@@ -6,7 +6,7 @@ export default defineConfig({
   name: 'default',
   title: 'Future Edge Institute',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'YOUR_PROJECT_ID',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || '6h8r2soo',
   dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [
