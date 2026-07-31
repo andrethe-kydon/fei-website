@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en-SG">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Edge Institute | Train the AI Factory Workforce</title>
+<meta name="description" content="Future Edge Institute trains working adults to operate AI: agents, knowledge bases and automated workflows built as working business assets. Six standalone professional courses from the Kydon Group.">
+
+<!-- ============================================================
+     OPEN GRAPH / SOCIAL
+     TODO: supply assets/og-image.jpg (1200 x 630) before launch
+============================================================= -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Future Edge Institute | Train the AI Factory Workforce">
+<meta property="og:description" content="Six standalone professional courses that teach working adults to operate AI: agents, knowledge bases and automated workflows built as working assets.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:url" content="{{SITE_URL}}/">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- ============================================================
+     TRACKING LAYER
+     1. GA4: replace {{GA4_ID}} with the measurement ID
+        (Google Analytics > Admin > Data Streams). Google Ads
+        conversion import runs through this same tag.
+     2. Meta Pixel: replace {{META_PIXEL_ID}} with the pixel ID
+        (Meta Events Manager). Needed before any Facebook or
+        Instagram campaign goes live.
+     3. HubSpot: portal ID {{HS_PORTAL}} is live and correct. This
+        tag also powers form analytics and ad attribution
+        inside HubSpot.
+     Nada owns items 1 and 2.
+============================================================= -->
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{GA4_ID}}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{GA4_ID}}');
+</script>
+<!-- Meta Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '{{META_PIXEL_ID}}');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{META_PIXEL_ID}}&ev=PageView&noscript=1" alt=""></noscript>
+<!-- HubSpot tracking: portal {{HS_PORTAL}} -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/{{HS_PORTAL}}.js"></script>
+
+<!-- ============================================================
+     STRUCTURED DATA: organisation + course catalogue
+     Enables course rich results in Google Search.
+============================================================= -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Future Edge Institute Pte. Ltd.",
+  "alternateName": "Future Edge Institute",
+  "parentOrganization": {"@type": "Organization", "name": "Kydon Group", "url": "https://www.kydongrp.com"},
+  "email": "{{EMAIL}}",
+  "address": {"@type": "PostalAddress", "addressCountry": "SG"},
+  "url": "{{SITE_URL}}/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "The AI Operator Professional Series",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"item":{"@type":"Course","courseCode":"AOP 101","name":"The One Person Company Blueprint: Niche, Offer and Business Foundations","description":"Design a one person business the market has already asked for: a validated niche, a tested brand promise, priced services, and the legal foundations to trade.","timeRequired":"PT40H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}},
+    {"@type":"ListItem","position":2,"item":{"@type":"Course","courseCode":"AOP 102","name":"AI Agents at Work: Build Your First AI Workforce with Claude","description":"Move from chatting with AI to running it. Build two working AI agents on real business tasks and learn to choose the right model for each job.","timeRequired":"PT16H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}},
+    {"@type":"ListItem","position":3,"item":{"@type":"Course","courseCode":"AOP 103","name":"The Knowledge Advantage: RAG Knowledge Bases and Your AI Team","description":"Give your AI a memory. Build a live knowledge base and connect a team of agents that answer from your business knowledge, in your voice.","timeRequired":"PT24H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}},
+    {"@type":"ListItem","position":4,"item":{"@type":"Course","courseCode":"AOP 104","name":"Automate the Business: n8n Workflows, Integration and the Without-You Test","description":"Connect your agents and knowledge into workflows that run without you: built, stress tested, costed, and proven in a live demonstration.","timeRequired":"PT32H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}},
+    {"@type":"ListItem","position":5,"item":{"@type":"Course","courseCode":"AOP 105","name":"Validate, Price and Sell: From Offer to Pipeline","description":"Turn an offer into a pipeline: validate with real prospects, price with confidence, and launch an outreach sequence that books conversations.","timeRequired":"PT32H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}},
+    {"@type":"ListItem","position":6,"item":{"@type":"Course","courseCode":"AOP 106","name":"Launch Ready: Registration, Money and the Readiness Check","description":"Get the business real: registration, payment capability, a stress tested unit economics model, and a launch readiness check presented to a panel.","timeRequired":"PT24H","provider":{"@type":"EducationalOrganization","name":"Future Edge Institute Pte. Ltd."}}}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Do I need prior experience or my own business to join?","acceptedAnswer":{"@type":"Answer","text":"No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one."}},
+    {"@type":"Question","name":"Are the courses SkillsFuture claimable?","acceptedAnswer":{"@type":"Answer","text":"Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). AOP courses are currently premium commercial programmes. You can register interest to be notified when funding support becomes available."}},
+    {"@type":"Question","name":"What certificate do I receive?","acceptedAnswer":{"@type":"Answer","text":"A Certificate of Completion issued by Future Edge Institute, awarded on meeting all deliverable gates and passing every declared assessment for the course."}},
+    {"@type":"Question","name":"What do I actually leave with?","acceptedAnswer":{"@type":"Answer","text":"Working assets, not notes. Depending on the course: tested AI agents, a live knowledge base, running n8n automations, a priced offer with a real pipeline, or a launch ready business, all built and assessed live during the course."}},
+    {"@type":"Question","name":"How are classes delivered?","acceptedAnswer":{"@type":"Answer","text":"Full day, in person, hands on sessions of 8 hours (6.5 taught plus breaks), in small cohorts. Courses run on consecutive days or one day per week without any change to content."}},
+    {"@type":"Question","name":"Do I need to buy any software?","acceptedAnswer":{"@type":"Answer","text":"No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop."}},
+    {"@type":"Question","name":"Can my company book a private run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any course can run privately for your team, at your office or our venue, and courses can be combined into capability pathways or scoped as a custom programme after a needs discovery session."}},
+    {"@type":"Question","name":"Where do these courses come from?","acceptedAnswer":{"@type":"Answer","text":"They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates."}}
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%231C3557"/><path d="M8 24V8h14v4h-9v3h8v4h-8v5z" fill="%23F15522"/></svg>'>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Future Edge Institute home">
+      <span class="brand-mark">FE</span>
+      <span class="brand-text">
+        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
+        <span class="byline">A Kydon Group Company</span>
+      </span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navlinks">
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#why">Why We Exist</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#pathway">The Pathway</a></li>
+      <li><a href="#corporate">For Corporates</a></li>
+      <li><a class="nav-wa" id="nav-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>WhatsApp</a></li>
+      <li><a href="#contact" class="nav-cta">Enquire</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <span class="hero-badge"><span class="pulse"></span>The <b>AI Operator</b> Professional Series · Now enrolling</span>
+    <h1>We train people to <span class="grad">operate AI</span>.<br>Not just talk about it.</h1>
+    <p class="lede">Future Edge Institute builds the AI Factory workforce: working adults who run AI agents, knowledge bases and automated workflows as everyday business assets. Every course ends with something built, tested and working.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-solid" href="#courses">Browse the courses</a>
+      <a class="btn btn-ghost" href="#story">Where we come from</a>
+    </div>
+  </div>
+  <div class="hero-stats" role="list">
+    <div role="listitem"><strong><em>6</em></strong><small>Standalone courses</small></div>
+    <div role="listitem"><strong>168<em>h</em></strong><small>Hands on training</small></div>
+    <div role="listitem"><strong>100<em>%</em></strong><small>Build first, assessed live</small></div>
+  </div>
+</section>
+
+<!-- ================= TRUST STRIP ================= -->
+<section class="trust" aria-label="Backed by Kydon Group">
+  <div class="wrap">
+    <div class="trust-head">Backed by Kydon Group, Singapore</div>
+    <div class="trust-grid">
+      <div class="trust-item"><strong>Since 2012</strong><small>Building learning technology and custom digital learning for institutions</small></div>
+      <div class="trust-item"><strong>100,000+</strong><small>Learners on systems Kydon has built and powered</small></div>
+      <div class="trust-item"><strong>100+ organisations</strong><small>Government agencies and enterprises across 10 countries</small></div>
+      <div class="trust-item"><strong>ZilLearn</strong><small>Kydon's own AI powered learning platform, part of Singapore's national edtech push</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLATFORM MARQUEE ================= -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Claude <i>◆</i> Notion <i>◆</i> n8n <i>◆</i> Gmail <i>◆</i> Canva <i>◆</i> Apollo <i>◆</i> Google Forms <i>◆</i> RAG Pipelines <i>◆</i> AI Agents <i>◆</i> Workflow Automation <i>◆</i></span>
+    <span>Claude <i>◆</i> Notion <i>◆</i> n8n <i>◆</i> Gmail <i>◆</i> Canva <i>◆</i> Apollo <i>◆</i> Google Forms <i>◆</i> RAG Pipelines <i>◆</i> AI Agents <i>◆</i> Workflow Automation <i>◆</i></span>
+  </div>
+</div>
+
+<!-- ================= STORY ================= -->
+<section class="section story" id="story">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Our Story</span>
+      <h2>We built the systems institutions learn on. Now we run the classroom.</h2>
+      <p>Future Edge Institute did not appear from nowhere. It is the education institute of Kydon Group, a company that has spent fourteen years engineering how organisations learn.</p>
+    </div>
+    <div class="timeline">
+      <div class="t-item reveal">
+        <span class="t-when">2012 · Singapore</span>
+        <h3>Kydon Group is founded</h3>
+        <p>Kydon began as a digital learning agency and grew into Singapore's leading digital learning technology company: custom learning platforms, digital content and learning systems built for government agencies and enterprises. More than 100,000 learners across 100 plus organisations in 10 countries have learned on systems Kydon built and powered.</p>
+      </div>
+      <div class="t-item reveal">
+        <span class="t-when">2021 · The platform years</span>
+        <h3>ZilLearn: Kydon builds its own AI learning platform</h3>
+        <p>Rather than only building for others, Kydon launched ZilLearn, its own AI powered learning platform: skills analytics, AI assisted course creation, and personalised learning pathways. Recognised in Singapore's national edtech initiatives and used in work alongside government agencies and institutes of higher learning, ZilLearn put Kydon at the frontier of AI in learning years before the current wave.</p>
+      </div>
+      <div class="t-item reveal">
+        <span class="t-when">The shift</span>
+        <h3>AI changes what one person can do</h3>
+        <p>As agentic AI matured, Kydon saw the unit of transformation shrinking: from the enterprise, to the team, to the individual. One person with a trained AI workforce can now run operations that once needed a department. Kydon launched the AI Workforce Factory and built its flagship One Person Company programme: not a course but a venture build system, where every week produces a real business deliverable.</p>
+      </div>
+      <div class="t-item now reveal">
+        <span class="t-when">2026 · Today</span>
+        <h3>Future Edge Institute</h3>
+        <p>After fourteen years engineering learning for institutions, Kydon steps into the classroom itself. Future Edge Institute Pte. Ltd. carries the flagship method to every working adult as six standalone professional courses: shorter, focused, and open to anyone, with the same rule intact. You do not leave with notes. You leave with working assets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAIN POINTS ================= -->
+<section class="section pain" id="why">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Why We Exist</span>
+      <h2>The market is full of AI talk. It is short of AI operators.</h2>
+      <p>We built these courses because four problems kept appearing in every organisation and every career conversation we had.</p>
+    </div>
+    <div class="pain-grid">
+      <article class="pain-card reveal">
+        <div class="p-mark">1</div>
+        <h3>The depth gap</h3>
+        <p>There is no shortage of AI awareness seminars. There is a real shortage of training that leaves you with something built, tested and running the next morning. The gap in the market is depth, not supply.</p>
+      </article>
+      <article class="pain-card reveal">
+        <div class="p-mark">2</div>
+        <h3>Chatting is not operating</h3>
+        <p>Most people can prompt an AI model. Very few can make it do a defined job reliably, with the right model, the right context and a human in the loop where it matters.</p>
+      </article>
+      <article class="pain-card reveal">
+        <div class="p-mark">3</div>
+        <h3>Skills that never connect</h3>
+        <p>Tool tutorials teach features in isolation. Nobody shows you how agents, knowledge bases and workflows join into one system that runs a business function end to end.</p>
+      </article>
+      <article class="pain-card reveal">
+        <div class="p-mark">4</div>
+        <h3>The leverage shift</h3>
+        <p>One person with an AI workforce can now do what used to take a team. Careers and businesses are being rebuilt around that fact, and most training has not caught up.</p>
+      </article>
+    </div>
+    <div class="pain-answer reveal">
+      <p>Our answer is the <em>AI Factory workforce</em>: individuals trained to design, run and maintain AI workflows and models as dependable working assets, in their job or in a business of their own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CATALOGUE ================= -->
+<section class="section catalogue" id="courses">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The AI Operator Professional Series</span>
+      <h2>Six courses. Every one standalone. Every one ends with something working.</h2>
+      <p>No prerequisites. Participants without their own venture build on a fully prepared reference business, so every exercise runs on real material from day one. Filter by the part of the business you want to strengthen.</p>
+    </div>
+
+    <div class="filters" role="tablist" aria-label="Filter courses by business function">
+      <button class="filter-chip active" data-filter="all" role="tab" aria-selected="true">All courses</button>
+      <button class="filter-chip" data-filter="operations" role="tab" aria-selected="false">Operations</button>
+      <button class="filter-chip" data-filter="marketing" role="tab" aria-selected="false">Marketing</button>
+      <button class="filter-chip" data-filter="sales" role="tab" aria-selected="false">Sales</button>
+      <button class="filter-chip" data-filter="foundations" role="tab" aria-selected="false">Business Foundations</button>
+    </div>
+
+    <div class="course-grid">
+{{COURSE_CARDS}}
+    </div>
+    <p class="cat-note">Course fees, intake dates and venues are confirmed at enquiry. AOP 106 provides awareness and structured reasoning, not legal, tax, or accounting advice. Certificates of Completion are issued on meeting all deliverable gates and passing assessment.</p>
+  </div>
+</section>
+
+<!-- ================= FUNDING ================= -->
+<section class="section funding" id="funding">
+  <div class="wrap funding-inner">
+    <div class="reveal">
+      <span class="eyebrow">Fees and Funding</span>
+      <h2>Straight answers on fees and subsidies</h2>
+      <p>AOP courses are premium commercial programmes. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG); until that registration is granted, courses are not eligible for SkillsFuture Credit or other government subsidies, and we will not pretend otherwise.</p>
+      <p>Fees, intake dates and corporate rates are shared on enquiry, and every course lists exactly what you will have built by the final day, so you can judge the value on the assets you leave with.</p>
+    </div>
+    <div class="funding-card reveal">
+      <h3>Be first to know when funding lands</h3>
+      <p>Leave your details and we will notify you the moment subsidy support becomes available for any AOP course.</p>
+      <a class="btn btn-solid" id="funding-cta" href="#contact">Register my interest</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PATHWAY ================= -->
+<section class="section pathway" id="pathway">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Operator Pathway</span>
+      <h2>Take one course. Or walk the whole line.</h2>
+      <p>Each course stands alone. Taken in sequence, the six reconstruct the full journey from idea to launch ready one person business: the same journey our flagship OPC programme runs end to end.</p>
+    </div>
+    <div class="rail reveal">
+      <div class="station"><div class="dot">101</div><p>Blueprint<small>Niche and offer</small></p></div>
+      <div class="station"><div class="dot">102</div><p>Agents<small>Your first AI workforce</small></p></div>
+      <div class="station"><div class="dot">103</div><p>Knowledge<small>RAG and your AI team</small></p></div>
+      <div class="station"><div class="dot">104</div><p>Automation<small>Workflows that run without you</small></p></div>
+      <div class="station"><div class="dot">105</div><p>Pipeline<small>Validate, price, sell</small></p></div>
+      <div class="station"><div class="dot">106</div><p>Launch<small>Registration and readiness</small></p></div>
+    </div>
+    <p class="cat-note reveal">Looking for the full immersion instead? The flagship One Person Company programme by Kydon runs the complete venture build journey as a single cohort experience. <a href="https://opc.kydongrp.com">Explore the OPC programme</a>.</p>
+  </div>
+</section>
+
+<!-- ================= CORPORATE ================= -->
+<section class="section corporate" id="corporate">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">For Corporates</span>
+      <h2>Build an AI operator capability inside your company</h2>
+      <p>The same build first method, delivered privately for your teams. We start with your needs, not our catalogue, and your people leave with working assets built on your actual processes.</p>
+    </div>
+    <div class="corp-grid">
+      <div class="corp-copy reveal">
+        <p>Every company is being told to adopt AI. Few are told how to build the people who can actually run it. We train your staff to be AI operators: designing agents around your real workflows, connecting them to your business knowledge, and automating the processes your teams run every day.</p>
+        <p>Corporate engagements are shaped around your needs. Some companies take a single course as a private run. Others take a curated pathway across departments: operations teams into agents, knowledge and automation, commercial teams into validation and pipeline. Where the need does not fit the catalogue, we consult first and design the programme around what your business actually requires.</p>
+
+        <div class="corp-formats">
+          <div class="format-card">
+            <div class="f-icon">01</div>
+            <div>
+              <h4>Private course runs</h4>
+              <p>Any course from the series delivered exclusively for your team, at your office or our venue, on consecutive days or spread one day per week around operations.</p>
+            </div>
+          </div>
+          <div class="format-card">
+            <div class="f-icon">02</div>
+            <div>
+              <h4>Curated capability pathways</h4>
+              <p>Course combinations matched to functions: the AI stack pairing for operations teams, the commercial pairing for sales and marketing, or the full line for a transformation cohort.</p>
+            </div>
+          </div>
+          <div class="format-card">
+            <div class="f-icon">03</div>
+            <div>
+              <h4>Consult first programmes</h4>
+              <p>Where your need is specific, we scope it with you before proposing anything: your tools, your data, your workflows, your success measures.</p>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn btn-solid" id="corp-cta" href="#contact">Book a corporate consultation</a>
+      </div>
+
+      <aside class="corp-steps reveal" aria-label="How a corporate engagement works">
+        <h3>How we work with you</h3>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Discover</h4>
+            <p>A working session with your leaders to map where AI leverage sits in your business: the tasks, the bottlenecks, and the teams closest to them.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Design</h4>
+            <p>We propose the course, pathway or custom programme that fits, with exercises rebuilt on your own processes and platforms instead of generic examples.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Deliver</h4>
+            <p>Hands on, cohort based delivery by our faculty. Every participant builds, tests and demonstrates live: agents, knowledge bases and workflows that belong to your company from day one.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h4>Evidence</h4>
+            <p>Assessed outcomes, working assets in production shape, and a capability report so leadership can see exactly what the team can now operate.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="section faq" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Questions, Answered</span>
+      <h2>What people ask before they enrol</h2>
+    </div>
+    <div class="faq-list reveal">
+      <details class="faq-item">
+        <summary>Do I need prior experience or my own business to join?</summary>
+        <div class="faq-a">No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Are the courses SkillsFuture claimable?</summary>
+        <div class="faq-a">Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). AOP courses are currently premium commercial programmes. You can <a href="#contact">register interest</a> to be notified the moment funding support becomes available.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What certificate do I receive?</summary>
+        <div class="faq-a">A Certificate of Completion issued by Future Edge Institute, awarded on meeting all deliverable gates and passing every declared assessment for the course. Assessments are practical: live builds, projects and panel interviews, never multiple choice.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What do I actually leave with?</summary>
+        <div class="faq-a">Working assets, not notes. Depending on the course: tested AI agents, a live knowledge base, running n8n automations, a priced offer with a real pipeline, or a launch ready business, all built and assessed live during the course.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How are classes delivered?</summary>
+        <div class="faq-a">Full day, in person, hands on sessions of 8 hours (6.5 taught plus breaks), in small cohorts. Courses run on consecutive days or one day per week without any change to content.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to buy any software?</summary>
+        <div class="faq-a">No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can my company book a private run?</summary>
+        <div class="faq-a">Yes. Any course can run privately for your team, at your office or our venue, and courses can be combined into capability pathways or scoped as a custom programme after a needs discovery session. See <a href="#corporate">For Corporates</a>.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Where do these courses come from?</summary>
+        <div class="faq-a">They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="section contact" id="contact">
+  <div class="wrap contact-inner">
+    <div class="contact-copy reveal">
+      <span class="eyebrow">Enquire</span>
+      <h2>Bring the AI Factory workforce to your team, or to yourself.</h2>
+      <p>Tell us which course caught your eye, or describe the capability you want to build. We run public intakes and private corporate runs, in Singapore and with international delivery partners.</p>
+      <p>Fees, upcoming intake dates and corporate arrangements are shared on enquiry.</p>
+    </div>
+    <div class="contact-card reveal">
+      <h3>Talk to us</h3>
+      <p>Leave your details and we will come back within one working day.</p>
+
+      <!-- ============================================================
+           HUBSPOT FORM EMBED · portal {{HS_PORTAL}}
+           1. In HubSpot: Marketing > Forms > Create form.
+              Suggested fields: First name, Last name, Email,
+              Company (optional), single dropdown "Course of
+              interest" (AOP 101 to AOP 106, OPC Programme,
+              Corporate enquiry, Notify me when funding is
+              available), message box.
+           2. Copy the form GUID from the embed code and replace
+              {{HS_FORM_GUID}} below.
+           3. Verify the region value matches the embed code
+              HubSpot gives you (na1, na2 or eu1).
+           Until then the mailto fallback below stays visible.
+      ============================================================= -->
+      <div id="hubspot-form"></div>
+      <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+      <script>
+        if (window.hbspt) {
+          hbspt.forms.create({
+            region: "{{HS_REGION}}",
+            portalId: "{{HS_PORTAL}}",
+            formId: "{{HS_FORM_GUID}}",
+            target: "#hubspot-form"
+          });
+        }
+      </script>
+
+      <p class="form-fallback">Prefer email? Write to <a href="mailto:{{EMAIL}}?subject=AOP%20Course%20Enquiry">{{EMAIL}}</a>.</p>
+      <a class="contact-wa" id="contact-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>Or message us on WhatsApp for a faster reply</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
+        <small>Future Edge Institute Pte. Ltd. is the education institute of the Kydon Group, Singapore. Home of The AI Operator Professional Series.</small>
+      </div>
+      <ul>
+        <li><a href="#story">Our Story</a></li>
+        <li><a href="#why">Why We Exist</a></li>
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#funding">Fees and Funding</a></li>
+        <li><a href="#corporate">Corporate Training</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <ul>
+        <li><a href="https://www.kydongrp.com">Kydon Group</a></li>
+        <li><a href="https://opc.kydongrp.com">The OPC Programme</a></li>
+        <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+      </ul>
+    </div>
+    <div class="legal">© 2026 Future Edge Institute Pte. Ltd. All rights reserved. Singapore.</div>
+  </div>
+</footer>
+
+<!-- Sticky mobile action bar -->
+<div class="sticky-bar" aria-hidden="false">
+  <a class="sb-wa" id="sb-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses.">WhatsApp</a>
+  <a class="sb-enq" href="#contact">Enquire</a>
+</div>
+
+<script>
+// Mobile menu
+const btn=document.querySelector('.menu-btn');
+const links=document.getElementById('navlinks');
+btn.addEventListener('click',()=>{
+  const open=links.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open);
+});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  links.classList.remove('open');btn.setAttribute('aria-expanded','false');
+}));
+
+// Catalogue filter (fires a GA4 event per filter for ad audience building)
+const chips=document.querySelectorAll('.filter-chip');
+const cards=document.querySelectorAll('.course-card');
+chips.forEach(chip=>chip.addEventListener('click',()=>{
+  chips.forEach(c=>{c.classList.remove('active');c.setAttribute('aria-selected','false')});
+  chip.classList.add('active');chip.setAttribute('aria-selected','true');
+  const f=chip.dataset.filter;
+  cards.forEach(card=>{
+    const segs=card.dataset.seg.split(' ');
+    card.classList.toggle('hidden', f!=='all' && !segs.includes(f));
+  });
+  if(typeof gtag==='function'){gtag('event','filter_courses',{segment:f});}
+}));
+
+// Enquiry click events for ads attribution
+document.querySelectorAll('.c-foot a').forEach(a=>a.addEventListener('click',()=>{
+  const code=a.closest('.course-card').querySelector('.c-code').textContent.trim();
+  const evt=a.classList.contains('cf-primary')?'course_detail_click':'course_enquiry_click';
+  if(typeof gtag==='function'){gtag('event',evt,{course:code});}
+  if(typeof fbq==='function'){fbq('trackCustom',evt==='course_enquiry_click'?'CourseEnquiryClick':'CourseDetailClick',{course:code});}
+}));
+
+// Corporate consultation click for ads attribution
+const corpCta=document.getElementById('corp-cta');
+if(corpCta){corpCta.addEventListener('click',()=>{
+  if(typeof gtag==='function'){gtag('event','corporate_enquiry_click');}
+  if(typeof fbq==='function'){fbq('trackCustom','CorporateEnquiryClick');}
+});}
+
+// WhatsApp, funding and outline events for ads attribution
+['nav-wa','contact-wa','sb-wa'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){el.addEventListener('click',()=>{
+    if(typeof gtag==='function'){gtag('event','whatsapp_click',{placement:id});}
+    if(typeof fbq==='function'){fbq('trackCustom','WhatsAppClick',{placement:id});}
+  });}
+});
+const fundingCta=document.getElementById('funding-cta');
+if(fundingCta){fundingCta.addEventListener('click',()=>{
+  if(typeof gtag==='function'){gtag('event','funding_interest_click');}
+  if(typeof fbq==='function'){fbq('trackCustom','FundingInterestClick');}
+});}
+document.querySelectorAll('.c-outline').forEach(d=>{
+  d.addEventListener('toggle',()=>{
+    if(d.open && typeof gtag==='function'){gtag('event','course_outline_open',{course:d.dataset.course});}
+  });
+});
+
+// Scroll reveal
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+</script>
+</body>
+</html>

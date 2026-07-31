@@ -1,0 +1,57 @@
+// Sanity schema: course
+// Drop this file into your Sanity Studio's schemaTypes folder and register it.
+export default {
+  name: 'course',
+  title: 'Course',
+  type: 'document',
+  fields: [
+    {name: 'number', title: 'Course number (e.g. 101)', type: 'number', validation: R => R.required()},
+    {name: 'slug', title: 'Slug (page filename, e.g. aop101)', type: 'slug', options: {source: doc => `aop${doc.number}`}, validation: R => R.required()},
+    {name: 'title', title: 'Title', type: 'string', validation: R => R.required()},
+    {name: 'subtitle', title: 'Subtitle', type: 'string', validation: R => R.required()},
+    {name: 'tagline', title: 'Tagline (course objective, one sentence set)', type: 'text', rows: 3, validation: R => R.required()},
+    {name: 'hours', title: 'Total hours', type: 'number', validation: R => R.required()},
+    {name: 'days', title: 'Days', type: 'number', validation: R => R.required()},
+    {name: 'contactHours', title: 'Contact hours', type: 'number'},
+    {name: 'instructorLedHours', title: 'Instructor led hours', type: 'number'},
+    {name: 'practicalHours', title: 'Practical hours', type: 'number'},
+    {name: 'assessmentHours', title: 'Assessment hours', type: 'number'},
+    {name: 'breakHours', title: 'Break hours', type: 'number'},
+    {name: 'tags', title: 'Segments (Operations, Marketing, Sales, Business Foundations)', type: 'array', of: [{type: 'string'}]},
+    {name: 'audience', title: 'Who it is for', type: 'text', rows: 3},
+    {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
+    {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}]},
+    {name: 'outline', title: 'Day by day outline', type: 'array', of: [{
+      type: 'object',
+      fields: [
+        {name: 'day', title: 'Day label', type: 'string'},
+        {name: 'theme', title: 'Theme', type: 'string'},
+        {name: 'content', title: 'Content', type: 'text', rows: 2},
+        {name: 'hours', title: 'Hours', type: 'number'},
+      ],
+      preview: {select: {title: 'day', subtitle: 'theme'}},
+    }]},
+    {name: 'builds', title: 'What participants build', type: 'array', of: [{type: 'string'}]},
+    {name: 'assessments', title: 'Assessment modes', type: 'array', of: [{
+      type: 'object',
+      fields: [
+        {name: 'mode', title: 'Mode (Practical Exam, Project, Oral Interview)', type: 'string'},
+        {name: 'description', title: 'Description with duration', type: 'text', rows: 2},
+      ],
+      preview: {select: {title: 'mode'}},
+    }]},
+    {name: 'related', title: 'Related courses', type: 'array', of: [{
+      type: 'object',
+      fields: [
+        {name: 'number', title: 'Course number', type: 'number'},
+        {name: 'why', title: 'Relationship label', type: 'string'},
+      ],
+      preview: {select: {title: 'why'}},
+    }]},
+    {name: 'disclaimer', title: 'Disclaimer (awareness not advice), optional', type: 'text', rows: 3},
+    {name: 'banner', title: 'Banner image (1600 x 640)', type: 'image'},
+    {name: 'thumbnail', title: 'Card thumbnail (1200 x 750)', type: 'image'},
+  ],
+  orderings: [{title: 'Course number', name: 'numberAsc', by: [{field: 'number', direction: 'asc'}]}],
+  preview: {select: {title: 'title', subtitle: 'subtitle'}},
+}

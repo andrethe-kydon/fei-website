@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en-SG">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{CODE}} · {{FULL_TITLE}} | Future Edge Institute</title>
+<meta name="description" content="{{TAG_ESC}}">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{CODE}} · {{FULL_TITLE}} | Future Edge Institute">
+<meta property="og:description" content="{{TAG_ESC}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta name="twitter:card" content="summary_large_image">
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{GA4_ID}}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{GA4_ID}}');
+</script>
+<!-- Meta Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '{{META_PIXEL_ID}}');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{META_PIXEL_ID}}&ev=PageView&noscript=1" alt=""></noscript>
+<!-- HubSpot tracking -->
+<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/{{HS_PORTAL}}.js"></script>
+<script type="application/ld+json">{{SCHEMA_COURSE}}</script>
+<script type="application/ld+json">{{SCHEMA_CRUMB}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%231C3557"/><path d="M8 24V8h14v4h-9v3h8v4h-8v5z" fill="%23F15522"/></svg>'>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html" aria-label="Future Edge Institute home">
+      <span class="brand-mark">FE</span>
+      <span class="brand-text">
+        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
+        <span class="byline">A Kydon Group Company</span>
+      </span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navlinks">
+      <li><a href="index.html#story">Our Story</a></li>
+      <li><a href="index.html#courses">All Courses</a></li>
+      <li><a href="index.html#funding">Fees and Funding</a></li>
+      <li><a href="index.html#corporate">For Corporates</a></li>
+      <li><a class="nav-wa" id="nav-wa" href="{{WA_LINK}}"><span class="wa-dot"></span>WhatsApp</a></li>
+      <li><a href="#enquire" class="nav-cta">Enquire</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ================= COURSE HERO ================= -->
+<section class="chero">
+  <div class="wrap">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="index.html#courses">Courses</a> / {{CODE}}</nav>
+    <div class="c-top" style="justify-content:flex-start;gap:14px;align-items:center">
+      <span class="c-code">{{CODE}}</span>
+      <div class="c-tags">{{TAGS}}</div>
+    </div>
+    <h1>{{TITLE}}</h1>
+    <p class="csub">{{SUBTITLE}}</p>
+    <p class="lede">{{TAGLINE}}</p>
+    <div class="chero-ctas">
+      <a class="btn btn-solid" href="#enquire">Enquire about this course</a>
+      <a class="btn btn-ghost" href="#outline">See the day by day outline</a>
+    </div>
+    <div class="facts reveal">
+      <div class="fact"><small>Duration</small><strong>{{HOURS}} hours · {{DAYS}} days</strong></div>
+      <div class="fact"><small>Format</small><strong>Full day, in person, hands on</strong></div>
+      <div class="fact"><small>Prerequisites</small><strong>None · laptop required</strong></div>
+      <div class="fact"><small>Assessment</small><strong>{{ASSESS_MODES}}</strong></div>
+      <div class="fact"><small>Certificate</small><strong>Certificate of Completion</strong></div>
+      <div class="fact"><small>Class size</small><strong>12 to 16 per trainer</strong></div>
+    </div>
+    <!-- Course banner: upload in Sanity, or drop assets/courses/{{SLUG}}.jpg (1600 x 640) -->
+    <div class="cthumb-banner">
+      <div class="c-thumb" style="aspect-ratio:16/5">
+        <span class="ph-label">Course banner</span>
+        <span class="ph-code">{{NUM}}</span>
+        <img src="{{BANNER_SRC}}" alt="{{CODE}} course banner" loading="lazy" onerror="this.remove()">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OVERVIEW + AUDIENCE ================= -->
+<section class="cpage-section">
+  <div class="wrap two-col">
+    <div class="reveal">
+      <span class="eyebrow">Course Overview</span>
+      <div class="section-head" style="margin-bottom:0"><h2>What this course is</h2></div>
+      <div style="margin-top:18px;color:var(--slate)">{{OVERVIEW}}</div>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">Who It Is For</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">The intended participant</h2></div>
+      <p style="margin-top:18px;color:var(--slate)">{{AUDIENCE}}</p>
+      <ul class="entry-list" style="margin-top:22px">
+        <li><b>Entry requirements:</b> none. Basic computer literacy and a personal laptop.</li>
+        <li><b>No business yet?</b> You build on Brightleaf Bookkeeping, the fully prepared reference business in the course starter pack.</li>
+        <li><b>Software:</b> free tier platform accounts as required by the course, set up before Day 1 via joining instructions.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LEARNING OUTCOMES ================= -->
+<section class="cpage-section" style="background:var(--bg-alt)">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Learning Outcomes</span>
+      <h2>What you will learn</h2>
+      <p>On completion, participants can:</p>
+    </div>
+    <ul class="lo-list reveal">{{LO_ITEMS}}</ul>
+  </div>
+</section>
+
+<!-- ================= OUTLINE ================= -->
+<section class="cpage-section" id="outline">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Course Outline</span>
+      <h2>The {{DAYS}} days, hour by hour honest</h2>
+    </div>
+    <div class="reveal" style="overflow-x:auto">
+      <table class="day-table">
+        <thead><tr><th>Day</th><th>Theme</th><th>Content</th><th>Hours</th></tr></thead>
+        <tbody>{{OUTLINE_ROWS}}</tbody>
+      </table>
+    </div>
+    <p class="split-note reveal">Of {{CONTACT}} contact hours: {{IL}} instructor led classroom, {{PR}} practical hands on, and {{ASMT}} assessment, plus {{BRKS}} hours of scheduled breaks across the course. No asynchronous or self directed hours: every hour is facilitated.</p>
+  </div>
+</section>
+
+<!-- ================= WHAT YOU BUILD + ASSESSMENT ================= -->
+<section class="cpage-section" style="background:var(--bg-alt)">
+  <div class="wrap two-col">
+    <div class="reveal">
+      <span class="eyebrow">What You Will Build</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">You leave with working assets</h2></div>
+      <ul class="build-list" style="margin-top:20px">{{BUILD_ITEMS}}</ul>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">Assessment</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">How you are assessed</h2></div>
+      <div class="assess-grid" style="margin-top:20px">{{ASSESS_CARDS}}</div>
+      <div class="pass-box">Completion requires attendance of at least 75 percent, every deliverable gate met, and a pass in each declared assessment mode at a 70 percent threshold. A Certificate of Completion is issued by Future Edge Institute.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEES ================= -->
+<section class="cpage-section">
+  <div class="wrap two-col">
+    <div class="reveal">
+      <span class="eyebrow">Fees and Funding</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Straight answers on fees</h2></div>
+      <p style="margin-top:18px;color:var(--slate)">This is a premium commercial programme; fees and intake dates are shared on enquiry. {{RTP_STATEMENT}} Until registration is granted, this course is not eligible for SkillsFuture Credit or other government subsidies.</p>
+      {{DISCLAIM}}
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">Continue the Pathway</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Related courses</h2></div>
+      <div class="related-grid" style="margin-top:20px">{{REL_CARDS}}</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENQUIRE ================= -->
+<section class="enq-band" id="enquire">
+  <div class="wrap">
+    <span class="eyebrow">Enquire</span>
+    <h2>Ready to build, not just learn about it?</h2>
+    <p>Tell us you are interested in {{CODE}} and we will come back within one working day with fees, upcoming intake dates and anything else you need to decide.</p>
+    <div class="enq-ctas">
+      <a class="btn btn-solid" id="enq-mail" href="mailto:{{EMAIL}}?subject={{MAIL_SUBJECT}}">Email {{EMAIL}}</a>
+      <a class="btn btn-white" id="enq-wa" href="{{WA_LINK}}">WhatsApp us</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
+        <small>Future Edge Institute Pte. Ltd. is the education institute of the Kydon Group, Singapore. Home of The AI Operator Professional Series.</small>
+      </div>
+      <ul>
+        <li><a href="index.html#story">Our Story</a></li>
+        <li><a href="index.html#courses">Courses</a></li>
+        <li><a href="index.html#funding">Fees and Funding</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+      <ul>
+        <li><a href="https://www.kydongrp.com">Kydon Group</a></li>
+        <li><a href="https://opc.kydongrp.com">The OPC Programme</a></li>
+        <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+      </ul>
+    </div>
+    <div class="legal">© 2026 Future Edge Institute Pte. Ltd. All rights reserved. Singapore.</div>
+  </div>
+</footer>
+
+<!-- Sticky mobile action bar -->
+<div class="sticky-bar">
+  <a class="sb-wa" id="sb-wa" href="{{WA_LINK}}">WhatsApp</a>
+  <a class="sb-enq" href="#enquire">Enquire</a>
+</div>
+
+<script>
+const btn=document.querySelector('.menu-btn');
+const links=document.getElementById('navlinks');
+btn.addEventListener('click',()=>{
+  const open=links.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open);
+});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  links.classList.remove('open');btn.setAttribute('aria-expanded','false');
+}));
+['nav-wa','sb-wa','enq-wa'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){el.addEventListener('click',()=>{
+    if(typeof gtag==='function'){gtag('event','whatsapp_click',{placement:id,course:'{{CODE}}'});}
+    if(typeof fbq==='function'){fbq('trackCustom','WhatsAppClick',{placement:id,course:'{{CODE}}'});}
+  });}
+});
+const em=document.getElementById('enq-mail');
+if(em){em.addEventListener('click',()=>{
+  if(typeof gtag==='function'){gtag('event','course_enquiry_click',{course:'{{CODE}}'});}
+  if(typeof fbq==='function'){fbq('trackCustom','CourseEnquiryClick',{course:'{{CODE}}'});}
+});}
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+</script>
+</body>
+</html>
