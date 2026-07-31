@@ -104,8 +104,7 @@ function renderCourseCards(content) {
     const takes = c.builds.map(b => `<li>${b}</li>`).join("\n            ");
     const days = c.outline.map(([d, t, txt]) =>
       `<li><b>${d}</b>${t}: ${txt.charAt(0).toLowerCase() + txt.slice(1)}</li>`).join("\n              ");
-    const modes = c.assess.map(a => a[0].replace("Practical Exam", "Practical")
-      .replace("Oral Interview", "Interview")).join(" · ");
+    const modes = c.assess.map(a => a[0]).join(" · ");
     const thumbSrc = c.thumbUrl || `assets/courses/${c.slug}.jpg`;
     out += `
       <article class="course-card reveal" data-seg="${segs}">
