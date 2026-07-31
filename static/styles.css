@@ -649,3 +649,67 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .c-foot{display:flex;gap:10px;flex-wrap:wrap}
 .c-foot .cf-primary{background:var(--navy);border-color:var(--navy);color:#fff}
 .c-foot .cf-primary:hover{background:var(--orange);border-color:var(--orange);box-shadow:0 8px 20px rgba(241,85,34,.32)}
+
+/* ============ POLICY PAGE ============ */
+/* No reveal animation on this page: legal content must be readable
+   immediately, including with JavaScript disabled. */
+.policy-head{padding:56px 0 40px;background:
+  radial-gradient(900px 460px at 85% -15%, rgba(241,85,34,.12), transparent 55%),
+  linear-gradient(180deg,#FDFDFE,var(--bg));border-bottom:1px solid var(--line)}
+.policy-head h1{font-family:var(--display);font-size:clamp(1.8rem,4.2vw,2.6rem);font-weight:700;
+  line-height:1.12;letter-spacing:-.02em;color:var(--navy)}
+.policy-lede{margin-top:14px;max-width:640px;font-size:1.02rem;color:var(--slate)}
+.policy-updated{margin-top:10px;font-size:.82rem;color:var(--fog)}
+.policy-layout-band{padding:56px 0 90px}
+.policy-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:56px;align-items:start}
+
+/* The list is longer than a short viewport, so it scrolls within itself. */
+.policy-nav{position:sticky;top:96px;max-height:calc(100vh - 128px);overflow-y:auto}
+.policy-nav ul{list-style:none;border-left:2px solid var(--line)}
+.policy-nav a{
+  display:block;text-decoration:none;font-size:.86rem;color:var(--slate);
+  padding:7px 0 7px 16px;margin-left:-2px;border-left:2px solid transparent;
+  transition:color .15s,border-color .15s;
+}
+.policy-nav a:hover,.policy-nav a:focus-visible{color:var(--navy)}
+.policy-nav a.pn-section{font-family:var(--display);font-weight:600}
+.policy-nav li:not(:first-child) a.pn-section{margin-top:14px}
+.policy-nav a[aria-current]{color:var(--navy);font-weight:600;border-left-color:var(--orange)}
+
+.policy-doc{max-width:720px;font-size:.94rem;line-height:1.75;color:var(--slate)}
+.policy-doc h2{font-family:var(--display);font-size:1.6rem;font-weight:700;letter-spacing:-.02em;
+  color:var(--navy);line-height:1.2;margin-top:48px;padding-top:28px;border-top:1px solid var(--line);
+  scroll-margin-top:96px}
+.policy-doc h3{font-family:var(--display);font-size:1.05rem;font-weight:700;color:var(--navy);
+  line-height:1.35;margin-top:28px;scroll-margin-top:96px}
+.policy-doc h2:first-child{margin-top:0;padding-top:0;border-top:none}
+.policy-doc p{margin-top:14px}
+.policy-doc .policy-intro{margin-top:0;font-size:1.02rem;color:#41546E;margin-bottom:8px}
+.policy-doc ul{margin:14px 0 0;padding-left:22px}
+.policy-doc li{margin-bottom:10px}
+.policy-doc li:last-child{margin-bottom:0}
+.policy-doc strong{color:var(--navy);font-weight:600}
+.policy-doc a{color:var(--orange);font-weight:600}
+.policy-table-scroll{overflow-x:auto;margin-top:18px}
+.policy-doc .day-table td:first-child{font-family:var(--display);font-weight:600;color:var(--navy)}
+
+.tbc{
+  display:inline;background:var(--orange-dim);border:1px solid rgba(241,85,34,.35);
+  color:var(--orange);font-size:.86em;padding:2px 8px;border-radius:4px;
+}
+
+/* No sticky action bar on this page, so drop the space reserved for it. */
+@media (max-width:820px){body.policy-page{padding-bottom:0}}
+
+@media (max-width:880px){
+  .policy-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+  .policy-nav,.policy-doc{min-width:0}
+  .policy-nav{position:static;top:auto;max-height:none;overflow-y:hidden;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;border-bottom:1px solid var(--line);padding-bottom:2px}
+  .policy-nav::-webkit-scrollbar{display:none}
+  .policy-nav ul{display:flex;gap:4px;border-left:none;width:max-content}
+  .policy-nav a{flex:0 0 auto;white-space:nowrap;padding:8px 12px;margin-left:0;
+    border-left:none;border-bottom:2px solid transparent}
+  .policy-nav a[aria-current]{border-left-color:transparent;border-bottom-color:var(--orange)}
+}

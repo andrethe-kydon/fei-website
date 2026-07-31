@@ -201,6 +201,28 @@ function renderCoursePage(template, n, c, content, s) {
   });
 }
 
+/**
+ * Legal and policies page. The document body lives in content/policies.html
+ * so the prose stays out of the build script; it is injected first so that
+ * tokens used inside it are filled along with the template's own.
+ */
+function renderPoliciesPage(template, body, s, updated) {
+  const withBody = template.replace("{{POLICY_BODY}}", () => body);
+  return fill(withBody, {
+    SITE_URL: s.siteUrl,
+    EMAIL: s.enquiryEmail,
+    WA_LINK: waLink(s.whatsappNumber),
+    GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
+    RTP_STATEMENT: s.rtpStatement,
+    UPDATED: updated,
+  });
+}
+
+/** Build date as "31 July 2026". */
+function formatUpdated(d) {
+  return `${d.getDate()} ${d.toLocaleString("en-GB", { month: "long" })} ${d.getFullYear()}`;
+}
+
 // ---------- main ----------
 (async () => {
   let content, source;
@@ -237,8 +259,14 @@ function renderCoursePage(template, n, c, content, s) {
       renderCoursePage(cTpl, n, c, content, s));
   }
 
+  // policies
+  const pTpl = fs.readFileSync(path.join(ROOT, "templates/policies.template.html"), "utf8");
+  const pBody = fs.readFileSync(path.join(ROOT, "content/policies.html"), "utf8");
+  fs.writeFileSync(path.join(DIST, "policies.html"),
+    renderPoliciesPage(pTpl, pBody, s, formatUpdated(new Date())));
+
   // sitemap
-  const pages = ["", ...Object.values(content.courses).map(c => `${c.slug}.html`)];
+  const pages = ["", ...Object.values(content.courses).map(c => `${c.slug}.html`), "policies.html"];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     pages.map(p => `  <url><loc>${s.siteUrl}/${p}</loc></url>`).join("\n") + "\n</urlset>\n";
   fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemap);

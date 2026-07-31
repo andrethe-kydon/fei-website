@@ -162,7 +162,7 @@ In Vercel, open the project, then **Settings, Environment Variables**, and add:
 | `SANITY_PROJECT_ID` | your project ID from Step 3 |
 | `SANITY_DATASET` | `production` (optional, this is the default) |
 
-Redeploy. The build log should now say `Built 7 pages to dist/ from Sanity (<project id>)`. If Sanity is ever unreachable the build falls back to `content/content.json` and says so, so a CMS problem can never take the site down.
+Redeploy. The build log should now say `Built 8 pages to dist/ from Sanity (<project id>)`. If Sanity is ever unreachable the build falls back to `content/content.json` and says so, so a CMS problem can never take the site down.
 
 *Private dataset only:* create a read token in sanity.io/manage under API, Tokens, and add it to Vercel as `SANITY_READ_TOKEN`.
 
