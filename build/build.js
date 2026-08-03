@@ -57,7 +57,7 @@ async function loadFromSanity(projectId, dataset) {
       contact: String(c.contactHours), il: String(c.instructorLedHours),
       pr: String(c.practicalHours), asmt: String(c.assessmentHours),
       brks: String(c.breakHours),
-      tags: c.tags || [], audience: c.audience,
+      tags: c.tags || [], aiTags: c.aiTags || [], audience: c.audience,
       overview: c.overview || [], los: c.learningOutcomes || [],
       outline: (c.outline || []).map(d => [d.day, d.theme, d.content, String(d.hours)]),
       builds: c.builds || [],
@@ -92,6 +92,17 @@ function waLink(number, code) {
   return `https://wa.me/${number}?text=${text}`;
 }
 
+/**
+ * AI capability tags as their own row. Returns "" when the course teaches no
+ * AI, so nothing is emitted: no wrapper, no spacing. `after` is appended only
+ * when there is something to show, to keep the generated markup tidy.
+ */
+function aiTagRow(aiTags, after = "") {
+  if (!aiTags || !aiTags.length) return "";
+  const pills = aiTags.map(t => `<span class="c-tag-ai">${t}</span>`).join("");
+  return `<div class="c-tags-ai">${pills}</div>${after}`;
+}
+
 function renderCourseCards(content) {
   const segMap = t => ({
     "Business Foundations": "foundations", "Foundations": "foundations",
@@ -105,6 +116,9 @@ function renderCourseCards(content) {
     const days = c.outline.map(([d, t, txt]) =>
       `<li><b>${d}</b>${t}: ${txt.charAt(0).toLowerCase() + txt.slice(1)}</li>`).join("\n              ");
     const modes = c.assess.map(a => a[0]).join(" · ");
+    // AI capability tags: only the courses that genuinely teach AI carry them,
+    // and an empty list renders nothing at all, not an empty row.
+    const aiRow = aiTagRow(c.aiTags, "\n          ");
     const thumbSrc = c.thumbUrl || `assets/courses/${c.slug}.jpg`;
     out += `
       <article class="course-card reveal" data-seg="${segs}">
@@ -121,7 +135,7 @@ function renderCourseCards(content) {
           </div>
           <h3>${c.title}: ${c.subtitle}</h3>
           <p class="c-sub">${c.tag}</p>
-          <div class="c-meta">
+          ${aiRow}<div class="c-meta">
             <span><b>${c.hours}</b> hours</span><span><b>${c.days}</b> days</span><span>${modes}</span>
           </div>
           <ul class="c-take">
@@ -183,6 +197,7 @@ function renderCoursePage(template, n, c, content, s) {
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${c.title}`),
     TAGS: c.tags.map(t => `<span class="c-tag">${t}</span>`).join(""),
+    AI_TAGS: aiTagRow(c.aiTags),
     HOURS: String(c.hours), DAYS: String(c.days),
     ASSESS_MODES: c.assess.map(a => a[0]).join(" + "),
     OVERVIEW: c.overview.map(p => `<p>${p}</p>`).join(""),

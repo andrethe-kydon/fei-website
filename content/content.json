@@ -27,6 +27,9 @@
         "Business Foundations",
         "Marketing"
       ],
+      "aiTags": [
+        "AI-Assisted Research"
+      ],
       "audience": "Professionals planning a move into self employment, career transitioners exploring a solo venture, and freelancers who want to move from ad hoc gigs to a structured business.",
       "overview": [
         "Most solo businesses fail before they start: built on an untested idea, priced by guesswork, and structured as an afterthought. AOP 101 runs the foundation work properly, in five consecutive days, with a deliverable gate at the end of each one. You do not move on until the asset is built.",
@@ -114,6 +117,10 @@
       "tags": [
         "Operations"
       ],
+      "aiTags": [
+        "AI Agents",
+        "Model Selection"
+      ],
       "audience": "Business owners, solo operators, and professionals who use AI casually and want repeatable, dependable AI agents doing defined jobs in their work.",
       "overview": [
         "Almost everyone can prompt an AI model. Very few can make it do a defined job reliably, again and again, without supervision of every word. AOP 102 closes that gap in two intensive days: you learn how frontier models actually differ, how to match the model to the task, and how to structure an agent as a persistent, tested working asset rather than a disposable chat.",
@@ -177,6 +184,10 @@
       "brks": "4.5",
       "tags": [
         "Operations"
+      ],
+      "aiTags": [
+        "RAG Knowledge Bases",
+        "AI Agent Teams"
       ],
       "audience": "Operators and small teams already using AI tools who need consistency, accuracy, and control across every AI output the business produces.",
       "overview": [
@@ -252,6 +263,10 @@
       "tags": [
         "Operations",
         "Marketing"
+      ],
+      "aiTags": [
+        "AI Workflow Automation",
+        "Orchestration"
       ],
       "audience": "Operators and business teams ready to automate repeatable work: marketing content, client onboarding, and publishing, with human approval gates kept in place.",
       "overview": [
@@ -334,6 +349,7 @@
         "Marketing",
         "Sales"
       ],
+      "aiTags": [],
       "audience": "Founders, freelancers, and operators with a working capability who have not yet converted it into consistent, qualified sales conversations.",
       "overview": [
         "Capability does not pay. Clients do. AOP 105 is four days of turning what you can do into what someone will buy: a priced, outcome led one page offer, validated in structured conversations with real prospects, not friends, then pushed into a live pipeline through a personalised four touch outreach sequence.",
@@ -415,6 +431,7 @@
         "Operations",
         "Business Foundations"
       ],
+      "aiTags": [],
       "audience": "Operators with demand in hand who now need the legal, financial, and operational structure of a real business, built and checked before launch.",
       "overview": [
         "Demand without structure is a hobby with invoices. AOP 106 is three days of making the business real: entity options assessed and the registration prepared, a live payment capability with an invoicing cadence, unit economics stress tested against fewer clients and churn, and a money system with separated accounts, tax set aside and a weekly numbers check.",

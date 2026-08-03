@@ -46,6 +46,7 @@ Build and check: `npm run build`, then `npx serve dist`.
 - Assessment modes are only ever **Practical Exam, Project, Oral Interview**. Pass threshold 70 percent, attendance 75 percent.
 - Certificates are **Certificates of Completion issued by Future Edge Institute**.
 - Segment tags used for catalogue filtering: Operations, Marketing, Sales, Business Foundations.
+- **AI capability tags** (`aiTags`, orange pills) are separate from the segment tags and are not filterable. They appear only on courses whose curriculum genuinely teaches AI, currently AOP 101 to 104. AOP 105 and 106 must not carry them unless a curriculum revision introduces real AI content. Do not add tags to make the catalogue look uniform.
 - HubSpot portal `2457674` is live and correct. GA4 and Meta Pixel IDs are placeholders until supplied.
 - Conversion events already fire on: course enquiry clicks, course detail clicks, WhatsApp clicks (tagged by placement), funding interest, corporate enquiry, and course outline opens. Preserve these when editing; add matching events for any new call to action.
 

@@ -18,6 +18,13 @@ export default {
     {name: 'assessmentHours', title: 'Assessment hours', type: 'number'},
     {name: 'breakHours', title: 'Break hours', type: 'number'},
     {name: 'tags', title: 'Segments (Operations, Marketing, Sales, Business Foundations)', type: 'array', of: [{type: 'string'}]},
+    {
+      name: 'aiTags',
+      title: 'AI capabilities taught',
+      description: 'Leave empty where the course does not teach AI. Do not add these unless the curriculum genuinely covers them.',
+      type: 'array',
+      of: [{type: 'string'}],
+    },
     {name: 'audience', title: 'Who it is for', type: 'text', rows: 3},
     {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
     {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}]},
