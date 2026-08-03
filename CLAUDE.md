@@ -6,7 +6,7 @@ Context for Claude Code working in this repository.
 
 The website for **Future Edge Institute Private Limited** (FEI), the education institute of Kydon Group, Singapore. FEI delivers **The AI Operator Professional Series (AOP)**: six standalone professional courses, AOP 101 to AOP 106, teaching working adults to operate AI (agents, RAG knowledge bases, n8n automation) as working business assets. FEI is working towards SSG Registered Training Provider (RTP) status.
 
-**Registered names, exact.** FEI's registered name is **Future Edge Institute Private Limited**, spelled out in full, never abbreviated to Pte. Ltd. It is a wholly owned subsidiary of **Kydon Holdings Pte. Ltd.**, which is registered with the abbreviated form. The two differ deliberately: each must match ACRA exactly, so never normalise one to match the other and never apply a blanket Pte. Ltd. replacement. Standalone **Future Edge Institute** is the brand name and is correct wherever the legal entity is not being named.
+**Registered names, exact.** FEI's registered name is **Future Edge Institute Private Limited**, spelled out in full, never abbreviated to Pte. Ltd. UEN **202634510R**, incorporated in Singapore on 30 July 2026. It is a wholly owned subsidiary of **Kydon Holdings Pte. Ltd.**, which is registered with the abbreviated form. The two differ deliberately: each must match ACRA exactly, so never normalise one to match the other and never apply a blanket Pte. Ltd. replacement. Standalone **Future Edge Institute** is the brand name and is correct wherever the legal entity is not being named.
 
 ## Architecture
 

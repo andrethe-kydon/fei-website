@@ -153,6 +153,7 @@ function renderCoursePage(template, n, c, content, s) {
     teaches: c.los,
     provider: {
       "@type": "EducationalOrganization", name: "Future Edge Institute Private Limited",
+      identifier: { "@type": "PropertyValue", name: "UEN", value: "202634510R" },
       parentOrganization: { "@type": "Organization", name: "Kydon Group" }
     },
     url: canonical,
