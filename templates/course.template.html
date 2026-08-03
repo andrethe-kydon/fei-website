@@ -320,9 +320,6 @@
   <a class="sb-enq" href="#enquire">Enquire</a>
 </div>
 
-<!-- Brochure modal: rendered only when static/assets/brochures/{{SLUG}}.pdf exists -->
-{{BROCHURE_MODAL}}
-
 <script>
 const btn=document.querySelector('.menu-btn');
 const links=document.getElementById('navlinks');
@@ -345,21 +342,12 @@ if(em){em.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','course_enquiry_click',{course:'{{CODE}}'});}
   if(typeof fbq==='function'){fbq('trackCustom','CourseEnquiryClick',{course:'{{CODE}}'});}
 });}
-// Brochure modal. Both button and dialog exist only when the PDF is on disk.
+// Brochure link. Present only when the PDF is on disk; opens it directly.
 const bBtn=document.getElementById('brochure-btn');
-const bModal=document.getElementById('brochure-modal');
-if(bBtn&&bModal){
-  bBtn.addEventListener('click',()=>{
-    if(typeof gtag==='function'){gtag('event','brochure_request',{course:'{{CODE}}'});}
-    if(typeof fbq==='function'){fbq('trackCustom','BrochureRequest',{course:'{{CODE}}'});}
-    bModal.showModal();
-  });
-  // Escape and the close button are handled by <dialog> and method="dialog".
-  // This adds the backdrop click, which the element does not give us.
-  bModal.addEventListener('click',e=>{
-    if(e.target===bModal){bModal.close()}
-  });
-}
+if(bBtn){bBtn.addEventListener('click',()=>{
+  if(typeof gtag==='function'){gtag('event','brochure_request',{course:'{{CODE}}'});}
+  if(typeof fbq==='function'){fbq('trackCustom','BrochureRequest',{course:'{{CODE}}'});}
+});}
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
 },{threshold:.12});

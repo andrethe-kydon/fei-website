@@ -259,35 +259,11 @@ function renderCoursePage(template, n, c, content, s) {
       </a>`;
   }).join("");
   // The brochure button appears only when the file is actually on disk, so a
-  // course without a brochure never shows a link that leads nowhere.
+  // course without a brochure never shows a link that leads nowhere. It opens
+  // the PDF straight away: no form, no gate.
   const hasBrochure = fs.existsSync(path.join(ROOT, "static/assets/brochures", `${c.slug}.pdf`));
   const brochureBtn = hasBrochure
-    ? `<button class="sc-btn sc-btn-ghost" id="brochure-btn" type="button">Download the course brochure</button>`
-    : "";
-  // Until the HubSpot form GUID is supplied, the modal offers the brochure by
-  // email rather than embedding a form that cannot render.
-  const hasForm = s.hubspotFormGuid && !/FORM_GUID/i.test(s.hubspotFormGuid);
-  const brochureBody = hasForm
-    ? `<div id="brochure-form"></div>
-        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
-        <script>
-          if (window.hbspt) {
-            hbspt.forms.create({
-              region: "${s.hubspotFormRegion}", portalId: "${s.hubspotPortalId}",
-              formId: "${s.hubspotFormGuid}", target: "#brochure-form"
-            });
-          }
-        </script>`
-    : `<p>Email us and we will send the ${code} brochure straight back.</p>
-        <a class="btn btn-solid" href="mailto:${s.enquiryEmail}?subject=${encodeURIComponent(`Brochure request: ${code}`)}">Request the brochure by email</a>`;
-  const brochureModal = hasBrochure
-    ? `<dialog class="brochure-modal" id="brochure-modal" aria-labelledby="brochure-title">
-    <form method="dialog" class="brochure-close-form">
-      <button class="brochure-close" aria-label="Close">&times;</button>
-    </form>
-    <h2 id="brochure-title">${code} course brochure</h2>
-    ${brochureBody}
-  </dialog>`
+    ? `<a class="sc-btn sc-btn-ghost" id="brochure-btn" href="assets/brochures/${c.slug}.pdf" target="_blank" rel="noopener">Read the course brochure</a>`
     : "";
 
   return fill(template, {
@@ -317,7 +293,6 @@ function renderCoursePage(template, n, c, content, s) {
     REL_CARDS: relCards,
     FEE_DISPLAY: c.feeDisplay || "Fees confirmed at enquiry",
     BROCHURE_BTN: brochureBtn,
-    BROCHURE_MODAL: brochureModal,
     INTAKES: renderIntakes(c.intakes || [], code),
     TRAINER_SECTION: renderTrainers(c.trainers || []),
     BANNER_SRC: c.bannerUrl || `assets/courses/${c.slug}.jpg`,

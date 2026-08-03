@@ -45,7 +45,7 @@ Three fields drive the conditional parts, and all three are safe to leave empty:
 | `intakes` | The intakes section still renders, saying dates are being scheduled. Filter tabs are not built yet: the markup carries a comment marking where they go, at more than four intakes for format tabs and more than one month for month tabs. |
 | `trainers` | The whole trainer section is omitted: no heading, no placeholder, no reserved space. |
 
-The brochure button on the summary card appears only when `static/assets/brochures/<slug>.pdf` exists, checked with `fs.existsSync` at build time. Its modal embeds the HubSpot form when `hubspotFormGuid` is set, and offers the brochure by email until then.
+The brochure button on the summary card appears only when `static/assets/brochures/<slug>.pdf` exists, checked with `fs.existsSync` at build time. It opens the PDF directly in a new tab: the brochure is for reading, so there is no form and no email gate in front of it. The click still fires `brochure_request` to GA4 and Meta.
 
 **Course pages state the current position honestly rather than showing TBC markers.** Visible `[TO BE CONFIRMED: ...]` markers are reserved for `policies.html`, where unresolved legal detail must be obvious. On a course page, say what is true now: dates being scheduled, fees at enquiry, the certificate issued by the institute and not yet accredited.
 
