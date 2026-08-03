@@ -166,8 +166,7 @@ function renderCourseCards(content) {
 function renderIntakes(intakes, code) {
   if (!intakes.length) {
     return `<div class="intake-empty">
-        <p>Dates for the next public run of ${code} are being scheduled. Enquire and we will tell you the intake dates, the venue and the fee as soon as they are confirmed, and we will ask which format suits you: weekday, weekend, or consecutive days.</p>
-        <p>Any course can also run privately for a team on dates you choose.</p>
+        <p>Intake dates for this course are confirmed at enquiry. We run small cohorts and schedule them around confirmed demand, so tell us which course you are interested in and we will come back with the next available dates, including weekday and weekend options.</p>
         <a class="btn btn-solid" href="#enquire">Ask about the next intake</a>
       </div>`;
   }

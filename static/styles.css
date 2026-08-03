@@ -870,6 +870,7 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 
 /* ============ FOR TEAMS (compact) ============ */
 .teams-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
+.teams-lead{margin-top:18px;color:var(--slate);font-size:.98rem;max-width:640px}
 .teams-items{display:grid;gap:14px;margin-top:22px}
 .teams-card{
   background:var(--bg-alt);border:1px solid var(--line);border-radius:var(--radius);
