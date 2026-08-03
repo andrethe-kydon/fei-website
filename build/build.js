@@ -110,7 +110,9 @@ function renderCourseCards(content) {
   }[t] || t.toLowerCase());
   let out = "";
   for (const [n, c] of Object.entries(content.courses)) {
-    const segs = c.tags.map(segMap).join(" ");
+    // The "ai" filter segment is derived from aiTags, never hardcoded, so the
+    // filter and the orange capability tags can never disagree.
+    const segs = [...c.tags.map(segMap), ...(c.aiTags && c.aiTags.length ? ["ai"] : [])].join(" ");
     const tags = c.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
     const takes = c.builds.map(b => `<li>${b}</li>`).join("\n            ");
     const days = c.outline.map(([d, t, txt]) =>
