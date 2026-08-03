@@ -115,8 +115,6 @@ function renderCourseCards(content) {
     const segs = [...c.tags.map(segMap), ...(c.aiTags && c.aiTags.length ? ["ai"] : [])].join(" ");
     const tags = c.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
     const takes = c.builds.map(b => `<li>${b}</li>`).join("\n            ");
-    const days = c.outline.map(([d, t, txt]) =>
-      `<li><b>${d}</b>${t}: ${txt.charAt(0).toLowerCase() + txt.slice(1)}</li>`).join("\n              ");
     const modes = c.assess.map(a => a[0]).join(" · ");
     // AI capability tags: only the courses that genuinely teach AI carry them,
     // and an empty list renders nothing at all, not an empty row.
@@ -143,12 +141,6 @@ function renderCourseCards(content) {
           <ul class="c-take">
             ${takes}
           </ul>
-          <details class="c-outline" data-course="AOP ${n}">
-            <summary>View the ${c.days} day outline</summary>
-            <ol>
-              ${days}
-            </ol>
-          </details>
           <div class="c-foot"><a class="cf-primary" href="${c.slug}.html">Full course details</a><a href="#contact">Enquire</a></div>
         </div>
       </article>`;
@@ -236,6 +228,19 @@ function renderPoliciesPage(template, body, s, updated) {
   });
 }
 
+/**
+ * About page. Story and market context live here, not on the homepage.
+ * Static content, so this only fills the shared tracking and contact tokens.
+ */
+function renderAboutPage(template, s) {
+  return fill(template, {
+    SITE_URL: s.siteUrl,
+    EMAIL: s.enquiryEmail,
+    WA_LINK: waLink(s.whatsappNumber),
+    GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
+  });
+}
+
 /** Build date as "31 July 2026". */
 function formatUpdated(d) {
   return `${d.getDate()} ${d.toLocaleString("en-GB", { month: "long" })} ${d.getFullYear()}`;
@@ -277,6 +282,10 @@ function formatUpdated(d) {
       renderCoursePage(cTpl, n, c, content, s));
   }
 
+  // about
+  const aTpl = fs.readFileSync(path.join(ROOT, "templates/about.template.html"), "utf8");
+  fs.writeFileSync(path.join(DIST, "about.html"), renderAboutPage(aTpl, s));
+
   // policies
   const pTpl = fs.readFileSync(path.join(ROOT, "templates/policies.template.html"), "utf8");
   const pBody = fs.readFileSync(path.join(ROOT, "content/policies.html"), "utf8");
@@ -284,7 +293,8 @@ function formatUpdated(d) {
     renderPoliciesPage(pTpl, pBody, s, formatUpdated(new Date())));
 
   // sitemap
-  const pages = ["", ...Object.values(content.courses).map(c => `${c.slug}.html`), "policies.html"];
+  const pages = ["", ...Object.values(content.courses).map(c => `${c.slug}.html`),
+    "about.html", "policies.html"];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     pages.map(p => `  <url><loc>${s.siteUrl}/${p}</loc></url>`).join("\n") + "\n</urlset>\n";
   fs.writeFileSync(path.join(DIST, "sitemap.xml"), sitemap);

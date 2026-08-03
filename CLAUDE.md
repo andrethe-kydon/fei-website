@@ -18,7 +18,22 @@ Content driven static site. No framework, no dependencies for the site build.
 - `studio/` is the Sanity Studio (its own package.json; not part of the site build).
 - `dist/` is generated. Never edit it, never commit it.
 
-Build and check: `npm run build`, then `npx serve dist`.
+Build and check: `npm run build`, then `npx serve dist`. A correct build reports **9 pages**.
+
+## Pages
+
+| Page | Template | Notes |
+| --- | --- | --- |
+| `index.html` | `index.template.html` | The homepage. Section order below. |
+| `about.html` | `about.template.html` | Story timeline and market context. |
+| `policies.html` | `policies.template.html` + `content/policies.html` | Privacy, terms, fees and refunds. |
+| `aop101.html` to `aop106.html` | `course.template.html` | One per course, rendered from content. |
+
+**Homepage section order:** hero, trust strip, marquee, catalogue (`#courses`), pathway (`#pathway`), the operator difference (`#difference`), who it is for (`#audience`), corporates (`#corporate`), funding (`#funding`), FAQ (`#faq`), contact (`#contact`).
+
+The **story** (`#story`) and **market context** (`#why`) sections live on `about.html` and must not be reintroduced to the homepage: the homepage reaches the catalogue quickly by design. Anything linking to them points at `about.html`, never `index.html#story` or `index.html#why`.
+
+The day by day outline appears only on the individual course pages. The homepage cards link to them and carry no outline accordion.
 
 ## Where to make a change
 
