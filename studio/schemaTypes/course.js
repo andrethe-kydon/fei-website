@@ -25,7 +25,35 @@ export default {
       type: 'array',
       of: [{type: 'string'}],
     },
+    {
+      name: 'feeDisplay',
+      title: 'Fee line on the summary card',
+      description: 'Leave empty to show "Fees confirmed at enquiry". No figure goes here until fees are set.',
+      type: 'string',
+    },
     {name: 'audience', title: 'Who it is for', type: 'text', rows: 3},
+    {name: 'intakes', title: 'Intake schedule', description: 'Leave empty until dates are confirmed. The page says so honestly rather than hiding the section.', type: 'array', of: [{
+      type: 'object',
+      fields: [
+        {name: 'label', title: 'Label (e.g. Every Tuesday)', type: 'string'},
+        {name: 'dates', title: 'Dates (e.g. 14, 21 and 28 April 2026)', type: 'string'},
+        {name: 'timing', title: 'Timing', type: 'string', initialValue: '9:00 AM to 6:00 PM'},
+        {name: 'venue', title: 'Venue', type: 'string'},
+        {name: 'format', title: 'Format', type: 'string', options: {list: ['Weekday', 'Weekend', 'Custom']}},
+        {name: 'status', title: 'Status', type: 'string', options: {list: ['Open', 'Filling fast', 'Closed']}, initialValue: 'Open'},
+      ],
+      preview: {select: {title: 'label', subtitle: 'dates'}},
+    }]},
+    {name: 'trainers', title: 'Trainers', description: 'Leave empty until trainers are confirmed. The section is omitted entirely when empty.', type: 'array', of: [{
+      type: 'object',
+      fields: [
+        {name: 'name', title: 'Name', type: 'string'},
+        {name: 'role', title: 'Role', type: 'string'},
+        {name: 'bio', title: 'Bio', type: 'text', rows: 4},
+        {name: 'photo', title: 'Photo', type: 'image'},
+      ],
+      preview: {select: {title: 'name', subtitle: 'role'}},
+    }]},
     {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
     {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}]},
     {name: 'outline', title: 'Day by day outline', type: 'array', of: [{

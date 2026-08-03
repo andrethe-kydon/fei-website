@@ -35,6 +35,20 @@ The **story** (`#story`) and **market context** (`#why`) sections live on `about
 
 The day by day outline appears only on the individual course pages. The homepage cards link to them and carry no outline accordion.
 
+**Course page structure**, in order: hero with the sticky summary card, overview and audience, learning outcomes, outline, what you build, assessment including the certificate block, intakes, trainer (only when present), for teams, fees and funding with related courses, enquire band. The first four content blocks sit in a two column grid beside the sticky card; everything from intakes down is full width.
+
+Three fields drive the conditional parts, and all three are safe to leave empty:
+
+| Field | Empty behaviour |
+| --- | --- |
+| `feeDisplay` | Summary card shows "Fees confirmed at enquiry". Never put a figure here until fees are set. |
+| `intakes` | The intakes section still renders, saying dates are being scheduled. Filter tabs are not built yet: the markup carries a comment marking where they go, at more than four intakes for format tabs and more than one month for month tabs. |
+| `trainers` | The whole trainer section is omitted: no heading, no placeholder, no reserved space. |
+
+The brochure button on the summary card appears only when `static/assets/brochures/<slug>.pdf` exists, checked with `fs.existsSync` at build time. Its modal embeds the HubSpot form when `hubspotFormGuid` is set, and offers the brochure by email until then.
+
+**Course pages state the current position honestly rather than showing TBC markers.** Visible `[TO BE CONFIRMED: ...]` markers are reserved for `policies.html`, where unresolved legal detail must be obvious. On a course page, say what is true now: dates being scheduled, fees at enquiry, the certificate issued by the institute and not yet accredited.
+
 ## Where to make a change
 
 | Change | Where |

@@ -58,6 +58,15 @@ async function loadFromSanity(projectId, dataset) {
       pr: String(c.practicalHours), asmt: String(c.assessmentHours),
       brks: String(c.breakHours),
       tags: c.tags || [], aiTags: c.aiTags || [], audience: c.audience,
+      feeDisplay: c.feeDisplay || "",
+      intakes: (c.intakes || []).map(i => ({
+        label: i.label, dates: i.dates, timing: i.timing, venue: i.venue,
+        format: i.format || "Weekday", status: i.status || "Open",
+      })),
+      trainers: (c.trainers || []).map(t => ({
+        name: t.name, role: t.role, bio: t.bio,
+        photoUrl: sanityImageUrl(t.photo, projectId, dataset, 400),
+      })),
       overview: c.overview || [], los: c.learningOutcomes || [],
       outline: (c.outline || []).map(d => [d.day, d.theme, d.content, String(d.hours)]),
       builds: c.builds || [],
@@ -148,6 +157,74 @@ function renderCourseCards(content) {
   return out;
 }
 
+/**
+ * Intake cards. An empty schedule is stated plainly rather than hidden: a
+ * missing section reads worse than an acknowledged one.
+ * Filter tabs are deliberately not built yet, because there is nothing to
+ * filter; the thresholds below decide when they become worth building.
+ */
+function renderIntakes(intakes, code) {
+  if (!intakes.length) {
+    return `<div class="intake-empty">
+        <p>Dates for the next public run of ${code} are being scheduled. Enquire and we will tell you the intake dates, the venue and the fee as soon as they are confirmed, and we will ask which format suits you: weekday, weekend, or consecutive days.</p>
+        <p>Any course can also run privately for a team on dates you choose.</p>
+        <a class="btn btn-solid" href="#enquire">Ask about the next intake</a>
+      </div>`;
+  }
+  const months = new Set(intakes.map(i => String(i.dates).replace(/[^A-Za-z]/g, " ").trim()));
+  const needsFormatTabs = intakes.length > 4;
+  const needsMonthTabs = months.size > 1;
+  const cards = intakes.map(i => {
+    const closed = i.status === "Closed";
+    const pillClass = i.status === "Filling fast" ? "intake-pill hot" : "intake-pill";
+    return `<article class="intake-card${closed ? " closed" : ""}">
+        <div class="intake-top">
+          <span class="${pillClass}">${i.format}</span>
+          <span class="intake-status">${i.status}</span>
+        </div>
+        <h3>${i.label}</h3>
+        <dl class="intake-rows">
+          <div><dt>Dates</dt><dd>${i.dates}</dd></div>
+          <div><dt>Timing</dt><dd>${i.timing}</dd></div>
+          <div><dt>Venue</dt><dd>${i.venue}</dd></div>
+        </dl>
+        ${closed ? "" : `<a class="intake-link" href="#enquire">Enquire about this intake</a>`}
+      </article>`;
+  }).join("");
+  const tabs = [
+    needsFormatTabs ? `<!-- format filter tabs belong here once there are more than four intakes -->` : "",
+    needsMonthTabs ? `<!-- month tabs belong here once intakes span more than one month -->` : "",
+  ].filter(Boolean).join("\n      ");
+  return `${tabs}\n      <div class="intake-grid">${cards}</div>`;
+}
+
+/** Trainer cards, or nothing at all when no trainer is confirmed. */
+function renderTrainers(trainers) {
+  if (!trainers.length) return "";
+  const cards = trainers.map(t => `<article class="trainer-card">
+        <div class="trainer-photo">
+          <span class="ph-label">Photo</span>
+          ${t.photoUrl ? `<img src="${t.photoUrl}" alt="${esc(t.name)}" loading="lazy" onerror="this.remove()">` : ""}
+        </div>
+        <div>
+          <h3>${t.name}</h3>
+          <p class="trainer-role">${t.role}</p>
+          <p>${t.bio}</p>
+        </div>
+      </article>`).join("");
+  return `<section class="cpage-section" id="trainer">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Your Trainer</span>
+      <h2 style="font-size:1.6rem">Who is in the room</h2>
+    </div>
+    <div class="trainer-grid reveal">${cards}</div>
+  </div>
+</section>
+
+`;
+}
+
 function renderCoursePage(template, n, c, content, s) {
   const code = `AOP ${n}`;
   const fullTitle = `${c.title}: ${c.subtitle}`;
@@ -181,6 +258,38 @@ function renderCoursePage(template, n, c, content, s) {
         <p>${rc.hours} hours · ${rc.days} days</p>
       </a>`;
   }).join("");
+  // The brochure button appears only when the file is actually on disk, so a
+  // course without a brochure never shows a link that leads nowhere.
+  const hasBrochure = fs.existsSync(path.join(ROOT, "static/assets/brochures", `${c.slug}.pdf`));
+  const brochureBtn = hasBrochure
+    ? `<button class="sc-btn sc-btn-ghost" id="brochure-btn" type="button">Download the course brochure</button>`
+    : "";
+  // Until the HubSpot form GUID is supplied, the modal offers the brochure by
+  // email rather than embedding a form that cannot render.
+  const hasForm = s.hubspotFormGuid && !/FORM_GUID/i.test(s.hubspotFormGuid);
+  const brochureBody = hasForm
+    ? `<div id="brochure-form"></div>
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+          if (window.hbspt) {
+            hbspt.forms.create({
+              region: "${s.hubspotFormRegion}", portalId: "${s.hubspotPortalId}",
+              formId: "${s.hubspotFormGuid}", target: "#brochure-form"
+            });
+          }
+        </script>`
+    : `<p>Email us and we will send the ${code} brochure straight back.</p>
+        <a class="btn btn-solid" href="mailto:${s.enquiryEmail}?subject=${encodeURIComponent(`Brochure request: ${code}`)}">Request the brochure by email</a>`;
+  const brochureModal = hasBrochure
+    ? `<dialog class="brochure-modal" id="brochure-modal" aria-labelledby="brochure-title">
+    <form method="dialog" class="brochure-close-form">
+      <button class="brochure-close" aria-label="Close">&times;</button>
+    </form>
+    <h2 id="brochure-title">${code} course brochure</h2>
+    ${brochureBody}
+  </dialog>`
+    : "";
+
   return fill(template, {
     CODE: code, NUM: String(n), SLUG: c.slug,
     TITLE: c.title, SUBTITLE: c.subtitle, FULL_TITLE: fullTitle,
@@ -206,6 +315,11 @@ function renderCoursePage(template, n, c, content, s) {
     RTP_STATEMENT: s.rtpStatement,
     DISCLAIM: c.disclaim ? `<p class="disclaim">${c.disclaim}</p>` : "",
     REL_CARDS: relCards,
+    FEE_DISPLAY: c.feeDisplay || "Fees confirmed at enquiry",
+    BROCHURE_BTN: brochureBtn,
+    BROCHURE_MODAL: brochureModal,
+    INTAKES: renderIntakes(c.intakes || [], code),
+    TRAINER_SECTION: renderTrainers(c.trainers || []),
     BANNER_SRC: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
     OG_IMAGE: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
   });

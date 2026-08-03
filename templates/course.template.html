@@ -70,106 +70,197 @@
 <section class="chero">
   <div class="wrap">
     <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="index.html#courses">Courses</a> / {{CODE}}</nav>
-    <div class="c-top" style="justify-content:flex-start;gap:14px;align-items:center">
-      <span class="c-code">{{CODE}}</span>
-      <div class="c-tags">{{TAGS}}</div>
-      {{AI_TAGS}}
+  </div>
+</section>
+
+<!-- ================= TWO COLUMN BODY: content + sticky summary card ================= -->
+<div class="wrap cpage-layout">
+
+  <div class="chero-copy">
+      <div class="c-top" style="justify-content:flex-start;gap:14px;align-items:center">
+        <span class="c-code">{{CODE}}</span>
+        <div class="c-tags">{{TAGS}}</div>
+        {{AI_TAGS}}
+      </div>
+      <h1>{{TITLE}}</h1>
+      <p class="csub">{{SUBTITLE}}</p>
+      <p class="lede">{{TAGLINE}}</p>
+      <div class="chero-ctas">
+        <a class="btn btn-solid" href="#enquire">Enquire about this course</a>
+        <a class="btn btn-ghost" href="#outline">See the day by day outline</a>
+      </div>
+      <!-- Course banner: upload in Sanity, or drop assets/courses/{{SLUG}}.jpg (1600 x 640) -->
+      <div class="cthumb-banner">
+        <div class="c-thumb" style="aspect-ratio:16/5">
+          <span class="ph-label">Course banner</span>
+          <span class="ph-code">{{NUM}}</span>
+          <img src="{{BANNER_SRC}}" alt="{{CODE}} course banner" loading="lazy" onerror="this.remove()">
+        </div>
+      </div>
+  </div>
+
+  <!-- On mobile the summary card falls here, between the hero copy and the
+       content blocks. On desktop it moves to the second column and sticks. -->
+
+<aside class="cpage-aside" aria-label="Course summary">
+    <div class="cpage-sticky">
+      <div class="summary-card">
+        <p class="sc-code">{{CODE}}</p>
+        <p class="sc-title">{{TITLE}}</p>
+        <p class="sc-fee">{{FEE_DISPLAY}}</p>
+        <dl class="sc-list">
+          <div><dt>Duration</dt><dd>{{HOURS}} hours over {{DAYS}} days</dd></div>
+          <div><dt>Format</dt><dd>Full day, in person, hands on</dd></div>
+          <div><dt>Class size</dt><dd>12 to 16 per trainer</dd></div>
+          <div><dt>Assessment</dt><dd>{{ASSESS_MODES}}</dd></div>
+          <div><dt>Certificate</dt><dd>Certificate of Completion</dd></div>
+          <div><dt>Prerequisites</dt><dd>None, laptop required</dd></div>
+        </dl>
+        <div class="sc-rule"></div>
+        <p class="sc-provider">Future Edge Institute Private Limited<br>UEN 202634510R<br>Working towards SkillsFuture Singapore RTP registration</p>
+        <a class="sc-btn sc-btn-solid" href="#enquire">Enquire about this course</a>
+        {{BROCHURE_BTN}}
+        <a class="sc-wa" id="sc-wa" href="{{WA_LINK}}"><span class="wa-dot"></span>Ask a question on WhatsApp</a>
+      </div>
     </div>
-    <h1>{{TITLE}}</h1>
-    <p class="csub">{{SUBTITLE}}</p>
-    <p class="lede">{{TAGLINE}}</p>
-    <div class="chero-ctas">
-      <a class="btn btn-solid" href="#enquire">Enquire about this course</a>
-      <a class="btn btn-ghost" href="#outline">See the day by day outline</a>
+  </aside>
+
+  <div class="cpage-main">
+    <!-- OVERVIEW + AUDIENCE -->
+    <section class="cpage-block">
+      <div class="reveal">
+        <span class="eyebrow">Course Overview</span>
+        <div class="section-head" style="margin-bottom:0"><h2>What this course is</h2></div>
+        <div style="margin-top:18px;color:var(--slate)">{{OVERVIEW}}</div>
+      </div>
+      <div class="reveal" style="margin-top:38px">
+        <span class="eyebrow">Who It Is For</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">The intended participant</h2></div>
+        <p style="margin-top:18px;color:var(--slate)">{{AUDIENCE}}</p>
+        <ul class="entry-list" style="margin-top:22px">
+          <li><b>Entry requirements:</b> none. Basic computer literacy and a personal laptop.</li>
+          <li><b>No business yet?</b> You build on Brightleaf Bookkeeping, the fully prepared reference business in the course starter pack.</li>
+          <li><b>Software:</b> free tier platform accounts as required by the course, set up before Day 1 via joining instructions.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- LEARNING OUTCOMES -->
+    <section class="cpage-block">
+      <div class="section-head reveal" style="margin-bottom:24px">
+        <span class="eyebrow">Learning Outcomes</span>
+        <h2 style="font-size:1.6rem">What you will learn</h2>
+        <p>On completion, participants can:</p>
+      </div>
+      <ul class="lo-list reveal">{{LO_ITEMS}}</ul>
+    </section>
+
+    <!-- OUTLINE -->
+    <section class="cpage-block" id="outline">
+      <div class="section-head reveal" style="margin-bottom:24px">
+        <span class="eyebrow">Course Outline</span>
+        <h2 style="font-size:1.6rem">The {{DAYS}} days, hour by hour honest</h2>
+      </div>
+      <div class="reveal" style="overflow-x:auto">
+        <table class="day-table">
+          <thead><tr><th>Day</th><th>Theme</th><th>Content</th><th>Hours</th></tr></thead>
+          <tbody>{{OUTLINE_ROWS}}</tbody>
+        </table>
+      </div>
+      <p class="split-note reveal">Of {{CONTACT}} contact hours: {{IL}} instructor led classroom, {{PR}} practical hands on, and {{ASMT}} assessment, plus {{BRKS}} hours of scheduled breaks across the course. No asynchronous or self directed hours: every hour is facilitated.</p>
+    </section>
+
+    <!-- WHAT YOU BUILD -->
+    <section class="cpage-block">
+      <div class="reveal">
+        <span class="eyebrow">What You Will Build</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">You leave with working assets</h2></div>
+        <ul class="build-list" style="margin-top:20px">{{BUILD_ITEMS}}</ul>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT + CERTIFICATE -->
+    <section class="cpage-block">
+      <div class="reveal">
+        <span class="eyebrow">Assessment</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">How you are assessed</h2></div>
+        <div class="assess-grid" style="margin-top:20px">{{ASSESS_CARDS}}</div>
+        <div class="pass-box">Completion requires attendance of at least 75 percent, every deliverable gate met, and a pass in each declared assessment mode at a 70 percent threshold. A Certificate of Completion is issued by Future Edge Institute.</div>
+      </div>
+      <div class="cert-block reveal">
+        <!-- Certificate sample: drop static/assets/certificate-sample.jpg (1200 x 900) -->
+        <div class="c-thumb cert-thumb">
+          <span class="ph-label">Certificate</span>
+          <span class="ph-code">FEI</span>
+          <img src="assets/certificate-sample.jpg" alt="Sample Certificate of Completion" loading="lazy" onerror="this.remove()">
+        </div>
+        <div class="cert-copy">
+          <h3>What the certificate says</h3>
+          <p>Meet the attendance requirement, clear every deliverable gate and pass each declared assessment, and Future Edge Institute issues you a Certificate of Completion naming the course, its hours and the assessment modes you passed.</p>
+          <p>It is issued by the institute in its own name. {{RTP_STATEMENT}} Until that registration is granted, the certificate is not a WSQ or SSG accredited qualification, and we will not describe it as one.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  
+</div>
+
+<!-- ================= INTAKES ================= -->
+<section class="cpage-section" id="intakes" style="background:var(--bg-alt)">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Intakes</span>
+      <h2 style="font-size:1.6rem">When {{CODE}} runs next</h2>
     </div>
-    <div class="facts reveal">
-      <div class="fact"><small>Duration</small><strong>{{HOURS}} hours · {{DAYS}} days</strong></div>
-      <div class="fact"><small>Format</small><strong>Full day, in person, hands on</strong></div>
-      <div class="fact"><small>Prerequisites</small><strong>None · laptop required</strong></div>
-      <div class="fact"><small>Assessment</small><strong>{{ASSESS_MODES}}</strong></div>
-      <div class="fact"><small>Certificate</small><strong>Certificate of Completion</strong></div>
-      <div class="fact"><small>Class size</small><strong>12 to 16 per trainer</strong></div>
+    <div class="reveal">
+      {{INTAKES}}
     </div>
-    <!-- Course banner: upload in Sanity, or drop assets/courses/{{SLUG}}.jpg (1600 x 640) -->
-    <div class="cthumb-banner">
-      <div class="c-thumb" style="aspect-ratio:16/5">
-        <span class="ph-label">Course banner</span>
-        <span class="ph-code">{{NUM}}</span>
-        <img src="{{BANNER_SRC}}" alt="{{CODE}} course banner" loading="lazy" onerror="this.remove()">
+  </div>
+</section>
+
+{{TRAINER_SECTION}}<!-- ================= FOR TEAMS ================= -->
+<section class="cpage-section" id="for-teams">
+  <div class="wrap teams-grid">
+    <div class="reveal">
+      <span class="eyebrow">For Teams</span>
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Running {{CODE}} for a team</h2></div>
+      <div class="teams-items">
+        <div class="format-card">
+          <div class="f-icon">01</div>
+          <div>
+            <h4>Your processes, not our examples</h4>
+            <p>Exercises are rebuilt on the work your team actually does, so what they build in the room is usable the following week.</p>
+          </div>
+        </div>
+        <div class="format-card">
+          <div class="f-icon">02</div>
+          <div>
+            <h4>Dates that fit operations</h4>
+            <p>Consecutive days or one day per week, at your office or our venue, with no change to the content or the assessment.</p>
+          </div>
+        </div>
+        <div class="format-card">
+          <div class="f-icon">03</div>
+          <div>
+            <h4>Evidence for leadership</h4>
+            <p>Assessed outcomes and a capability summary, so you can see what the team can operate rather than who attended.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="teams-card">
+        <h3>Private runs for your team</h3>
+        <p>Any course in the series can run privately, and courses combine into a pathway across functions. We scope it with you first: your tools, your data, your success measures.</p>
+        <a class="btn btn-solid" href="index.html#corporate">See corporate training</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= OVERVIEW + AUDIENCE ================= -->
-<section class="cpage-section">
-  <div class="wrap two-col">
-    <div class="reveal">
-      <span class="eyebrow">Course Overview</span>
-      <div class="section-head" style="margin-bottom:0"><h2>What this course is</h2></div>
-      <div style="margin-top:18px;color:var(--slate)">{{OVERVIEW}}</div>
-    </div>
-    <div class="reveal">
-      <span class="eyebrow">Who It Is For</span>
-      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">The intended participant</h2></div>
-      <p style="margin-top:18px;color:var(--slate)">{{AUDIENCE}}</p>
-      <ul class="entry-list" style="margin-top:22px">
-        <li><b>Entry requirements:</b> none. Basic computer literacy and a personal laptop.</li>
-        <li><b>No business yet?</b> You build on Brightleaf Bookkeeping, the fully prepared reference business in the course starter pack.</li>
-        <li><b>Software:</b> free tier platform accounts as required by the course, set up before Day 1 via joining instructions.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ================= LEARNING OUTCOMES ================= -->
-<section class="cpage-section" style="background:var(--bg-alt)">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Learning Outcomes</span>
-      <h2>What you will learn</h2>
-      <p>On completion, participants can:</p>
-    </div>
-    <ul class="lo-list reveal">{{LO_ITEMS}}</ul>
-  </div>
-</section>
-
-<!-- ================= OUTLINE ================= -->
-<section class="cpage-section" id="outline">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Course Outline</span>
-      <h2>The {{DAYS}} days, hour by hour honest</h2>
-    </div>
-    <div class="reveal" style="overflow-x:auto">
-      <table class="day-table">
-        <thead><tr><th>Day</th><th>Theme</th><th>Content</th><th>Hours</th></tr></thead>
-        <tbody>{{OUTLINE_ROWS}}</tbody>
-      </table>
-    </div>
-    <p class="split-note reveal">Of {{CONTACT}} contact hours: {{IL}} instructor led classroom, {{PR}} practical hands on, and {{ASMT}} assessment, plus {{BRKS}} hours of scheduled breaks across the course. No asynchronous or self directed hours: every hour is facilitated.</p>
-  </div>
-</section>
-
-<!-- ================= WHAT YOU BUILD + ASSESSMENT ================= -->
-<section class="cpage-section" style="background:var(--bg-alt)">
-  <div class="wrap two-col">
-    <div class="reveal">
-      <span class="eyebrow">What You Will Build</span>
-      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">You leave with working assets</h2></div>
-      <ul class="build-list" style="margin-top:20px">{{BUILD_ITEMS}}</ul>
-    </div>
-    <div class="reveal">
-      <span class="eyebrow">Assessment</span>
-      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">How you are assessed</h2></div>
-      <div class="assess-grid" style="margin-top:20px">{{ASSESS_CARDS}}</div>
-      <div class="pass-box">Completion requires attendance of at least 75 percent, every deliverable gate met, and a pass in each declared assessment mode at a 70 percent threshold. A Certificate of Completion is issued by Future Edge Institute.</div>
-    </div>
-  </div>
-</section>
-
 <!-- ================= FEES ================= -->
-<section class="cpage-section">
+<section class="cpage-section" style="background:var(--bg-alt)">
   <div class="wrap two-col">
     <div class="reveal">
       <span class="eyebrow">Fees and Funding</span>
@@ -229,6 +320,9 @@
   <a class="sb-enq" href="#enquire">Enquire</a>
 </div>
 
+<!-- Brochure modal: rendered only when static/assets/brochures/{{SLUG}}.pdf exists -->
+{{BROCHURE_MODAL}}
+
 <script>
 const btn=document.querySelector('.menu-btn');
 const links=document.getElementById('navlinks');
@@ -239,7 +333,7 @@ btn.addEventListener('click',()=>{
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
   links.classList.remove('open');btn.setAttribute('aria-expanded','false');
 }));
-['nav-wa','sb-wa','enq-wa'].forEach(id=>{
+['nav-wa','sb-wa','enq-wa','sc-wa'].forEach(id=>{
   const el=document.getElementById(id);
   if(el){el.addEventListener('click',()=>{
     if(typeof gtag==='function'){gtag('event','whatsapp_click',{placement:id,course:'{{CODE}}'});}
@@ -251,6 +345,21 @@ if(em){em.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','course_enquiry_click',{course:'{{CODE}}'});}
   if(typeof fbq==='function'){fbq('trackCustom','CourseEnquiryClick',{course:'{{CODE}}'});}
 });}
+// Brochure modal. Both button and dialog exist only when the PDF is on disk.
+const bBtn=document.getElementById('brochure-btn');
+const bModal=document.getElementById('brochure-modal');
+if(bBtn&&bModal){
+  bBtn.addEventListener('click',()=>{
+    if(typeof gtag==='function'){gtag('event','brochure_request',{course:'{{CODE}}'});}
+    if(typeof fbq==='function'){fbq('trackCustom','BrochureRequest',{course:'{{CODE}}'});}
+    bModal.showModal();
+  });
+  // Escape and the close button are handled by <dialog> and method="dialog".
+  // This adds the backdrop click, which the element does not give us.
+  bModal.addEventListener('click',e=>{
+    if(e.target===bModal){bModal.close()}
+  });
+}
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
 },{threshold:.12});
