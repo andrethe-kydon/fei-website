@@ -742,5 +742,7 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .aud-start{
   display:block;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
   font-family:var(--display);font-size:.82rem;font-weight:600;color:var(--orange);
+  text-decoration:none;transition:color .15s;
 }
+.aud-start:hover{color:var(--orange-hot)}
 @media (max-width:820px){.aud-grid{grid-template-columns:1fr}}
