@@ -1,6 +1,6 @@
 # Future Edge Institute Website
 
-Static site for Future Edge Institute Pte. Ltd. (futureedge.institute placeholder domain), home of The AI Operator Professional Series. Built as a content driven static site: course content and site settings live in Sanity (or the local `content/content.json` fallback), a Node build script renders the pages, Vercel hosts and auto deploys.
+Static site for Future Edge Institute Private Limited (futureedge.institute placeholder domain), home of The AI Operator Professional Series. Built as a content driven static site: course content and site settings live in Sanity (or the local `content/content.json` fallback), a Node build script renders the pages, Vercel hosts and auto deploys.
 
 ## Architecture
 

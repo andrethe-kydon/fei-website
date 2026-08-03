@@ -152,7 +152,7 @@ function renderCoursePage(template, n, c, content, s) {
     educationalCredentialAwarded: "Certificate of Completion issued by Future Edge Institute",
     teaches: c.los,
     provider: {
-      "@type": "EducationalOrganization", name: "Future Edge Institute Pte. Ltd.",
+      "@type": "EducationalOrganization", name: "Future Edge Institute Private Limited",
       parentOrganization: { "@type": "Organization", name: "Kydon Group" }
     },
     url: canonical,
