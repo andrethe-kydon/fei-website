@@ -1,14 +1,23 @@
 <!DOCTYPE html>
+<!-- ============================================================
+     ADOPTION SERIES (AIA) WORKSHOP PAGE
+     A sibling of course.template.html, not a variant of it.
+     These are corporate workshops: participation based, delivered
+     in house, and making no assessment claim. There is deliberately
+     no learning outcome list, no assessment card grid, no pass
+     criteria box and no delivery hour split anywhere on this page.
+     Nothing here may imply otherwise.
+============================================================= -->
 <html lang="en-SG">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{CODE}} · {{FULL_TITLE}} | Future Edge Institute</title>
-<meta name="description" content="{{TAG_ESC}}">
+<meta name="description" content="{{META_DESC}}">
 <link rel="canonical" href="{{CANONICAL}}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{{CODE}} · {{FULL_TITLE}} | Future Edge Institute">
-<meta property="og:description" content="{{TAG_ESC}}">
+<meta property="og:description" content="{{META_DESC}}">
 <meta property="og:image" content="{{OG_IMAGE}}">
 <meta property="og:url" content="{{CANONICAL}}">
 <meta name="twitter:card" content="summary_large_image">
@@ -66,10 +75,10 @@
   </div>
 </header>
 
-<!-- ================= COURSE HERO ================= -->
+<!-- ================= WORKSHOP HERO ================= -->
 <section class="chero">
   <div class="wrap">
-    <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="index.html#courses">Courses</a> / {{CODE}}</nav>
+    <nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="index.html#courses">Programmes</a> / {{FULL_TITLE}}</nav>
   </div>
 </section>
 
@@ -79,22 +88,23 @@
   <div class="chero-copy">
       <div class="c-top" style="justify-content:flex-start;gap:14px;align-items:center">
         <span class="c-code">{{CODE}}</span>
+        <span class="c-series">AI Adoption Series</span>
         <div class="c-tags">{{TAGS}}</div>
         {{AI_TAGS}}
       </div>
       <h1>{{TITLE}}</h1>
       <p class="csub">{{SUBTITLE}}</p>
-      <p class="lede">{{TAGLINE}}</p>
+      <p class="lede">{{LEAD}}</p>
       <div class="chero-ctas">
-        <a class="btn btn-solid" href="#enquire">Enquire about this course</a>
-        <a class="btn btn-ghost" href="#outline">See the day by day outline</a>
+        <a class="btn btn-solid" href="#enquire">Enquire about this workshop</a>
+        {{BROCHURE_HERO_BTN}}
       </div>
-      <!-- Course banner: upload in Sanity, or drop assets/courses/{{SLUG}}.jpg (1600 x 640) -->
+      <!-- Workshop banner: upload in Sanity, or drop assets/courses/{{SLUG}}.jpg (1600 x 640) -->
       <div class="cthumb-banner">
         <div class="c-thumb" style="aspect-ratio:16/5">
-          <span class="ph-label">Course banner</span>
+          <span class="ph-label">Workshop banner</span>
           <span class="ph-code">{{NUM}}</span>
-          <img src="{{BANNER_SRC}}" alt="{{CODE}} course banner" loading="lazy" onerror="this.remove()">
+          <img src="{{BANNER_SRC}}" alt="{{CODE}} workshop banner" loading="lazy" onerror="this.remove()">
         </div>
       </div>
   </div>
@@ -102,23 +112,21 @@
   <!-- On mobile the summary card falls here, between the hero copy and the
        content blocks. On desktop it moves to the second column and sticks. -->
 
-<aside class="cpage-aside" aria-label="Course summary">
+<aside class="cpage-aside" aria-label="Workshop summary">
     <div class="cpage-sticky">
       <div class="summary-card">
         <p class="sc-code">{{CODE}}</p>
         <p class="sc-title">{{TITLE}}</p>
-        <p class="sc-fee">{{FEE_DISPLAY}}</p>
         <dl class="sc-list">
-          <div><dt>Duration</dt><dd>{{HOURS}} hours over {{DAYS}} days</dd></div>
-          <div><dt>Format</dt><dd>Full day, in person, hands on</dd></div>
-          <div><dt>Class size</dt><dd>12 to 16 per trainer</dd></div>
-          <div><dt>Assessment</dt><dd>{{ASSESS_MODES}}</dd></div>
-          <div><dt>Certificate</dt><dd>Certificate of Completion</dd></div>
-          <div><dt>Prerequisites</dt><dd>None, laptop required</dd></div>
+          <div><dt>Duration</dt><dd>{{DAYS}} days · {{TAUGHT_HOURS}} taught hours</dd></div>
+          <div><dt>Group size</dt><dd>{{GROUP_SIZE}}</dd></div>
+          <div><dt>Format</dt><dd>In person, hands on</dd></div>
+          <div><dt>Certificate</dt><dd>Digital certificate of participation</dd></div>
+          <div><dt>Delivery</dt><dd>At your premises or ours</dd></div>
         </dl>
         <div class="sc-rule"></div>
-        <p class="sc-provider">Future Edge Institute Private Limited<br>UEN 202634510R<br>Working towards SkillsFuture Singapore RTP registration</p>
-        <a class="sc-btn sc-btn-solid" href="#enquire">Enquire about this course</a>
+        <p class="sc-provider">Future Edge Institute Private Limited<br>UEN 202634510R<br>The education institute of the Kydon Group</p>
+        <a class="sc-btn sc-btn-solid" href="#enquire">Enquire about this workshop</a>
         {{BROCHURE_BTN}}
         <a class="sc-wa" id="sc-wa" href="{{WA_LINK}}"><span class="wa-dot"></span>Ask a question on WhatsApp</a>
       </div>
@@ -126,153 +134,69 @@
   </aside>
 
   <div class="cpage-main">
-    <!-- OVERVIEW + AUDIENCE -->
+    <!-- WHO IT IS FOR -->
     <section class="cpage-block">
       <div class="reveal">
-        <span class="eyebrow">Course Overview</span>
-        <div class="section-head" style="margin-bottom:0"><h2>What this course is</h2></div>
-        <div style="margin-top:18px;color:var(--slate)">{{OVERVIEW}}</div>
-      </div>
-      <div class="reveal" style="margin-top:38px">
         <span class="eyebrow">Who It Is For</span>
-        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">The intended participant</h2></div>
+        <div class="section-head" style="margin-bottom:0"><h2>Who this workshop is for</h2></div>
         <p style="margin-top:18px;color:var(--slate)">{{AUDIENCE}}</p>
-        <ul class="entry-list" style="margin-top:22px">
-          <li><b>Entry requirements:</b> none. Basic computer literacy and a personal laptop.</li>
-          <li><b>No business yet?</b> You build on Brightleaf Bookkeeping, the fully prepared reference business in the course starter pack.</li>
-          <li><b>Software:</b> free tier platform accounts as required by the course, set up before Day 1 via joining instructions.</li>
-        </ul>
+        <div class="wk-overview" style="margin-top:22px;color:var(--slate)">{{OVERVIEW}}</div>
       </div>
     </section>
 
-    <!-- LEARNING OUTCOMES -->
+    <!-- WHAT PARTICIPANTS LEAVE WITH -->
     <section class="cpage-block">
-      <div class="section-head reveal" style="margin-bottom:24px">
-        <span class="eyebrow">Learning Outcomes</span>
-        <h2 style="font-size:1.6rem">What you will learn</h2>
-        <p>On completion, participants can:</p>
+      <div class="reveal">
+        <span class="eyebrow">What You Leave With</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">What every participant leaves with</h2></div>
+        <ul class="build-list" style="margin-top:20px">{{DELIVERABLE_ITEMS}}</ul>
       </div>
-      <ul class="lo-list reveal">{{LO_ITEMS}}</ul>
     </section>
 
-    <!-- OUTLINE -->
-    <section class="cpage-block" id="outline">
+    <!-- THE TWO DAYS -->
+    <section class="cpage-block" id="programme">
       <div class="section-head reveal" style="margin-bottom:24px">
-        <span class="eyebrow">Course Outline</span>
-        <h2 style="font-size:1.6rem">The {{DAYS}} days, hour by hour honest</h2>
+        <span class="eyebrow">The Programme</span>
+        <h2 style="font-size:1.6rem">The two days</h2>
       </div>
       <div class="reveal" style="overflow-x:auto">
         <table class="day-table">
-          <thead><tr><th>Day</th><th>Theme</th><th>Content</th><th>Hours</th></tr></thead>
-          <tbody>{{OUTLINE_ROWS}}</tbody>
+          <thead><tr><th>When</th><th>Theme</th><th>What happens</th></tr></thead>
+          <tbody>{{SESSION_ROWS}}</tbody>
         </table>
       </div>
-      <p class="split-note reveal">Of {{CONTACT}} contact hours: {{IL}} instructor led classroom, {{PR}} practical hands on, and {{ASMT}} assessment, plus {{BRKS}} hours of scheduled breaks across the course. No asynchronous or self directed hours: every hour is facilitated.</p>
     </section>
 
-    <!-- WHAT YOU BUILD -->
+    <!-- HOW WE TEACH -->
     <section class="cpage-block">
       <div class="reveal">
-        <span class="eyebrow">What You Will Build</span>
-        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">You leave with working assets</h2></div>
-        <ul class="build-list" style="margin-top:20px">{{BUILD_ITEMS}}</ul>
+        <span class="eyebrow">How We Teach</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">How we teach it</h2></div>
+        <div class="statement-band" style="margin-top:20px">
+          <p>{{METHOD_NOTE}}</p>
+        </div>
       </div>
     </section>
 
-    <!-- ASSESSMENT + CERTIFICATE -->
+    <!-- CERTIFICATE -->
     <section class="cpage-block">
       <div class="reveal">
-        <span class="eyebrow">Assessment</span>
-        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">How you are assessed</h2></div>
-        <div class="assess-grid" style="margin-top:20px">{{ASSESS_CARDS}}</div>
-        <div class="pass-box">Completion requires attendance of at least 75 percent, every deliverable gate met, and a pass in each declared assessment mode at a 70 percent threshold. A Certificate of Completion is issued by Future Edge Institute.</div>
-      </div>
-      <div class="cert-block reveal">
-        <!-- Certificate sample: drop static/assets/certificate-sample.jpg (1200 x 900) -->
-        <div class="c-thumb cert-thumb">
-          <span class="ph-label">Certificate</span>
-          <span class="ph-code">FEI</span>
-          <img src="assets/certificate-sample.jpg" alt="Sample Certificate of Completion" loading="lazy" onerror="this.remove()">
-        </div>
-        <div class="cert-copy">
-          <h3>What you earn</h3>
-          <p>On completion you receive a Certificate of Completion issued by Future Edge Institute. It is awarded on evidence, not attendance: every deliverable gate met, and a pass in each declared assessment at the 70 percent threshold, with a minimum of 75 percent attendance.</p>
-          <p>That means the certificate records something you built and demonstrated, in front of an assessor, rather than a seat you occupied.</p>
-        </div>
+        <span class="eyebrow">Certificate</span>
+        <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">What participants receive</h2></div>
+        <p class="cert-note" style="margin-top:18px">{{CERT_NOTE}}</p>
       </div>
     </section>
   </div>
 
-  
 </div>
 
-<!-- ================= INTAKES ================= -->
-<section class="cpage-section" id="intakes" style="background:var(--bg-alt)">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Intakes</span>
-      <h2 style="font-size:1.6rem">Upcoming intakes</h2>
-    </div>
-    <div class="reveal">
-      {{INTAKES}}
-    </div>
-  </div>
-</section>
-
-{{TRAINER_SECTION}}<!-- ================= FOR TEAMS ================= -->
-<section class="cpage-section" id="for-teams">
-  <div class="wrap teams-grid">
-    <div class="reveal">
-      <span class="eyebrow">For Teams</span>
-      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Running this for a team?</h2></div>
-      <p class="teams-lead">Any course in the series can be delivered privately for your people, at your office or our venue, on consecutive days or spread one day per week around operations.</p>
-      <div class="teams-items">
-        <div class="format-card">
-          <div class="f-icon">01</div>
-          <div>
-            <h4>Built on your own processes</h4>
-            <p>Exercises are rebuilt around your workflows, tools and data, so what your team produces in class is usable the following morning.</p>
-          </div>
-        </div>
-        <div class="format-card">
-          <div class="f-icon">02</div>
-          <div>
-            <h4>Scheduled around operations</h4>
-            <p>Consecutive days when you can spare the team, or one day per week when you cannot.</p>
-          </div>
-        </div>
-        <div class="format-card">
-          <div class="f-icon">03</div>
-          <div>
-            <h4>Evidence for leadership</h4>
-            <p>Assessed outcomes and a capability report showing exactly what your team can now operate.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal">
-      <div class="teams-card">
-        <h3>Private runs for your team</h3>
-        <p>We scope corporate engagements with a short discovery session before proposing anything.</p>
-        <a class="btn btn-solid" href="index.html#corporate">See corporate training</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= FEES ================= -->
+<!-- ================= FEES AND FUNDING ================= -->
 <section class="cpage-section" style="background:var(--bg-alt)">
-  <div class="wrap two-col">
-    <div class="reveal">
+  <div class="wrap">
+    <div class="reveal" style="max-width:760px">
       <span class="eyebrow">Fees and Funding</span>
       <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Straight answers on fees</h2></div>
-      <p style="margin-top:18px;color:var(--slate)">This is a premium commercial programme; fees and intake dates are shared on enquiry. {{RTP_STATEMENT}} Until registration is granted, this course is not eligible for SkillsFuture Credit or other government subsidies.</p>
-      {{DISCLAIM}}
-    </div>
-    <div class="reveal">
-      <span class="eyebrow">Continue the Pathway</span>
-      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.4rem">Related courses</h2></div>
-      <div class="related-grid" style="margin-top:20px">{{REL_CARDS}}</div>
+      <p style="margin-top:18px;color:var(--slate)">These workshops are commercial corporate training, delivered in house and priced per engagement. They are not government subsidised. Future Edge Institute is separately working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG) for the assessed courses in the AI Operator Professional Series.</p>
     </div>
   </div>
 </section>
@@ -281,8 +205,8 @@
 <section class="enq-band" id="enquire">
   <div class="wrap">
     <span class="eyebrow">Enquire</span>
-    <h2>Ready to build, not just learn about it?</h2>
-    <p>Tell us you are interested in {{CODE}} and we will come back within one working day with fees, upcoming intake dates and anything else you need to decide.</p>
+    <h2>Ready to move from talking about AI to using it?</h2>
+    <p>Tell us you are interested in {{CODE}} and we will come back within one working day with dates, engagement pricing and anything else you need to decide.</p>
     <div class="enq-ctas">
       <a class="btn btn-solid" id="enq-mail" href="mailto:{{EMAIL}}?subject={{MAIL_SUBJECT}}">Email {{EMAIL}}</a>
       <a class="btn btn-white" id="enq-wa" href="{{WA_LINK}}">WhatsApp us</a>
@@ -343,7 +267,7 @@ if(em){em.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','course_enquiry_click',{course:'{{CODE}}'});}
   if(typeof fbq==='function'){fbq('trackCustom','CourseEnquiryClick',{course:'{{CODE}}'});}
 });}
-// Brochure link. Present only when the PDF is on disk; opens it directly.
+// Brochure links. Present only when the PDF is on disk; they open it directly.
 document.querySelectorAll('.brochure-link').forEach(b=>b.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','brochure_request',{course:'{{CODE}}'});}
   if(typeof fbq==='function'){fbq('trackCustom','BrochureRequest',{course:'{{CODE}}'});}

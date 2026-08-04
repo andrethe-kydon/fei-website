@@ -47,12 +47,21 @@ async function loadFromSanity(projectId, dataset) {
   if (!result || !result.settings || !result.courses || !result.courses.length) {
     throw new Error("Sanity returned no content; is the dataset seeded?");
   }
-  // Reshape Sanity docs into the internal content shape
-  const courses = {};
+  // Reshape Sanity docs into the internal content shape. Both series live in
+  // the same document type and are split apart here, into courses (Operator)
+  // and workshops (Adoption), so each renders through its own template. The
+  // field mapping is shared: each series simply leaves the other's fields empty.
+  const courses = {}, workshops = {};
   for (const c of result.courses) {
-    courses[String(c.number)] = {
+    const series = c.series || "Operator";
+    const target = series === "Adoption" ? workshops : courses;
+    target[String(c.number)] = {
+      series,
+      codePrefix: c.codePrefix || "AOP",
+      number: c.number,
       slug: c.slug.current || c.slug,
       title: c.title, subtitle: c.subtitle, tag: c.tagline,
+      metaDescription: c.metaDescription || "", tileCopy: c.tileCopy || "",
       hours: c.hours, days: c.days,
       contact: String(c.contactHours), il: String(c.instructorLedHours),
       pr: String(c.practicalHours), asmt: String(c.assessmentHours),
@@ -75,13 +84,39 @@ async function loadFromSanity(projectId, dataset) {
       disclaim: c.disclaimer || null,
       thumbUrl: sanityImageUrl(c.thumbnail, projectId, dataset, 1200),
       bannerUrl: sanityImageUrl(c.banner, projectId, dataset, 1600),
+      // Adoption series fields. Empty on every Operator document.
+      groupSize: c.groupSize || "",
+      taughtHours: c.taughtHours || c.hours,
+      deliverables: c.deliverables || [],
+      sessions: (c.sessions || []).map(x => [x.when, x.theme, x.whatHappens]),
+      methodNote: c.methodNote || "",
+      certificateNote: c.certificateNote || "",
     };
   }
-  return { settings: result.settings, courses };
+  return { settings: result.settings, courses, workshops };
 }
 
 function loadLocal() {
   return JSON.parse(fs.readFileSync(path.join(ROOT, "content/content.json"), "utf8"));
+}
+
+/**
+ * Normalise either content source into the same shape: two collections, keyed
+ * by number, with series and codePrefix always set. Content written before the
+ * Adoption series existed carries neither field, so it defaults to Operator and
+ * AOP and renders exactly as it did before.
+ */
+function splitSeries(content) {
+  const courses = {}, workshops = {};
+  const entries = [
+    ...Object.entries(content.courses || {}),
+    ...Object.entries(content.workshops || {}),
+  ];
+  for (const [n, c] of entries) {
+    const doc = { ...c, series: c.series || "Operator", codePrefix: c.codePrefix || "AOP" };
+    (doc.series === "Adoption" ? workshops : courses)[n] = doc;
+  }
+  return { ...content, courses, workshops };
 }
 
 // ---------- rendering ----------
@@ -135,11 +170,11 @@ function renderCourseCards(content) {
         <div class="c-thumb">
           <span class="ph-label">Thumbnail</span>
           <span class="ph-code">${n}</span>
-          <img src="${thumbSrc}" alt="AOP ${n} course thumbnail" loading="lazy" onerror="this.remove()">
+          <img src="${thumbSrc}" alt="${c.codePrefix} ${n} course thumbnail" loading="lazy" onerror="this.remove()">
         </div>
         <div class="c-body">
           <div class="c-top">
-            <span class="c-code">AOP ${n}</span>
+            <span class="c-code">${c.codePrefix} ${n}</span>
             <div class="c-tags">${tags}</div>
           </div>
           <h3>${c.title}: ${c.subtitle}</h3>
@@ -155,6 +190,39 @@ function renderCourseCards(content) {
       </article>`;
   }
   return out;
+}
+
+/**
+ * The cross sell block, rendered identically at the foot of every course page
+ * and every workshop page. It lives here rather than in both templates so the
+ * two series can never end up describing each other differently.
+ */
+function pathwayBlock() {
+  return `<!-- ================= THE FULL PATHWAY ================= -->
+<section class="cpage-section pathway-block">
+  <div class="wrap">
+    <div class="reveal" style="max-width:760px">
+      <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.6rem">The full pathway</h2></div>
+      <p style="margin-top:18px;color:var(--slate)">Organisations see the strongest results running the Adoption Series in sequence: AI for Leaders creates the mandate and the roadmap, AI at Work equips the teams who deliver it. Individuals who want to go further progress into The AI Operator Professional Series, where they build AI agents, knowledge bases and business automations of their own. The Adoption Series teaches organisations to use AI. The Operator Series teaches individuals to run it.</p>
+      <div class="pathway-ctas">
+        <a class="btn btn-solid" href="index.html#corporate">See the Adoption Series</a>
+        <a class="btn btn-ghost" href="index.html#courses">See the Operator Series</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/**
+ * The brochure button. Present only when the PDF is actually on disk, so a
+ * course or workshop without one never shows a link that leads nowhere, and it
+ * opens the PDF straight away: no form, no gate.
+ */
+function brochureBtn(slug, label, cls) {
+  if (!fs.existsSync(path.join(ROOT, "static/assets/brochures", `${slug}.pdf`))) return "";
+  return `<a class="${cls} brochure-link" href="assets/brochures/${slug}.pdf" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /**
@@ -225,7 +293,7 @@ function renderTrainers(trainers) {
 }
 
 function renderCoursePage(template, n, c, content, s) {
-  const code = `AOP ${n}`;
+  const code = `${c.codePrefix} ${n}`;
   const fullTitle = `${c.title}: ${c.subtitle}`;
   const canonical = `${s.siteUrl}/${c.slug}.html`;
   const schemaCourse = JSON.stringify({
@@ -252,19 +320,11 @@ function renderCoursePage(template, n, c, content, s) {
   const relCards = c.related.map(([rn, why]) => {
     const rc = content.courses[String(rn)];
     return `<a class="rel-card" href="${rc.slug}.html">
-        <small>AOP ${rn} · ${why}</small>
+        <small>${rc.codePrefix} ${rn} · ${why}</small>
         <h4>${rc.title}: ${rc.subtitle}</h4>
         <p>${rc.hours} hours · ${rc.days} days</p>
       </a>`;
   }).join("");
-  // The brochure button appears only when the file is actually on disk, so a
-  // course without a brochure never shows a link that leads nowhere. It opens
-  // the PDF straight away: no form, no gate.
-  const hasBrochure = fs.existsSync(path.join(ROOT, "static/assets/brochures", `${c.slug}.pdf`));
-  const brochureBtn = hasBrochure
-    ? `<a class="sc-btn sc-btn-ghost" id="brochure-btn" href="assets/brochures/${c.slug}.pdf" target="_blank" rel="noopener">Read the course brochure</a>`
-    : "";
-
   return fill(template, {
     CODE: code, NUM: String(n), SLUG: c.slug,
     TITLE: c.title, SUBTITLE: c.subtitle, FULL_TITLE: fullTitle,
@@ -291,12 +351,107 @@ function renderCoursePage(template, n, c, content, s) {
     DISCLAIM: c.disclaim ? `<p class="disclaim">${c.disclaim}</p>` : "",
     REL_CARDS: relCards,
     FEE_DISPLAY: c.feeDisplay || "Fees confirmed at enquiry",
-    BROCHURE_BTN: brochureBtn,
+    BROCHURE_BTN: brochureBtn(c.slug, "Read the course brochure", "sc-btn sc-btn-ghost"),
     INTAKES: renderIntakes(c.intakes || [], code),
     TRAINER_SECTION: renderTrainers(c.trainers || []),
+    PATHWAY_BLOCK: pathwayBlock(),
     BANNER_SRC: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
     OG_IMAGE: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
   });
+}
+
+/**
+ * Adoption series workshop page. A sibling of renderCoursePage, not a branch
+ * inside it: these workshops declare no assessment, no pass threshold and no
+ * delivery hour split, so the template has nowhere to put one and this function
+ * never supplies one.
+ */
+function renderWorkshopPage(template, n, w, s) {
+  const code = `${w.codePrefix} ${n}`;
+  const fullTitle = `${w.title}: ${w.subtitle}`;
+  const canonical = `${s.siteUrl}/${w.slug}.html`;
+  const desc = w.metaDescription || w.tag;
+  const credential = "Digital certificate of participation issued by Future Edge Institute";
+  // No `teaches` property: these workshops publish deliverables and a method,
+  // not assessed learning outcomes, so there is nothing to claim there.
+  const schemaCourse = JSON.stringify({
+    "@context": "https://schema.org", "@type": "Course",
+    courseCode: code, name: fullTitle, description: w.tag,
+    timeRequired: `PT${w.taughtHours}H`,
+    educationalCredentialAwarded: credential,
+    provider: {
+      "@type": "EducationalOrganization", name: "Future Edge Institute Private Limited",
+      identifier: { "@type": "PropertyValue", name: "UEN", value: "202634510R" },
+      parentOrganization: { "@type": "Organization", name: "Kydon Group" }
+    },
+    url: canonical,
+  });
+  const schemaCrumb = JSON.stringify({
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${s.siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: "Programmes", item: `${s.siteUrl}/#courses` },
+      { "@type": "ListItem", position: 3, name: fullTitle, item: canonical }],
+  });
+
+  return fill(template, {
+    CODE: code, NUM: String(n), SLUG: w.slug,
+    TITLE: w.title, SUBTITLE: w.subtitle, FULL_TITLE: fullTitle,
+    LEAD: w.tag, META_DESC: esc(desc), CANONICAL: canonical,
+    GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
+    SCHEMA_COURSE: schemaCourse, SCHEMA_CRUMB: schemaCrumb,
+    WA_LINK: waLink(s.whatsappNumber, code),
+    EMAIL: s.enquiryEmail,
+    MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${w.title}`),
+    TAGS: (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join(""),
+    AI_TAGS: aiTagRow(w.aiTags),
+    DAYS: String(w.days), TAUGHT_HOURS: String(w.taughtHours),
+    GROUP_SIZE: w.groupSize,
+    AUDIENCE: w.audience,
+    OVERVIEW: (w.overview || []).map(p => `<p>${p}</p>`).join(""),
+    DELIVERABLE_ITEMS: (w.deliverables || []).map(d => `<li>${d}</li>`).join(""),
+    SESSION_ROWS: (w.sessions || []).map(([when, theme, what]) =>
+      `<tr><td class="d">${when}</td><td class="t">${theme}</td><td>${what}</td></tr>`).join(""),
+    METHOD_NOTE: w.methodNote,
+    CERT_NOTE: w.certificateNote,
+    BROCHURE_BTN: brochureBtn(w.slug, "Download the brochure", "sc-btn sc-btn-ghost"),
+    BROCHURE_HERO_BTN: brochureBtn(w.slug, "Download the brochure", "btn btn-ghost"),
+    PATHWAY_BLOCK: pathwayBlock(),
+    BANNER_SRC: w.bannerUrl || `assets/courses/${w.slug}.jpg`,
+    OG_IMAGE: w.bannerUrl || `assets/courses/${w.slug}.jpg`,
+  });
+}
+
+/**
+ * Homepage cards for the Adoption series. Deliberately not renderCourseCards:
+ * no AI capability tags, no filter segments, and a series pill instead, so the
+ * two series read as two products rather than one merged catalogue.
+ */
+function renderWorkshopCards(workshops) {
+  let out = "";
+  for (const [n, w] of Object.entries(workshops)) {
+    const code = `${w.codePrefix} ${n}`;
+    const tags = (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join("");
+    out += `
+      <article class="course-card reveal">
+        <div class="c-body">
+          <div class="c-top">
+            <div class="c-codes">
+              <span class="c-code">${code}</span>
+              <span class="c-series">AI Adoption Series</span>
+            </div>
+            <div class="c-tags">${tags}</div>
+          </div>
+          <h3>${w.title}: ${w.subtitle}</h3>
+          <p class="c-sub">${w.tileCopy}</p>
+          <div class="c-meta">
+            <span><b>${w.days}</b> days</span><span><b>${w.taughtHours}</b> taught hours</span><span>${w.groupSize}</span>
+          </div>
+          <div class="c-foot"><a class="cf-primary workshop-link" data-code="${code}" href="${w.slug}.html">Full workshop details</a><a href="#contact">Enquire</a></div>
+        </div>
+      </article>`;
+  }
+  return out;
 }
 
 /**
@@ -347,7 +502,16 @@ function formatUpdated(d) {
     }
   }
   if (!content) { content = loadLocal(); source = "content/content.json"; }
+  content = splitSeries(content);
   const s = content.settings;
+  // A series with no documents is not a build failure, but it does leave a
+  // section heading standing over an empty grid, so say so loudly. The usual
+  // cause is Sanity content that predates the series field being populated.
+  for (const [name, coll] of [["Operator", content.courses], ["Adoption", content.workshops]]) {
+    if (!Object.keys(coll).length) {
+      console.warn(`WARN: no ${name} series documents in ${source}. Pages and homepage cards for that series will be missing.`);
+    }
+  }
 
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(DIST, { recursive: true });
@@ -357,17 +521,25 @@ function formatUpdated(d) {
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
+    WORKSHOP_CARDS: renderWorkshopCards(content.workshops),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,
     HS_PORTAL: s.hubspotPortalId, HS_FORM_GUID: s.hubspotFormGuid,
     HS_REGION: s.hubspotFormRegion, EMAIL: s.enquiryEmail, SITE_URL: s.siteUrl,
   });
   fs.writeFileSync(path.join(DIST, "index.html"), idx);
 
-  // course pages
+  // course pages: the assessed Operator series
   const cTpl = fs.readFileSync(path.join(ROOT, "templates/course.template.html"), "utf8");
   for (const [n, c] of Object.entries(content.courses)) {
     fs.writeFileSync(path.join(DIST, `${c.slug}.html`),
       renderCoursePage(cTpl, n, c, content, s));
+  }
+
+  // workshop pages: the participation based Adoption series
+  const wTpl = fs.readFileSync(path.join(ROOT, "templates/workshop.template.html"), "utf8");
+  for (const [n, w] of Object.entries(content.workshops)) {
+    fs.writeFileSync(path.join(DIST, `${w.slug}.html`),
+      renderWorkshopPage(wTpl, n, w, s));
   }
 
   // about
@@ -381,7 +553,9 @@ function formatUpdated(d) {
     renderPoliciesPage(pTpl, pBody, s, formatUpdated(new Date())));
 
   // sitemap
-  const pages = ["", ...Object.values(content.courses).map(c => `${c.slug}.html`),
+  const pages = ["",
+    ...Object.values(content.courses).map(c => `${c.slug}.html`),
+    ...Object.values(content.workshops).map(w => `${w.slug}.html`),
     "about.html", "policies.html"];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     pages.map(p => `  <url><loc>${s.siteUrl}/${p}</loc></url>`).join("\n") + "\n</urlset>\n";

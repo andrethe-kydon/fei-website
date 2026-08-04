@@ -26,13 +26,33 @@ export default defineConfig({
                   .title('Site Settings')
               ),
             S.divider(),
+            // One document type, two series, two lists. Keeping them apart in
+            // the Studio mirrors how they are kept apart on the site: the
+            // assessed Operator courses and the participation based Adoption
+            // workshops are never presented as one catalogue.
             S.listItem()
-              .title('Courses')
+              .title('Operator Series (AOP)')
               .schemaType('course')
               .child(
                 S.documentTypeList('course')
-                  .title('Courses')
+                  .title('Operator Series (AOP)')
+                  .filter('_type == "course" && series == "Operator"')
                   .defaultOrdering([{field: 'number', direction: 'asc'}])
+                  .initialValueTemplates([
+                    S.initialValueTemplateItem('course-operator'),
+                  ])
+              ),
+            S.listItem()
+              .title('Adoption Series (AIA)')
+              .schemaType('course')
+              .child(
+                S.documentTypeList('course')
+                  .title('Adoption Series (AIA)')
+                  .filter('_type == "course" && series == "Adoption"')
+                  .defaultOrdering([{field: 'number', direction: 'asc'}])
+                  .initialValueTemplates([
+                    S.initialValueTemplateItem('course-adoption'),
+                  ])
               ),
           ]),
     }),
@@ -40,8 +60,24 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
-    // Hide Site Settings from the "create new" menu: there is only ever one
-    templates: (prev) => prev.filter((t) => t.schemaType !== 'siteSettings'),
+    templates: (prev) => [
+      // Hide Site Settings from the "create new" menu: there is only ever one
+      ...prev.filter((t) => t.schemaType !== 'siteSettings'),
+      // One template per series, so creating a document from inside either list
+      // lands in that list instead of defaulting to Operator.
+      {
+        id: 'course-operator',
+        title: 'Operator course (AOP)',
+        schemaType: 'course',
+        value: {series: 'Operator', codePrefix: 'AOP'},
+      },
+      {
+        id: 'course-adoption',
+        title: 'Adoption workshop (AIA)',
+        schemaType: 'course',
+        value: {series: 'Adoption', codePrefix: 'AIA'},
+      },
+    ],
   },
 
   document: {

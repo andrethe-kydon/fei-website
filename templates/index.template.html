@@ -124,7 +124,7 @@
     </button>
     <ul class="nav-links" id="navlinks">
       <li><a href="about.html">About</a></li>
-      <li><a href="#courses">Courses</a></li>
+      <li><a href="#courses">Programmes</a></li>
       <li><a href="#pathway">The Pathway</a></li>
       <li><a href="#corporate">For Corporates</a></li>
       <li><a class="nav-wa" id="nav-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>WhatsApp</a></li>
@@ -292,47 +292,35 @@
   </div>
 </section>
 
-<!-- ================= CORPORATE ================= -->
+<!-- ================= FOR ORGANISATIONS =================
+     The id stays #corporate so every existing link, on this page,
+     on the course pages and in the nav, keeps working.
+     Two products, kept visually distinct from the AOP catalogue
+     above: the AIA workshops carry a series pill and no AI
+     capability tags, and they are not part of the catalogue filter.
+============================================================= -->
 <section class="section corporate" id="corporate">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">For Corporates</span>
-      <h2>Build an AI operator capability inside your company</h2>
-      <p>The same build first method, delivered privately for your teams. We start with your needs, not our catalogue, and your people leave with working assets built on your actual processes.</p>
+      <span class="eyebrow">For Organisations</span>
+      <h2>Two ways to bring AI into your organisation</h2>
+      <p>AI adoption fails when it stays theoretical. The AI Adoption Series makes it practical: two hands on workshops that move an organisation from talking about AI to using it, from the boardroom decision to the workforce delivering it. Run them in sequence for a full adoption programme, or independently where the need is specific. Both are delivered in person by our facilitators, at your premises or ours.</p>
     </div>
-    <div class="corp-grid">
-      <div class="corp-copy reveal">
-        <p>Every company is being told to adopt AI. Few are told how to build the people who can actually run it. We train your staff to be AI operators: designing agents around your real workflows, connecting them to your business knowledge, and automating the processes your teams run every day.</p>
-        <p>Corporate engagements are shaped around your needs. Some companies take a single course as a private run. Others take a curated pathway across departments: operations teams into agents, knowledge and automation, commercial teams into validation and pipeline. Where the need does not fit the catalogue, we consult first and design the programme around what your business actually requires.</p>
 
-        <div class="corp-formats">
-          <div class="format-card">
-            <div class="f-icon">01</div>
-            <div>
-              <h4>Private course runs</h4>
-              <p>Any course from the series delivered exclusively for your team, at your office or our venue, on consecutive days or spread one day per week around operations.</p>
-            </div>
-          </div>
-          <div class="format-card">
-            <div class="f-icon">02</div>
-            <div>
-              <h4>Curated capability pathways</h4>
-              <p>Course combinations matched to functions: the AI stack pairing for operations teams, the commercial pairing for sales and marketing, or the full line for a transformation cohort.</p>
-            </div>
-          </div>
-          <div class="format-card">
-            <div class="f-icon">03</div>
-            <div>
-              <h4>Consult first programmes</h4>
-              <p>Where your need is specific, we scope it with you before proposing anything: your tools, your data, your workflows, your success measures.</p>
-            </div>
-          </div>
-        </div>
+    <div class="org-grid">
+{{WORKSHOP_CARDS}}
+    </div>
 
+    <!-- Private runs of the assessed Operator series: the condensed version of
+         the corporate offer, with the four step process kept in full. -->
+    <div class="org-band reveal">
+      <div class="org-band-copy">
+        <h3>Private runs of the Operator Series</h3>
+        <p>Where your teams need to build rather than adopt, any course in the AI Operator Professional Series can run privately for your people: at your office or our venue, on consecutive days or one day per week around operations. Courses can be combined into capability pathways by function, or scoped as a custom programme after a discovery session.</p>
         <a class="btn btn-solid" id="corp-cta" href="#contact">Book a corporate consultation</a>
       </div>
 
-      <aside class="corp-steps reveal" aria-label="How a corporate engagement works">
+      <aside class="corp-steps" aria-label="How a corporate engagement works">
         <h3>How we work with you</h3>
         <div class="step">
           <div class="step-num">1</div>
@@ -533,12 +521,23 @@ chips.forEach(chip=>chip.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','filter_courses',{segment:f});}
 }));
 
-// Enquiry click events for ads attribution
-document.querySelectorAll('.c-foot a').forEach(a=>a.addEventListener('click',()=>{
+// Enquiry click events for ads attribution. Scoped to the catalogue grid, so
+// the Adoption workshop cards below report as workshops, not as courses.
+document.querySelectorAll('.course-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
   const code=a.closest('.course-card').querySelector('.c-code').textContent.trim();
   const evt=a.classList.contains('cf-primary')?'course_detail_click':'course_enquiry_click';
   if(typeof gtag==='function'){gtag('event',evt,{course:code});}
   if(typeof fbq==='function'){fbq('trackCustom',evt==='course_enquiry_click'?'CourseEnquiryClick':'CourseDetailClick',{course:code});}
+}));
+
+// Adoption workshop cards. The detail click is its own event; the enquiry click
+// reports as a corporate enquiry, because that is what it is.
+document.querySelectorAll('.org-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
+  const code=a.closest('.course-card').querySelector('.c-code').textContent.trim();
+  const detail=a.classList.contains('cf-primary');
+  const evt=detail?'workshop_detail_click':'corporate_enquiry_click';
+  if(typeof gtag==='function'){gtag('event',evt,{workshop:code});}
+  if(typeof fbq==='function'){fbq('trackCustom',detail?'WorkshopDetailClick':'CorporateEnquiryClick',{workshop:code});}
 }));
 
 // Corporate consultation click for ads attribution

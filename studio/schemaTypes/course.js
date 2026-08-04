@@ -1,22 +1,99 @@
 // Sanity schema: course
 // Drop this file into your Sanity Studio's schemaTypes folder and register it.
+//
+// One document type carries both series. `series` decides which template the
+// document renders through and which homepage section it appears in:
+//   Operator (AOP) renders through course.template.html: assessed, for individuals.
+//   Adoption (AIA) renders through workshop.template.html: participation based,
+//   for organisations, and never shows assessment modes, pass thresholds or an
+//   hour split.
+// The Operator only and Adoption only field groups are both optional, so a
+// document of either series saves cleanly without the other's fields.
+const isAdoption = doc => doc?.series === 'Adoption'
+const isOperator = doc => doc?.series !== 'Adoption'
+
 export default {
   name: 'course',
   title: 'Course',
   type: 'document',
   fields: [
+    {
+      name: 'series',
+      title: 'Series',
+      description: 'Operator is the assessed AOP series for individuals. Adoption is the AIA corporate workshop series.',
+      type: 'string',
+      options: {list: [{title: 'Operator (AOP)', value: 'Operator'}, {title: 'Adoption (AIA)', value: 'Adoption'}], layout: 'radio'},
+      initialValue: 'Operator',
+      validation: R => R.required(),
+    },
     {name: 'number', title: 'Course number (e.g. 101)', type: 'number', validation: R => R.required()},
-    {name: 'slug', title: 'Slug (page filename, e.g. aop101)', type: 'slug', options: {source: doc => `aop${doc.number}`}, validation: R => R.required()},
+    {
+      name: 'codePrefix',
+      title: 'Code prefix',
+      description: 'The displayed code is prefix then number, for example AOP 101 or AIA 101.',
+      type: 'string',
+      initialValue: 'AOP',
+      validation: R => R.required(),
+    },
+    // The slug is its own field, not a mirror of the number: the prefix and the
+    // number together no longer decide the filename, so a document can be
+    // renumbered or moved between series without its published URL changing.
+    // Generate suggests prefix and number as a convenience only.
+    {name: 'slug', title: 'Slug (page filename, e.g. aop101)', type: 'slug', options: {source: doc => `${(doc.codePrefix || 'AOP').toLowerCase()}${doc.number || ''}`}, validation: R => R.required()},
     {name: 'title', title: 'Title', type: 'string', validation: R => R.required()},
     {name: 'subtitle', title: 'Subtitle', type: 'string', validation: R => R.required()},
     {name: 'tagline', title: 'Tagline (course objective, one sentence set)', type: 'text', rows: 3, validation: R => R.required()},
-    {name: 'hours', title: 'Total hours', type: 'number', validation: R => R.required()},
+    {
+      name: 'metaDescription',
+      title: 'Meta description',
+      description: 'Search result and social preview text. Leave empty to use the tagline.',
+      type: 'text',
+      rows: 3,
+    },
+    {
+      name: 'tileCopy',
+      title: 'Homepage tile copy',
+      description: 'The short pitch on the homepage card. Adoption workshops only; Operator cards list what participants build instead.',
+      type: 'text',
+      rows: 3,
+      hidden: isOperator,
+    },
+    {
+      name: 'hours',
+      title: 'Total hours',
+      description: 'Operator courses count every contact hour including breaks. Adoption workshops carry the taught hours figure here, and declare no split.',
+      type: 'number',
+      validation: R => R.required(),
+    },
     {name: 'days', title: 'Days', type: 'number', validation: R => R.required()},
-    {name: 'contactHours', title: 'Contact hours', type: 'number'},
-    {name: 'instructorLedHours', title: 'Instructor led hours', type: 'number'},
-    {name: 'practicalHours', title: 'Practical hours', type: 'number'},
-    {name: 'assessmentHours', title: 'Assessment hours', type: 'number'},
-    {name: 'breakHours', title: 'Break hours', type: 'number'},
+    // The delivery hour split is declared for the Operator series only, because
+    // it must match the RTP filing. Adoption workshops do not declare a split.
+    {name: 'contactHours', title: 'Contact hours', type: 'number', hidden: isAdoption},
+    {name: 'instructorLedHours', title: 'Instructor led hours', type: 'number', hidden: isAdoption},
+    {name: 'practicalHours', title: 'Practical hours', type: 'number', hidden: isAdoption},
+    {name: 'assessmentHours', title: 'Assessment hours', type: 'number', hidden: isAdoption},
+    {name: 'breakHours', title: 'Break hours', type: 'number', hidden: isAdoption},
+    // ---- Adoption series only ----
+    {name: 'groupSize', title: 'Group size (e.g. 10 to 18 participants)', type: 'string', hidden: isOperator},
+    {name: 'taughtHours', title: 'Taught hours', type: 'number', hidden: isOperator},
+    {
+      name: 'deliverables',
+      title: 'What every participant leaves with',
+      type: 'array',
+      of: [{type: 'string'}],
+      hidden: isOperator,
+    },
+    {name: 'sessions', title: 'The two days', type: 'array', hidden: isOperator, of: [{
+      type: 'object',
+      fields: [
+        {name: 'when', title: 'When (e.g. Day 1, morning)', type: 'string'},
+        {name: 'theme', title: 'Theme', type: 'string'},
+        {name: 'whatHappens', title: 'What happens', type: 'text', rows: 3},
+      ],
+      preview: {select: {title: 'when', subtitle: 'theme'}},
+    }]},
+    {name: 'methodNote', title: 'How we teach (method paragraph)', type: 'text', rows: 4, hidden: isOperator},
+    {name: 'certificateNote', title: 'Certificate note', type: 'text', rows: 3, hidden: isOperator},
     {name: 'tags', title: 'Segments (Operations, Marketing, Sales, Business Foundations)', type: 'array', of: [{type: 'string'}]},
     {
       name: 'aiTags',
@@ -55,8 +132,8 @@ export default {
       preview: {select: {title: 'name', subtitle: 'role'}},
     }]},
     {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
-    {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}]},
-    {name: 'outline', title: 'Day by day outline', type: 'array', of: [{
+    {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}], hidden: isAdoption},
+    {name: 'outline', title: 'Day by day outline', type: 'array', hidden: isAdoption, of: [{
       type: 'object',
       fields: [
         {name: 'day', title: 'Day label', type: 'string'},
@@ -66,8 +143,10 @@ export default {
       ],
       preview: {select: {title: 'day', subtitle: 'theme'}},
     }]},
-    {name: 'builds', title: 'What participants build', type: 'array', of: [{type: 'string'}]},
-    {name: 'assessments', title: 'Assessment modes', type: 'array', of: [{
+    {name: 'builds', title: 'What participants build', type: 'array', of: [{type: 'string'}], hidden: isAdoption},
+    // Assessment is never declared for the Adoption series: those workshops make
+    // no assessment claim and the workshop template has nowhere to show one.
+    {name: 'assessments', title: 'Assessment modes', type: 'array', hidden: isAdoption, of: [{
       type: 'object',
       fields: [
         {name: 'mode', title: 'Mode (Practical Exam, Project, Oral Interview)', type: 'string'},
@@ -88,5 +167,11 @@ export default {
     {name: 'thumbnail', title: 'Card thumbnail (1200 x 750)', type: 'image'},
   ],
   orderings: [{title: 'Course number', name: 'numberAsc', by: [{field: 'number', direction: 'asc'}]}],
-  preview: {select: {title: 'title', subtitle: 'subtitle'}},
+  preview: {
+    select: {title: 'title', subtitle: 'subtitle', prefix: 'codePrefix', number: 'number'},
+    prepare: ({title, subtitle, prefix, number}) => ({
+      title: `${prefix || 'AOP'} ${number}: ${title}`,
+      subtitle,
+    }),
+  },
 }

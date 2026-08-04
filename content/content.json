@@ -12,6 +12,8 @@
   },
   "courses": {
     "101": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop101",
       "title": "The One Person Company Blueprint",
       "subtitle": "Niche, Offer and Business Foundations",
@@ -103,9 +105,19 @@
           "Pairs naturally"
         ]
       ],
-      "disclaim": "Day 4 provides awareness and structured reasoning on legal and entity matters, not legal advice. Participants are directed to qualified professionals for jurisdiction specific decisions."
+      "disclaim": "Day 4 provides awareness and structured reasoning on legal and entity matters, not legal advice. Participants are directed to qualified professionals for jurisdiction specific decisions.",
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
     },
     "102": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop102",
       "title": "AI Agents at Work",
       "subtitle": "Build Your First AI Workforce with Claude",
@@ -174,9 +186,19 @@
           "Where the agents go to work"
         ]
       ],
-      "disclaim": null
+      "disclaim": null,
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
     },
     "103": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop103",
       "title": "The Knowledge Advantage",
       "subtitle": "RAG Knowledge Bases and Your AI Team",
@@ -255,9 +277,19 @@
           "Next on the pathway"
         ]
       ],
-      "disclaim": null
+      "disclaim": null,
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
     },
     "104": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop104",
       "title": "Automate the Business",
       "subtitle": "n8n Workflows, Integration and the Without-You Test",
@@ -343,9 +375,19 @@
           "Next on the pathway"
         ]
       ],
-      "disclaim": null
+      "disclaim": null,
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
     },
     "105": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop105",
       "title": "Validate, Price and Sell",
       "subtitle": "From Offer to Pipeline",
@@ -428,9 +470,19 @@
           "Where the offer begins"
         ]
       ],
-      "disclaim": null
+      "disclaim": null,
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
     },
     "106": {
+      "series": "Operator",
+      "codePrefix": "AOP",
       "slug": "aop106",
       "title": "Launch Ready",
       "subtitle": "Registration, Money and the Readiness Check",
@@ -507,7 +559,160 @@
           "Where it all begins"
         ]
       ],
-      "disclaim": "This course provides awareness and structured reasoning, not legal, tax, or accounting advice. Participants with work passes, partners, or foreign income are directed to qualified professionals before registering."
+      "disclaim": "This course provides awareness and structured reasoning, not legal, tax, or accounting advice. Participants with work passes, partners, or foreign income are directed to qualified professionals before registering.",
+      "metaDescription": "",
+      "tileCopy": "",
+      "groupSize": "",
+      "taughtHours": null,
+      "deliverables": [],
+      "sessions": [],
+      "methodNote": "",
+      "certificateNote": ""
+    }
+  },
+  "workshops": {
+    "101": {
+      "series": "Adoption",
+      "codePrefix": "AIA",
+      "hours": 14,
+      "days": 2,
+      "taughtHours": 14,
+      "feeDisplay": "",
+      "intakes": [],
+      "trainers": [],
+      "contact": "",
+      "il": "",
+      "pr": "",
+      "asmt": "",
+      "brks": "",
+      "los": [],
+      "outline": [],
+      "builds": [],
+      "assess": [],
+      "related": [],
+      "disclaim": null,
+      "slug": "aia101",
+      "title": "AI for Leaders",
+      "subtitle": "Executive ROI Strategy",
+      "tag": "A two day strategic workshop for the C-suite: where AI creates value in your business, how to build the investment case, and the governance to run it responsibly. You leave with a board ready 90 day roadmap.",
+      "metaDescription": "A two day executive workshop for CEOs and leadership teams: AI strategy, an evidence based ROI business case, governance, and a board ready 90 day action plan. Delivered in person by Future Edge Institute.",
+      "tileCopy": "Strategy for the C-suite: where AI creates value in your business, the investment case built on published evidence, governance, and a board ready 90 day roadmap.",
+      "groupSize": "10 to 18 participants",
+      "tags": [
+        "Business Foundations",
+        "Operations"
+      ],
+      "aiTags": [
+        "AI Strategy",
+        "AI Governance"
+      ],
+      "audience": "CEOs, Managing Directors, C-suite executives, business unit heads, and strategy leaders. No technical background required or expected.",
+      "overview": [
+        "This is not a technology briefing. Over two days your leadership team maps where AI creates value in your specific business, builds the investment case on published research evidence rather than vendor promises, drafts a board level governance and risk policy, and leaves with a 90 day action plan carrying named owners, timelines and success metrics.",
+        "Every module includes a Live AI Moment: fifteen minutes where each executive personally uses AI on a real task from their organisation. Not to learn the tools, but to replace second hand opinion with first hand experience before making investment decisions."
+      ],
+      "deliverables": [
+        "A strategic AI opportunity assessment for your organisation",
+        "An AI ROI business case built on published evidence, not vendor promises",
+        "A board level AI governance and risk policy draft",
+        "A 90 day executive action plan with named owners and metrics"
+      ],
+      "sessions": [
+        [
+          "Day 1, morning",
+          "AI strategy and the business landscape",
+          "The strategic AI landscape, your readiness across five dimensions, and the executive opportunity assessment."
+        ],
+        [
+          "Day 1, afternoon",
+          "Efficiency and cost reduction",
+          "Where AI creates immediate operating leverage, the ROI framework, and your business case built in the room."
+        ],
+        [
+          "Day 2, morning",
+          "Revenue growth and market velocity",
+          "AI as a direct revenue driver: commercial process redesign and the growth scenario builder."
+        ],
+        [
+          "Day 2, afternoon",
+          "Governance, risk and the 90 day plan",
+          "The governance imperative, your risk assessment, and the executive roadmap closed with a public commitment."
+        ]
+      ],
+      "methodNote": "Every module includes a Live AI Moment where each executive personally uses AI on a real task from their organisation: a competitive briefing, a board ready business case summary, a governance policy draft. The evidence base is published research, not vendor claims, and every output produced is yours to take into Monday's leadership meeting.",
+      "certificateNote": "An AI Leadership Certificate is issued digitally by Future Edge Institute within 24 hours, recognising active participation and output."
+    },
+    "102": {
+      "series": "Adoption",
+      "codePrefix": "AIA",
+      "hours": 14,
+      "days": 2,
+      "taughtHours": 14,
+      "feeDisplay": "",
+      "intakes": [],
+      "trainers": [],
+      "contact": "",
+      "il": "",
+      "pr": "",
+      "asmt": "",
+      "brks": "",
+      "los": [],
+      "outline": [],
+      "builds": [],
+      "assess": [],
+      "related": [],
+      "disclaim": null,
+      "slug": "aia102",
+      "title": "AI at Work",
+      "subtitle": "From Awareness to Action",
+      "tag": "A two day hands on workshop for every level of the organisation: understand what AI actually is, use it on your real work all day, and leave with a personal 90 day action roadmap and seven working outputs.",
+      "metaDescription": "A two day hands on AI workshop for teams: prompt skills on real work, seven usable outputs per participant, and a personal 90 day AI action roadmap. Delivered in person by Future Edge Institute.",
+      "tileCopy": "Hands on AI capability for every level of the organisation: real work, real outputs, and a personal 90 day roadmap. Seven working assets per participant.",
+      "groupSize": "12 to 20 participants",
+      "tags": [
+        "Operations",
+        "Marketing"
+      ],
+      "aiTags": [
+        "Prompt Design",
+        "AI-Assisted Production"
+      ],
+      "audience": "Executives, managers and operational staff across every function. Designed for teams adopting AI together, and no technical background is needed.",
+      "overview": [
+        "The principle is simple: people learn by doing, not watching. The facilitator talks for less than a third of the time and participants build for the rest. No activity uses a fictional case study. Every output produced across the two days comes from each participant's actual work, which is why everyone leaves with seven real, usable assets rather than notes.",
+        "Across five modules participants learn what AI actually is and where it fits their role, practise structured prompting on their own writing, analysis and communication tasks, produce a complete multimedia communication brief, prototype an improvement to a real workflow, and build a personal 90 day AI Action Roadmap committed to publicly before the room."
+      ],
+      "deliverables": [
+        "Seven real work outputs produced by you during the two days",
+        "A personal prompt library tested on your own tasks",
+        "A ready to produce multimedia communication brief",
+        "A prototype concept card for one real workflow improvement",
+        "A personal 90 day AI Action Roadmap"
+      ],
+      "sessions": [
+        [
+          "Day 1, morning",
+          "AI unlocked",
+          "What AI is and why it matters to your role, real organisational case studies, and your AI opportunity map."
+        ],
+        [
+          "Day 1, afternoon",
+          "Hands on with AI",
+          "Prompt design fundamentals, then three fully participant led labs: writing, analysis and communication, all on your real work."
+        ],
+        [
+          "Day 2, morning",
+          "AI for communication",
+          "Produce a professional multimedia communication brief with AI: script, creative direction and production plan."
+        ],
+        [
+          "Day 2, afternoon",
+          "Your workflow and your roadmap",
+          "Prototype a real workflow improvement, then build and publicly commit to your 90 day action roadmap."
+        ]
+      ],
+      "methodNote": "People learn by doing, not watching. The facilitator talks for less than a third of the time and you build for the rest. No activity uses fictional case studies: every output is produced from your actual work, which is why you leave with seven assets you can use immediately.",
+      "certificateNote": "An AI at Work Certificate is issued digitally by Future Edge Institute within 24 hours, recognising active participation and output, not just attendance."
     }
   }
 }

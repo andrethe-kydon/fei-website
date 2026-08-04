@@ -879,3 +879,54 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .teams-card h3{font-family:var(--display);font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:10px}
 .teams-card p{font-size:.92rem;color:var(--slate);margin-bottom:22px}
 @media (max-width:880px){.teams-grid{grid-template-columns:1fr;gap:30px}}
+
+/* ============ ADOPTION SERIES (AIA) ============
+   The organisations section on the homepage and the workshop pages.
+   Deliberately built on the existing card and band language rather than a
+   second visual system: the two series should read as siblings, while the
+   series pill and the missing capability tags keep them distinct.
+------------------------------------------------------------ */
+.c-codes{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* The hero pill row carries a code, a series pill, segment tags and capability
+   tags. It has to wrap, or on a narrow screen it sets a minimum width and
+   pushes the whole page into horizontal overflow. */
+.chero-copy .c-top{flex-wrap:wrap;row-gap:10px}
+.chero-copy .c-tags{justify-content:flex-start}
+.c-series{
+  font-family:var(--display);font-size:.6rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--navy);
+  background:var(--bg-alt);border:1px solid var(--line);border-radius:999px;padding:4px 11px;
+}
+.org-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+/* Two cards of unequal copy length still line their footers up. */
+.org-grid .c-sub{flex:1}
+.org-band{
+  margin-top:56px;padding-top:48px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:start;
+}
+.org-band h3{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--navy)}
+.org-band-copy p{color:var(--slate);margin-top:16px;font-weight:400}
+.org-band-copy .btn{margin-top:30px}
+@media (max-width:880px){
+  .org-grid{grid-template-columns:1fr}
+  .org-band{grid-template-columns:1fr;gap:38px;margin-top:44px;padding-top:38px}
+}
+/* Narrow screens: the code and the series pill take their own row, so they stop
+   interleaving with the segment tags opposite them. */
+@media (max-width:520px){
+  .org-grid .c-top{flex-wrap:wrap;row-gap:10px}
+  .org-grid .c-codes{flex:0 0 100%}
+  .org-grid .c-tags{justify-content:flex-start}
+}
+
+/* Certificate note on a workshop page: compact, and never a pass criteria box. */
+.cert-note{
+  background:var(--bg-alt);border:1px solid var(--line);border-left:4px solid var(--orange);
+  border-radius:12px;padding:18px 22px;font-size:.9rem;color:#33465F;
+}
+
+/* The cross sell block at the foot of every course and workshop page. It takes
+   the default section background, so it alternates with the fees band above it
+   instead of merging into one long tinted block. */
+.pathway-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
+.wk-overview p + p{margin-top:16px}
