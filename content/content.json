@@ -585,7 +585,13 @@
       "pr": "",
       "asmt": "",
       "brks": "",
-      "los": [],
+      "los": [
+        "Assess their organisation's AI readiness across five dimensions",
+        "Identify and prioritise where AI creates measurable value in their own business",
+        "Build an AI ROI business case grounded in published research evidence rather than vendor claims",
+        "Draft a board level AI governance and risk policy appropriate to their organisation",
+        "Produce a 90 day executive action plan with named owners, timelines and success metrics"
+      ],
       "outline": [],
       "builds": [],
       "assess": [],
@@ -656,7 +662,13 @@
       "pr": "",
       "asmt": "",
       "brks": "",
-      "los": [],
+      "los": [
+        "Explain in plain terms what AI is, what it does well, and where it fails",
+        "Identify the tasks in their own role where AI creates the most immediate benefit",
+        "Apply structured prompt design to real writing, analysis and communication tasks",
+        "Produce a complete multimedia communication brief with AI, covering script, creative direction and production plan",
+        "Prototype an improvement to one real workflow and commit to a personal 90 day AI action roadmap"
+      ],
       "outline": [],
       "builds": [],
       "assess": [],

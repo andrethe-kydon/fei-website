@@ -36,7 +36,11 @@ export default defineConfig({
               .child(
                 S.documentTypeList('course')
                   .title('Operator Series (AOP)')
-                  .filter('_type == "course" && series == "Operator"')
+                  // An unset series means Operator, matching the default in
+                  // build.js. Documents created before the series field existed
+                  // must not disappear from the Studio while they wait to be
+                  // backfilled: see scripts/backfill-series.js.
+                  .filter('_type == "course" && (!defined(series) || series == "Operator")')
                   .defaultOrdering([{field: 'number', direction: 'asc'}])
                   .initialValueTemplates([
                     S.initialValueTemplateItem('course-operator'),

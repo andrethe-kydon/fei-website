@@ -9,8 +9,12 @@
 //   hour split.
 // The Operator only and Adoption only field groups are both optional, so a
 // document of either series saves cleanly without the other's fields.
-const isAdoption = doc => doc?.series === 'Adoption'
-const isOperator = doc => doc?.series !== 'Adoption'
+// An unset series counts as Operator, the same default build.js applies, so
+// documents that predate the series field behave correctly in the Studio until
+// scripts/backfill-series.js has run.
+const seriesOf = doc => doc?.series || 'Operator'
+const isAdoption = doc => seriesOf(doc) === 'Adoption'
+const isOperator = doc => seriesOf(doc) === 'Operator'
 
 export default {
   name: 'course',
@@ -132,7 +136,11 @@ export default {
       preview: {select: {title: 'name', subtitle: 'role'}},
     }]},
     {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
-    {name: 'learningOutcomes', title: 'Learning outcomes (LO1 to LO5)', type: 'array', of: [{type: 'string'}], hidden: isAdoption},
+    // Visible on both series, because both carry outcomes as content. Only the
+    // Operator series presents them as numbered, assessed LO1 to LO5 outcomes;
+    // an Adoption workshop states the same capability without the assessment
+    // framing, so never render these through the numbered lo-list on a workshop.
+    {name: 'learningOutcomes', title: 'Learning outcomes', description: 'Operator courses show these as assessed outcomes, LO1 to LO5. Adoption workshops state them as capability, with no assessment claim.', type: 'array', of: [{type: 'string'}]},
     {name: 'outline', title: 'Day by day outline', type: 'array', hidden: isAdoption, of: [{
       type: 'object',
       fields: [

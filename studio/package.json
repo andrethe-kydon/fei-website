@@ -8,7 +8,12 @@
     "start": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "seed": "sanity dataset import seed.ndjson production"
+    "seed": "sanity dataset import seed.ndjson production",
+    "seed-aia": "sanity dataset import seed-aia.ndjson production",
+    "backfill-series": "sanity exec scripts/backfill-series.js --with-user-token",
+    "backfill-series:dry": "sanity exec scripts/backfill-series.js --with-user-token -- --dry-run",
+    "backfill-aitags": "sanity exec scripts/backfill-aitags.js --with-user-token",
+    "backfill-aitags:dry": "sanity exec scripts/backfill-aitags.js --with-user-token -- --dry-run"
   },
   "dependencies": {
     "react": "^18.3.1",
