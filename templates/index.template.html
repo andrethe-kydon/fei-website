@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Future Edge Institute | Train the AI Factory Workforce</title>
-<meta name="description" content="Future Edge Institute trains working adults to operate AI: agents, knowledge bases and automated workflows built as working business assets. Six standalone professional courses from the Kydon Group.">
+<meta name="description" content="Future Edge Institute, the education institute of the Kydon Group: eight programmes teaching individuals and organisations to operate AI as working business assets.">
 
 <!-- ============================================================
      OPEN GRAPH / SOCIAL
@@ -12,7 +12,7 @@
 ============================================================= -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Future Edge Institute | Train the AI Factory Workforce">
-<meta property="og:description" content="Six standalone professional courses that teach working adults to operate AI: agents, knowledge bases and automated workflows built as working assets.">
+<meta property="og:description" content="Eight programmes from Future Edge Institute: six assessed professional courses for individuals, and two AI adoption workshops for organisations. Built first, not lectured.">
 <meta property="og:image" content="assets/og-image.jpg">
 <meta property="og:url" content="{{SITE_URL}}/">
 <meta name="twitter:card" content="summary_large_image">
@@ -145,7 +145,7 @@
     </div>
   </div>
   <div class="hero-stats" role="list">
-    <div role="listitem"><strong><em>6</em></strong><small>Standalone courses</small></div>
+    <div role="listitem"><strong><em>8</em></strong><small>Programmes</small></div>
     <div role="listitem"><strong>168<em>h</em></strong><small>Hands on training</small></div>
     <div role="listitem"><strong>100<em>%</em></strong><small>Build first, assessed live</small></div>
   </div>
@@ -175,14 +175,24 @@
 <!-- ================= CATALOGUE ================= -->
 <section class="section catalogue" id="courses">
   <div class="wrap">
+    <!-- INTERIM COPY: the final catalogue heading and intro were referred to as
+         "the copy provided" but were not supplied. This is factually correct
+         placeholder copy so the page does not contradict itself; replace all
+         three lines when the real block arrives. -->
     <div class="section-head reveal">
-      <span class="eyebrow">The AI Operator Professional Series</span>
-      <h2>Six courses. Every one standalone. Every one ends with something working.</h2>
-      <p>No prerequisites. Participants without their own venture build on a fully prepared reference business, so every exercise runs on real material from day one. Filter by AI capability, or by the part of the business you want to strengthen.</p>
+      <span class="eyebrow">The Programmes</span>
+      <h2>Eight programmes. Two series. Every one ends with something working.</h2>
+      <p>Six assessed professional courses for individuals building an AI operator capability, and two workshops for organisations adopting AI together. Every programme is standalone, with no prerequisites. Filter by who it is for, by AI capability, or by the part of the business you want to strengthen.</p>
     </div>
 
-    <div class="filters" role="tablist" aria-label="Filter courses by business function">
-      <button class="filter-chip active" data-filter="all" role="tab" aria-selected="true">All courses</button>
+    <!-- Audience filters first, then the divider, then the function filters.
+         The divider is decorative only: no role, no tab stop, hidden from
+         assistive technology, so the tablist still reads as eight tabs. -->
+    <div class="filters" role="tablist" aria-label="Filter programmes by audience or business function">
+      <button class="filter-chip active" data-filter="all" role="tab" aria-selected="true">All programmes</button>
+      <button class="filter-chip" data-filter="individuals" role="tab" aria-selected="false">For individuals</button>
+      <button class="filter-chip" data-filter="organisations" role="tab" aria-selected="false">For organisations</button>
+      <span class="filter-div" aria-hidden="true"></span>
       <button class="filter-chip" data-filter="ai" role="tab" aria-selected="false">AI Skills</button>
       <button class="filter-chip" data-filter="operations" role="tab" aria-selected="false">Operations</button>
       <button class="filter-chip" data-filter="marketing" role="tab" aria-selected="false">Marketing</button>
@@ -193,7 +203,9 @@
     <div class="course-grid">
 {{COURSE_CARDS}}
     </div>
-    <p class="cat-note">Course fees, intake dates and venues are confirmed at enquiry. AOP 106 provides awareness and structured reasoning, not legal, tax, or accounting advice. Certificates of Completion are issued on meeting all deliverable gates and passing assessment.</p>
+    <!-- INTERIM COPY: replace alongside the catalogue heading above. It has to
+         keep both certificate positions distinct, and the AOP 106 disclaimer. -->
+    <p class="cat-note">Fees, dates and venues are confirmed at enquiry. Operator Series courses are assessed: a Certificate of Completion is issued on meeting all deliverable gates and passing every declared assessment. Adoption Series workshops are participation based and issue a digital certificate of participation. AOP 106 provides awareness and structured reasoning, not legal, tax, or accounting advice.</p>
   </div>
 </section>
 
@@ -293,34 +305,52 @@
 </section>
 
 <!-- ================= FOR ORGANISATIONS =================
-     The id stays #corporate so every existing link, on this page,
-     on the course pages and in the nav, keeps working.
-     Two products, kept visually distinct from the AOP catalogue
-     above: the AIA workshops carry a series pill and no AI
-     capability tags, and they are not part of the catalogue filter.
+     Private delivery only. The two Adoption Series workshops are listed in
+     the catalogue above, alongside the Operator courses, so this section does
+     not repeat them: it points at them and then covers private runs.
+     The id stays #corporate so every existing link keeps working.
 ============================================================= -->
 <section class="section corporate" id="corporate">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">For Organisations</span>
-      <h2>Two ways to bring AI into your organisation</h2>
-      <p>AI adoption fails when it stays theoretical. The AI Adoption Series makes it practical: two hands on workshops that move an organisation from talking about AI to using it, from the boardroom decision to the workforce delivering it. Run them in sequence for a full adoption programme, or independently where the need is specific. Both are delivered in person by our facilitators, at your premises or ours.</p>
+      <h2>Build an AI operator capability inside your company</h2>
+      <p>The same build first method, delivered privately for your teams. We start with your needs, not our catalogue, and your people leave with working assets built on your actual processes.</p>
+      <p class="corp-pointer">Looking for the two AI Adoption Series workshops, AI for Leaders and AI at Work? They sit with everything else in <a href="#courses">the programme catalogue above</a>.</p>
     </div>
+    <div class="corp-grid">
+      <div class="corp-copy reveal">
+        <p>Every company is being told to adopt AI. Few are told how to build the people who can actually run it. We train your staff to be AI operators: designing agents around your real workflows, connecting them to your business knowledge, and automating the processes your teams run every day.</p>
+        <p>Corporate engagements are shaped around your needs. Some companies take a single course as a private run. Others take a curated pathway across departments: operations teams into agents, knowledge and automation, commercial teams into validation and pipeline. Where the need does not fit the catalogue, we consult first and design the programme around what your business actually requires.</p>
 
-    <div class="org-grid">
-{{WORKSHOP_CARDS}}
-    </div>
+        <div class="corp-formats">
+          <div class="format-card">
+            <div class="f-icon">01</div>
+            <div>
+              <h4>Private course runs</h4>
+              <p>Any course from the series delivered exclusively for your team, at your office or our venue, on consecutive days or spread one day per week around operations.</p>
+            </div>
+          </div>
+          <div class="format-card">
+            <div class="f-icon">02</div>
+            <div>
+              <h4>Curated capability pathways</h4>
+              <p>Course combinations matched to functions: the AI stack pairing for operations teams, the commercial pairing for sales and marketing, or the full line for a transformation cohort.</p>
+            </div>
+          </div>
+          <div class="format-card">
+            <div class="f-icon">03</div>
+            <div>
+              <h4>Consult first programmes</h4>
+              <p>Where your need is specific, we scope it with you before proposing anything: your tools, your data, your workflows, your success measures.</p>
+            </div>
+          </div>
+        </div>
 
-    <!-- Private runs of the assessed Operator series: the condensed version of
-         the corporate offer, with the four step process kept in full. -->
-    <div class="org-band reveal">
-      <div class="org-band-copy">
-        <h3>Private runs of the Operator Series</h3>
-        <p>Where your teams need to build rather than adopt, any course in the AI Operator Professional Series can run privately for your people: at your office or our venue, on consecutive days or one day per week around operations. Courses can be combined into capability pathways by function, or scoped as a custom programme after a discovery session.</p>
         <a class="btn btn-solid" id="corp-cta" href="#contact">Book a corporate consultation</a>
       </div>
 
-      <aside class="corp-steps" aria-label="How a corporate engagement works">
+      <aside class="corp-steps reveal" aria-label="How a corporate engagement works">
         <h3>How we work with you</h3>
         <div class="step">
           <div class="step-num">1</div>
@@ -509,7 +539,7 @@ links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
 
 // Catalogue filter (fires a GA4 event per filter for ad audience building)
 const chips=document.querySelectorAll('.filter-chip');
-const cards=document.querySelectorAll('.course-card');
+const cards=document.querySelectorAll('.course-grid .course-card');
 chips.forEach(chip=>chip.addEventListener('click',()=>{
   chips.forEach(c=>{c.classList.remove('active');c.setAttribute('aria-selected','false')});
   chip.classList.add('active');chip.setAttribute('aria-selected','true');
@@ -521,23 +551,23 @@ chips.forEach(chip=>chip.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','filter_courses',{segment:f});}
 }));
 
-// Enquiry click events for ads attribution. Scoped to the catalogue grid, so
-// the Adoption workshop cards below report as workshops, not as courses.
+// Enquiry click events for ads attribution. Both series share one grid now, so
+// the event is chosen from the card's series: an Adoption card reports a
+// workshop detail click, and its enquiry reports as a corporate enquiry, because
+// that is what it is.
 document.querySelectorAll('.course-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
-  const code=a.closest('.course-card').querySelector('.c-code').textContent.trim();
-  const evt=a.classList.contains('cf-primary')?'course_detail_click':'course_enquiry_click';
-  if(typeof gtag==='function'){gtag('event',evt,{course:code});}
-  if(typeof fbq==='function'){fbq('trackCustom',evt==='course_enquiry_click'?'CourseEnquiryClick':'CourseDetailClick',{course:code});}
-}));
-
-// Adoption workshop cards. The detail click is its own event; the enquiry click
-// reports as a corporate enquiry, because that is what it is.
-document.querySelectorAll('.org-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
-  const code=a.closest('.course-card').querySelector('.c-code').textContent.trim();
+  const card=a.closest('.course-card');
+  const code=card.querySelector('.c-code').textContent.trim();
+  const adoption=card.dataset.series==='Adoption';
   const detail=a.classList.contains('cf-primary');
-  const evt=detail?'workshop_detail_click':'corporate_enquiry_click';
-  if(typeof gtag==='function'){gtag('event',evt,{workshop:code});}
-  if(typeof fbq==='function'){fbq('trackCustom',detail?'WorkshopDetailClick':'CorporateEnquiryClick',{workshop:code});}
+  const evt=detail
+    ?(adoption?'workshop_detail_click':'course_detail_click')
+    :(adoption?'corporate_enquiry_click':'course_enquiry_click');
+  const meta=adoption?{workshop:code}:{course:code};
+  const fbName={workshop_detail_click:'WorkshopDetailClick',course_detail_click:'CourseDetailClick',
+    corporate_enquiry_click:'CorporateEnquiryClick',course_enquiry_click:'CourseEnquiryClick'}[evt];
+  if(typeof gtag==='function'){gtag('event',evt,meta);}
+  if(typeof fbq==='function'){fbq('trackCustom',fbName,meta);}
 }));
 
 // Corporate consultation click for ads attribution

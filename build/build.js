@@ -113,7 +113,15 @@ function splitSeries(content) {
     ...Object.entries(content.workshops || {}),
   ];
   for (const [n, c] of entries) {
-    const doc = { ...c, series: c.series || "Operator", codePrefix: c.codePrefix || "AOP" };
+    const doc = {
+      ...c,
+      series: c.series || "Operator",
+      codePrefix: c.codePrefix || "AOP",
+      // content.json keys by number without repeating it as a field; Sanity
+      // supplies it. Setting it here means every document carries one, whichever
+      // source it came from, so the catalogue can sort on it.
+      number: Number(c.number ?? n),
+    };
     (doc.series === "Adoption" ? workshops : courses)[n] = doc;
   }
   return { ...content, courses, workshops };
@@ -147,45 +155,81 @@ function aiTagRow(aiTags, after = "") {
   return `<div class="c-tags-ai">${pills}</div>${after}`;
 }
 
+/**
+ * One catalogue for both series: all eight programmes in a single grid, Operator
+ * first and each series by number ascending.
+ *
+ * Everything that differs between the two is derived from the `series` field
+ * rather than from a course number or a hardcoded list, so adding a programme to
+ * either series cannot put the wrong card together. In particular an Adoption
+ * card shows group size where an Operator card shows assessment modes: these
+ * workshops make no assessment claim, and the meta bar must never imply one.
+ */
+function catalogueEntries(content) {
+  const rank = c => (c.series === "Adoption" ? 1 : 0);
+  return [
+    ...Object.entries(content.courses),
+    ...Object.entries(content.workshops),
+  ].sort(([na, a], [nb, b]) => rank(a) - rank(b) || Number(na) - Number(nb));
+}
+
 function renderCourseCards(content) {
   const segMap = t => ({
     "Business Foundations": "foundations", "Foundations": "foundations",
     "Operations": "operations", "Marketing": "marketing", "Sales": "sales",
   }[t] || t.toLowerCase());
   let out = "";
-  for (const [n, c] of Object.entries(content.courses)) {
+  for (const [n, c] of catalogueEntries(content)) {
+    const adoption = c.series === "Adoption";
     // The "ai" filter segment is derived from aiTags, never hardcoded, so the
-    // filter and the orange capability tags can never disagree.
-    const segs = [...c.tags.map(segMap), ...(c.aiTags && c.aiTags.length ? ["ai"] : [])].join(" ");
+    // filter and the orange capability tags can never disagree. The audience
+    // segment is derived from series for the same reason.
+    const segs = [
+      ...c.tags.map(segMap),
+      ...(c.aiTags && c.aiTags.length ? ["ai"] : []),
+      adoption ? "organisations" : "individuals",
+    ].join(" ");
     const tags = c.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
-    const takes = c.builds.map(b => `<li>${b}</li>`).join("\n            ");
-    const modes = c.assess.map(a => a[0]).join(" · ");
-    // AI capability tags: only the courses that genuinely teach AI carry them,
+    // An Operator course lists what participants build; an Adoption workshop
+    // lists what they leave with. Same slot, different field.
+    const takes = (adoption ? c.deliverables : c.builds)
+      .map(b => `<li>${b}</li>`).join("\n            ");
+    // Assessment modes on Operator cards only. An Adoption workshop shows who is
+    // in the room instead, because it declares no assessment at all.
+    const thirdMeta = adoption
+      ? `<span>${c.groupSize}</span>`
+      : `<span>${c.assess.map(a => a[0]).join(" · ")}</span>`;
+    const hoursMeta = adoption
+      ? `<span><b>${c.taughtHours}</b> taught hours</span>`
+      : `<span><b>${c.hours}</b> hours</span>`;
+    // AI capability tags: only the programmes that genuinely teach AI carry them,
     // and an empty list renders nothing at all, not an empty row.
     const aiRow = aiTagRow(c.aiTags, "\n          ");
     const thumbSrc = c.thumbUrl || `assets/courses/${c.slug}.jpg`;
+    const kind = adoption ? "workshop" : "course";
     out += `
-      <article class="course-card reveal" data-seg="${segs}">
+      <article class="course-card reveal" data-seg="${segs}" data-series="${c.series}">
         <!-- Thumbnail: upload in Sanity, or drop assets/courses/${c.slug}.jpg (1200 x 750) -->
         <div class="c-thumb">
           <span class="ph-label">Thumbnail</span>
           <span class="ph-code">${n}</span>
-          <img src="${thumbSrc}" alt="${c.codePrefix} ${n} course thumbnail" loading="lazy" onerror="this.remove()">
+          <img src="${thumbSrc}" alt="${c.codePrefix} ${n} ${kind} thumbnail" loading="lazy" onerror="this.remove()">
         </div>
         <div class="c-body">
           <div class="c-top">
             <span class="c-code">${c.codePrefix} ${n}</span>
             <div class="c-tags">${tags}</div>
           </div>
+          <div class="c-series-row"><span class="c-series">${c.series} Series</span></div>
           <h3>${c.title}: ${c.subtitle}</h3>
-          <p class="c-sub">${c.tag}</p>
+          <p class="c-sub">${adoption ? (c.tileCopy || c.tag) : c.tag}</p>
           ${aiRow}<div class="c-meta">
-            <span><b>${c.hours}</b> hours</span><span><b>${c.days}</b> days</span><span>${modes}</span>
+            ${hoursMeta}<span><b>${c.days}</b> days</span>${thirdMeta}
           </div>
           <ul class="c-take">
             ${takes}
           </ul>
-          <div class="c-foot"><a class="cf-primary" href="${c.slug}.html">Full course details</a><a href="#contact">Enquire</a></div>
+          <div class="c-foot"><a class="cf-primary" href="${c.slug}.html">Full ${kind} details</a><a href="#contact">Enquire</a></div>
         </div>
       </article>`;
   }
@@ -205,7 +249,7 @@ function pathwayBlock() {
       <div class="section-head" style="margin-bottom:0"><h2 style="font-size:1.6rem">The full pathway</h2></div>
       <p style="margin-top:18px;color:var(--slate)">Organisations see the strongest results running the Adoption Series in sequence: AI for Leaders creates the mandate and the roadmap, AI at Work equips the teams who deliver it. Individuals who want to go further progress into The AI Operator Professional Series, where they build AI agents, knowledge bases and business automations of their own. The Adoption Series teaches organisations to use AI. The Operator Series teaches individuals to run it.</p>
       <div class="pathway-ctas">
-        <a class="btn btn-solid" href="index.html#corporate">See the Adoption Series</a>
+        <a class="btn btn-solid" href="index.html#courses">See the Adoption Series</a>
         <a class="btn btn-ghost" href="index.html#courses">See the Operator Series</a>
       </div>
     </div>
@@ -423,38 +467,6 @@ function renderWorkshopPage(template, n, w, s) {
 }
 
 /**
- * Homepage cards for the Adoption series. Deliberately not renderCourseCards:
- * no AI capability tags, no filter segments, and a series pill instead, so the
- * two series read as two products rather than one merged catalogue.
- */
-function renderWorkshopCards(workshops) {
-  let out = "";
-  for (const [n, w] of Object.entries(workshops)) {
-    const code = `${w.codePrefix} ${n}`;
-    const tags = (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join("");
-    out += `
-      <article class="course-card reveal">
-        <div class="c-body">
-          <div class="c-top">
-            <div class="c-codes">
-              <span class="c-code">${code}</span>
-              <span class="c-series">AI Adoption Series</span>
-            </div>
-            <div class="c-tags">${tags}</div>
-          </div>
-          <h3>${w.title}: ${w.subtitle}</h3>
-          <p class="c-sub">${w.tileCopy}</p>
-          <div class="c-meta">
-            <span><b>${w.days}</b> days</span><span><b>${w.taughtHours}</b> taught hours</span><span>${w.groupSize}</span>
-          </div>
-          <div class="c-foot"><a class="cf-primary workshop-link" data-code="${code}" href="${w.slug}.html">Full workshop details</a><a href="#contact">Enquire</a></div>
-        </div>
-      </article>`;
-  }
-  return out;
-}
-
-/**
  * Legal and policies page. The document body lives in content/policies.html
  * so the prose stays out of the build script; it is injected first so that
  * tokens used inside it are filled along with the template's own.
@@ -521,7 +533,6 @@ function formatUpdated(d) {
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
-    WORKSHOP_CARDS: renderWorkshopCards(content.workshops),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,
     HS_PORTAL: s.hubspotPortalId, HS_FORM_GUID: s.hubspotFormGuid,
     HS_REGION: s.hubspotFormRegion, EMAIL: s.enquiryEmail, SITE_URL: s.siteUrl,

@@ -17,7 +17,9 @@ The `series` field on the course document decides which template a document rend
 
 **Adoption documents must never display assessment modes, pass thresholds or a delivery hour split.** These workshops make no assessment claim: they award a certificate of participation. `workshop.template.html` deliberately has nowhere to put an assessment card, a pass criteria box, a learning outcome list or an hour split line, and their Course JSON-LD omits `teaches`. Do not add any of it, and do not solve an Adoption layout problem by adding conditionals to the course template.
 
-**The two series are visually distinct on the homepage and must not be merged into one catalogue.** The AOP catalogue (`#courses`) is filterable and carries AI capability tags. The AIA workshops sit in the organisations section (`#corporate`) with a series pill, no capability tags and no filter. They are two products with two buying processes, not one list.
+**Both series share one catalogue** at `#courses`: all eight programmes in a single filterable grid, Operator first and each series by number. Every card carries a series pill so the two are still told apart at a glance. The audience filters (For individuals, For organisations) and the audience segment on each card are derived from `series`, never from a course number or a list, so the filter cannot disagree with the card.
+
+This replaced an earlier split, where the AIA workshops sat in the organisations section instead. Anything still describing the homepage as two separate lists is out of date.
 
 **Registered names, exact.** FEI's registered name is **Future Edge Institute Private Limited**, spelled out in full, never abbreviated to Pte. Ltd. UEN **202634510R**, incorporated in Singapore on 30 July 2026. It is a wholly owned subsidiary of **Kydon Holdings Pte. Ltd.**, which is registered with the abbreviated form. The two differ deliberately: each must match ACRA exactly, so never normalise one to match the other and never apply a blanket Pte. Ltd. replacement. Standalone **Future Edge Institute** is the brand name and is correct wherever the legal entity is not being named.
 
@@ -45,7 +47,11 @@ Build and check: `npm run build`, then `npx serve dist`. A correct build reports
 
 **Homepage section order:** hero, trust strip, marquee, catalogue (`#courses`), pathway (`#pathway`), the operator difference (`#difference`), who it is for (`#audience`), organisations (`#corporate`), funding (`#funding`), FAQ (`#faq`), contact (`#contact`).
 
-The organisations section keeps the id `#corporate` from when it was the corporates section, so every existing link into it still works. It now leads with the two AIA workshop cards, and the private runs of the Operator Series sit beneath them as a condensed band: one paragraph on formats, then the four step discover, design, deliver, evidence flow kept in full, because that consultative process is what corporate buyers respond to.
+The organisations section keeps the id `#corporate` from when it was the corporates section, so every existing link into it still works. It covers **private delivery only**: the three engagement formats and the four step discover, design, deliver, evidence flow, because that consultative process is what corporate buyers respond to. It does not list the AIA workshops, which live in the catalogue with everything else; it carries one line pointing readers up to them.
+
+**Catalogue filter row**, in order: All programmes, For individuals, For organisations, a decorative divider, then AI Skills, Operations, Marketing, Sales, Business Foundations. The divider is a 1px rule, `aria-hidden`, and takes no tab stop, so the tablist still reads as eight tabs. The row scrolls horizontally on narrow screens; it is not meant to wrap.
+
+**Card composition is driven by `series`, and the meta bar is the part that matters.** An Operator card shows hours, days and assessment modes. An Adoption card shows taught hours, days and group size, and must never show assessment modes or a pass threshold. Operator cards list `builds`, Adoption cards list `deliverables`. Keep these derived from `series` so they cannot drift as content changes.
 
 The **story** (`#story`) and **market context** (`#why`) sections live on `about.html` and must not be reintroduced to the homepage: the homepage reaches the catalogue quickly by design. Anything linking to them points at `about.html`, never `index.html#story` or `index.html#why`.
 
@@ -97,7 +103,7 @@ The brochure button appears only when `static/assets/brochures/<slug>.pdf` exist
 - Assessment modes are only ever **Practical Exam, Project, Oral Interview**, and only ever on Operator courses. Pass threshold 70 percent, attendance 75 percent.
 - Operator certificates are **Certificates of Completion issued by Future Edge Institute**, awarded on evidence. Adoption workshops issue a **digital certificate of participation** from Future Edge Institute within 24 hours, recognising participation and output. Never blur the two.
 - Segment tags used for catalogue filtering: Operations, Marketing, Sales, Business Foundations. Adoption workshops carry segment tags too, but the filter belongs to the AOP catalogue only.
-- **AI capability tags** (`aiTags`, orange pills) are separate from the segment tags and are not filterable. They appear only where the curriculum genuinely teaches AI: AOP 101 to 104, and both AIA workshops. AOP 105 and 106 must not carry them unless a curriculum revision introduces real AI content. Do not add tags to make the catalogue look uniform. The AIA homepage cards deliberately omit them, so the two series read differently at a glance.
+- **AI capability tags** (`aiTags`, orange pills) are separate from the segment tags and are not filterable. They appear only where the curriculum genuinely teaches AI: AOP 101 to 104, and both AIA workshops. AOP 105 and 106 must not carry them unless a curriculum revision introduces real AI content. Do not add tags to make the catalogue look uniform.
 - HubSpot portal `2457674` is live and correct. GA4 and Meta Pixel IDs are placeholders until supplied.
 - Conversion events already fire on: course enquiry clicks, course detail clicks, workshop detail clicks (tagged with the AIA code), WhatsApp clicks (tagged by placement), funding interest, corporate enquiry, and course outline opens. An enquiry click on an AIA card reports as `corporate_enquiry_click` with the workshop code, because that is what it is. Preserve these when editing; add matching events for any new call to action.
 
