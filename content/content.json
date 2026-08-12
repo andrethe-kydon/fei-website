@@ -10,6 +10,7 @@
     "siteUrl": "https://www.futureedge.institute",
     "rtpStatement": "Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG)."
   },
+  "team": [],
   "courses": {
     "101": {
       "series": "Operator",

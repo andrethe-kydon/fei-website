@@ -58,6 +58,17 @@ export default defineConfig({
                     S.initialValueTemplateItem('course-adoption'),
                   ])
               ),
+            S.divider(),
+            // People: trainers and the team grid on the about page, in the
+            // order the grid renders them.
+            S.listItem()
+              .title('Team')
+              .schemaType('person')
+              .child(
+                S.documentTypeList('person')
+                  .title('Team')
+                  .defaultOrdering([{field: 'order', direction: 'asc'}])
+              ),
           ]),
     }),
   ],

@@ -33,9 +33,15 @@ function sanityImageUrl(img, projectId, dataset, width) {
 }
 
 async function loadFromSanity(projectId, dataset) {
+  // Trainers are references to person documents, so they are dereferenced in
+  // the query and arrive in the same shape the local content file uses.
   const query = encodeURIComponent(`{
     "settings": *[_type == "siteSettings"][0],
-    "courses": *[_type == "course"] | order(number asc)
+    "courses": *[_type == "course"] | order(number asc){
+      ...,
+      "trainers": trainers[]->{name, role, bio, photo}
+    },
+    "team": *[_type == "person" && (!defined(showOnAbout) || showOnAbout == true)] | order(order asc, name asc)
   }`);
   const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`;
   const headers = process.env.SANITY_READ_TOKEN
@@ -93,7 +99,13 @@ async function loadFromSanity(projectId, dataset) {
       certificateNote: c.certificateNote || "",
     };
   }
-  return { settings: result.settings, courses, workshops };
+  // The team grid is optional: an empty result is a valid state, not a failure,
+  // and renders no section at all.
+  const team = (result.team || []).map(p => ({
+    name: p.name, role: p.role, bio: p.bio || "",
+    photoUrl: sanityImageUrl(p.photo, projectId, dataset, 600),
+  }));
+  return { settings: result.settings, courses, workshops, team };
 }
 
 function loadLocal() {
@@ -387,6 +399,56 @@ function renderIntakes(intakes, code) {
   return `${tabs}\n      <div class="intake-grid">${cards}</div>`;
 }
 
+/**
+ * Initials for a photo placeholder: at most two, from the first and last word
+ * of the name.
+ */
+function initials(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "";
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+  return (parts[0][0] + last).toUpperCase();
+}
+
+/**
+ * The team grid on the about page, or nothing at all when no person is
+ * published: no heading, no empty grid, no reserved space, exactly as the
+ * trainer section behaves on a programme page.
+ *
+ * A person without a photo gets the branded placeholder the course thumbnails
+ * use, carrying their initials where a course carries its number. The initials
+ * are always rendered underneath the image, so a broken CDN URL falls back to
+ * them rather than to an empty box.
+ */
+function renderTeam(team) {
+  const people = (team || []).filter(p => p && p.name);
+  if (!people.length) return "";
+  const cards = people.map(p => `
+      <article class="person-card reveal">
+        <div class="person-photo">
+          <span class="ph-initials">${esc(initials(p.name))}</span>
+          ${p.photoUrl ? `<img src="${p.photoUrl}" alt="${esc(p.name)}" loading="lazy" onerror="this.remove()">` : ""}
+        </div>
+        <h3>${p.name}</h3>
+        <p class="person-role">${p.role}</p>
+        ${p.bio ? `<p class="person-bio">${p.bio}</p>` : ""}
+      </article>`).join("");
+  return `
+<!-- ================= TEAM ================= -->
+<section class="section team" id="team">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Team</span>
+      <h2>Who you learn from</h2>
+      <p>The people who designed the programmes and stand in front of the room.</p>
+    </div>
+    <div class="person-grid">${cards}
+    </div>
+  </div>
+</section>
+`;
+}
+
 /** Trainer cards, or nothing at all when no trainer is confirmed. */
 function renderTrainers(trainers) {
   if (!trainers.length) return "";
@@ -565,8 +627,9 @@ function renderPoliciesPage(template, body, s, updated) {
  * About page. Story and market context live here, not on the homepage.
  * Static content, so this only fills the shared tracking and contact tokens.
  */
-function renderAboutPage(template, s) {
+function renderAboutPage(template, s, team) {
   return fill(template, {
+    TEAM_SECTION: renderTeam(team),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -636,7 +699,7 @@ function formatUpdated(d) {
 
   // about
   const aTpl = fs.readFileSync(path.join(ROOT, "templates/about.template.html"), "utf8");
-  fs.writeFileSync(path.join(DIST, "about.html"), renderAboutPage(aTpl, s));
+  fs.writeFileSync(path.join(DIST, "about.html"), renderAboutPage(aTpl, s, content.team));
 
   // policies
   const pTpl = fs.readFileSync(path.join(ROOT, "templates/policies.template.html"), "utf8");

@@ -125,15 +125,12 @@ export default {
       ],
       preview: {select: {title: 'label', subtitle: 'dates'}},
     }]},
-    {name: 'trainers', title: 'Trainers', description: 'Leave empty until trainers are confirmed. The section is omitted entirely when empty.', type: 'array', of: [{
-      type: 'object',
-      fields: [
-        {name: 'name', title: 'Name', type: 'string'},
-        {name: 'role', title: 'Role', type: 'string'},
-        {name: 'bio', title: 'Bio', type: 'text', rows: 4},
-        {name: 'photo', title: 'Photo', type: 'image'},
-      ],
-      preview: {select: {title: 'name', subtitle: 'role'}},
+    // References, not inline objects: a trainer is one person document, pointed
+    // at from every course they teach, so a change of role, bio or photo
+    // reaches all of them at once. Create people under Team in the Studio.
+    {name: 'trainers', title: 'Trainers', description: 'Pick from the Team list. Leave empty until trainers are confirmed: the section is omitted entirely when empty.', type: 'array', of: [{
+      type: 'reference',
+      to: [{type: 'person'}],
     }]},
     {name: 'overview', title: 'Overview paragraphs', type: 'array', of: [{type: 'text', rows: 4}]},
     // Visible on both series, because both carry outcomes as content. Only the
