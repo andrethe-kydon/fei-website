@@ -237,6 +237,42 @@ function renderCourseCards(content) {
 }
 
 /**
+ * The two Adoption Series workshops, leading the organisations section on the
+ * homepage. They are rendered from the same content as the catalogue cards, so
+ * the two presentations of a workshop cannot disagree.
+ *
+ * A shorter card than the catalogue one: no thumbnail and no deliverable list,
+ * because the full card sits further up the same page. The summary stretches
+ * instead, which is what `.org-grid .c-sub` is for. Participation based, so the
+ * meta bar carries taught hours, days and group size, and never an assessment
+ * mode or a pass threshold.
+ */
+function renderAdoptionCards(content) {
+  return Object.entries(content.workshops)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([n, w]) => {
+      const tags = w.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
+      const aiRow = aiTagRow(w.aiTags, "\n          ");
+      return `
+      <article class="course-card reveal" data-series="${w.series}">
+        <div class="c-body">
+          <div class="c-top">
+            <span class="c-code">${w.codePrefix} ${n}</span>
+            <div class="c-tags">${tags}</div>
+          </div>
+          <div class="c-series-row"><span class="c-series">${w.series} Series</span></div>
+          <h3>${w.title}: ${w.subtitle}</h3>
+          <p class="c-sub">${w.tileCopy || w.tag}</p>
+          ${aiRow}<div class="c-meta">
+            <span><b>${w.taughtHours}</b> taught hours</span><span><b>${w.days}</b> days</span><span>${w.groupSize}</span>
+          </div>
+          <div class="c-foot"><a class="cf-primary" href="${w.slug}.html">Full workshop details</a><a href="#contact">Enquire</a></div>
+        </div>
+      </article>`;
+    }).join("");
+}
+
+/**
  * The cross sell block, rendered identically at the foot of every course page
  * and every workshop page. It lives here rather than in both templates so the
  * two series can never end up describing each other differently.
@@ -533,6 +569,7 @@ function formatUpdated(d) {
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
+    ADOPTION_CARDS: renderAdoptionCards(content),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,
     HS_PORTAL: s.hubspotPortalId, HS_FORM_GUID: s.hubspotFormGuid,
     HS_REGION: s.hubspotFormRegion, EMAIL: s.enquiryEmail, SITE_URL: s.siteUrl,

@@ -125,7 +125,7 @@
     <ul class="nav-links" id="navlinks">
       <li><a href="about.html">About</a></li>
       <li><a href="#courses">Programmes</a></li>
-      <li><a href="#pathway">The Pathway</a></li>
+      <li><a href="#pathway">The Pathways</a></li>
       <li><a href="#corporate">For Organisations</a></li>
       <li><a class="nav-wa" id="nav-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>WhatsApp</a></li>
       <li><a href="#contact" class="nav-cta">Enquire</a></li>
@@ -213,17 +213,31 @@
 <section class="section pathway" id="pathway">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">The Operator Pathway</span>
-      <h2>Take one course. Or walk the whole line.</h2>
-      <p>Each course stands alone. Taken in sequence they build a complete operator capability: how to design and build the AI systems, how to sell that capability, and how to run it as a business of your own. It is the same journey Kydon's flagship OPC programme runs end to end.</p>
+      <span class="eyebrow">The Pathways</span>
+      <h2>Take one step, or walk the whole line.</h2>
     </div>
-    <div class="rail reveal">
-      <div class="station"><div class="dot">101</div><p>Blueprint<small>Niche and offer</small></p></div>
-      <div class="station"><div class="dot">102</div><p>Agents<small>Your first AI workforce</small></p></div>
-      <div class="station"><div class="dot">103</div><p>Knowledge<small>RAG and your AI team</small></p></div>
-      <div class="station"><div class="dot">104</div><p>Automation<small>Workflows that run without you</small></p></div>
-      <div class="station"><div class="dot">105</div><p>Pipeline<small>Validate, price, sell</small></p></div>
-      <div class="station"><div class="dot">106</div><p>Launch<small>Registration and readiness</small></p></div>
+    <!-- One rail per series, so the section covers all eight programmes the
+         catalogue above shows. The two rails are the same component: the
+         Adoption rail only differs in how many stations it carries. -->
+    <div class="rail-group reveal">
+      <span class="rail-label">For individuals · The Operator Series</span>
+      <p class="rail-lead">Each course stands alone. Taken in sequence they build a complete operator capability: how to design and build the AI systems, how to sell that capability, and how to run it as a business of your own. It is the same journey Kydon's flagship OPC programme runs end to end.</p>
+      <div class="rail">
+        <div class="station"><div class="dot">101</div><p>Blueprint<small>Niche and offer</small></p></div>
+        <div class="station"><div class="dot">102</div><p>Agents<small>Your first AI workforce</small></p></div>
+        <div class="station"><div class="dot">103</div><p>Knowledge<small>RAG and your AI team</small></p></div>
+        <div class="station"><div class="dot">104</div><p>Automation<small>Workflows that run without you</small></p></div>
+        <div class="station"><div class="dot">105</div><p>Pipeline<small>Validate, price, sell</small></p></div>
+        <div class="station"><div class="dot">106</div><p>Launch<small>Registration and readiness</small></p></div>
+      </div>
+    </div>
+    <div class="rail-group reveal">
+      <span class="rail-label">For organisations · The Adoption Series</span>
+      <p class="rail-lead">The mandate first, then the capability. AI for Leaders creates the roadmap and the investment case. AI at Work equips the teams who deliver it.</p>
+      <div class="rail rail-pair">
+        <div class="station"><div class="dot">101</div><p>Leaders<small>Strategy, ROI and governance</small></p></div>
+        <div class="station"><div class="dot">102</div><p>Teams<small>Hands on capability</small></p></div>
+      </div>
     </div>
     <p class="cat-note reveal">Looking for the full immersion instead? The flagship One Person Company programme by Kydon runs the complete venture build journey as a single cohort experience. <a href="https://opc.kydongrp.com">Explore the OPC programme</a>.</p>
   </div>
@@ -298,28 +312,36 @@
       <article class="aud-card reveal">
         <h3>Teams and employers</h3>
         <p>You have been told to adopt AI and given no realistic way to build the people who can run it. You want a team that can identify the opportunities in your own operations and deliver them, not a workshop everyone forgets by the following month.</p>
-        <a class="aud-start" href="#corporate">See corporate training</a>
+        <a class="aud-start" href="#courses" data-filter-target="organisations">See the Adoption Series</a>
       </article>
     </div>
   </div>
 </section>
 
 <!-- ================= FOR ORGANISATIONS =================
-     Private delivery only. The two Adoption Series workshops are listed in
-     the catalogue above, alongside the Operator courses, so this section does
-     not repeat them: it points at them and then covers private runs.
+     The two Adoption Series workshops lead the section, because they are what
+     an organisation buys first. Private runs of the Operator Series are the
+     secondary option below them, and the engagement flow covers both.
+     The workshop cards are rendered from content by renderAdoptionCards() in
+     build.js, so their copy, hours and group sizes cannot drift from the
+     catalogue cards above or from the workshop pages.
      The id stays #corporate so every existing link keeps working.
 ============================================================= -->
 <section class="section corporate" id="corporate">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">For Organisations</span>
-      <h2>Build an AI operator capability inside your company</h2>
-      <p>The same build first method, delivered privately for your teams. We start with your needs, not our catalogue, and your people leave with working assets built on your actual processes.</p>
-      <p class="corp-pointer">Looking for the two AI Adoption Series workshops, AI for Leaders and AI at Work? They sit with everything else in <a href="#courses">the programme catalogue above</a>.</p>
+      <h2>Bring AI into your organisation</h2>
+      <p>Two workshops take an organisation from talking about AI to using it. AI for Leaders gives the executive team the strategy, the investment case, the governance and a board ready 90 day roadmap. AI at Work gives every level of the organisation the hands on capability to act on it. Both are delivered in person, at your premises or ours, and both sit in <a href="#courses">the catalogue above</a>.</p>
     </div>
-    <div class="corp-grid">
-      <div class="corp-copy reveal">
+
+    <div class="org-grid">
+{{ADOPTION_CARDS}}
+    </div>
+
+    <div class="org-band">
+      <div class="org-band-copy reveal">
+        <h3>Or run the Operator Series privately</h3>
         <p>Every company is being told to adopt AI. Few are told how to build the people who can actually run it. We train your staff to be AI operators: designing agents around your real workflows, connecting them to your business knowledge, and automating the processes your teams run every day.</p>
         <p>Corporate engagements are shaped around your needs. Some companies take a single course as a private run. Others take a curated pathway across departments: operations teams into agents, knowledge and automation, commercial teams into validation and pipeline. Where the need does not fit the catalogue, we consult first and design the programme around what your business actually requires.</p>
 
@@ -551,11 +573,22 @@ chips.forEach(chip=>chip.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','filter_courses',{segment:f});}
 }));
 
+// A link into the catalogue can ask for a filter to be applied on arrival, so
+// "See the Adoption Series" lands on the two workshops rather than on the top of
+// a grid of eight. It clicks the chip rather than duplicating its logic, so the
+// filter_courses event still fires exactly once.
+document.querySelectorAll('[data-filter-target]').forEach(a=>a.addEventListener('click',()=>{
+  const chip=document.querySelector('.filter-chip[data-filter="'+a.dataset.filterTarget+'"]');
+  if(chip){chip.click();}
+}));
+
 // Enquiry click events for ads attribution. Both series share one grid now, so
 // the event is chosen from the card's series: an Adoption card reports a
 // workshop detail click, and its enquiry reports as a corporate enquiry, because
 // that is what it is.
-document.querySelectorAll('.course-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
+// The organisations section leads with the same two workshops, in a shorter
+// card, so its links are bound by the same rule and report the same events.
+document.querySelectorAll('.course-grid .c-foot a, .org-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
   const card=a.closest('.course-card');
   const code=card.querySelector('.c-code').textContent.trim();
   const adoption=card.dataset.series==='Adoption';

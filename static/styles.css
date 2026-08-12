@@ -395,6 +395,22 @@ header{
 .station:last-child .dot{border-color:var(--orange);color:var(--orange)}
 .station p{font-family:var(--display);font-size:.8rem;font-weight:600;line-height:1.35;color:var(--navy)}
 .station small{display:block;font-family:var(--body);font-size:.7rem;font-weight:400;color:var(--fog)}
+/* Two rails, one per series. The Adoption rail carries two stations rather than
+   six, so only the column count and the reach of the connector line change: the
+   stations themselves are the same component. The connector runs between the
+   two dot centres, at 25% and 75%, as the six station line runs between 8% and
+   92%. Both are overridden by the stacked mobile rules below, which come later
+   in the file and win at equal specificity. */
+.rail-pair{grid-template-columns:repeat(2,1fr)}
+.rail-pair::before{left:25%;right:25%}
+.rail-group + .rail-group{margin-top:56px}
+.rail-label{
+  display:inline-block;font-family:var(--display);font-size:.66rem;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--navy);
+  background:var(--bg-alt);border:1px solid var(--line);border-radius:999px;padding:5px 14px;
+}
+.rail-lead{max-width:720px;margin-top:14px;color:var(--slate);font-weight:400}
+.rail-group .rail{margin-top:30px}
 @media (max-width:780px){
   .rail{grid-template-columns:1fr;gap:20px}
   .rail::before{left:29px;right:auto;top:8%;bottom:8%;width:3px;height:auto;
