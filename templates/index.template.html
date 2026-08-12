@@ -141,8 +141,11 @@
     <p class="lede">Future Edge Institute builds the AI Factory workforce: working adults who run AI agents, knowledge bases and automated workflows as everyday business assets. Every programme ends with something built, tested and working.</p>
     <div class="hero-ctas">
       <a class="btn btn-solid" href="#courses">Browse the programmes</a>
-      <a class="btn btn-ghost" href="about.html">Where we come from</a>
+      <a class="btn btn-ghost" href="#corporate">For organisations</a>
     </div>
+    <!-- Rendered only when static/assets/brochures/programme-directory.pdf is on
+         disk, so it is never a dead link. See directoryLink() in build.js. -->
+    {{DIRECTORY_LINK}}
   </div>
   <div class="hero-stats" role="list">
     <div role="listitem"><strong><em>8</em></strong><small>Programmes</small></div>
@@ -221,7 +224,7 @@
          Adoption rail only differs in how many stations it carries. -->
     <div class="rail-group reveal">
       <span class="rail-label">For individuals · The Operator Series</span>
-      <p class="rail-lead">Each course stands alone. Taken in sequence they build a complete operator capability: how to design and build the AI systems, how to sell that capability, and how to run it as a business of your own. It is the same journey Kydon's flagship OPC programme runs end to end.</p>
+      <p class="rail-lead">Each course stands alone. Taken in sequence they build a complete operator capability: how to design and build the AI systems, how to sell that capability, and how to run it as a business of your own.</p>
       <div class="rail">
         <div class="station"><div class="dot">101</div><p>Blueprint<small>Niche and offer</small></p></div>
         <div class="station"><div class="dot">102</div><p>Agents<small>Your first AI workforce</small></p></div>
@@ -239,7 +242,6 @@
         <div class="station"><div class="dot">102</div><p>Teams<small>Hands on capability</small></p></div>
       </div>
     </div>
-    <p class="cat-note reveal">Looking for the full immersion instead? The flagship One Person Company programme by Kydon runs the complete venture build journey as a single cohort experience. <a href="https://opc.kydongrp.com">Explore the OPC programme</a>.</p>
   </div>
 </section>
 
@@ -485,10 +487,10 @@
            HUBSPOT FORM EMBED · portal {{HS_PORTAL}}
            1. In HubSpot: Marketing > Forms > Create form.
               Suggested fields: First name, Last name, Email,
-              Company (optional), single dropdown "Course of
-              interest" (AOP 101 to AOP 106, OPC Programme,
-              Corporate enquiry, Notify me when funding is
-              available), message box.
+              Company (optional), single dropdown "Programme of
+              interest" (AOP 101 to AOP 106, AIA 101 to AIA 102,
+              Corporate enquiry, Programme directory, Notify me
+              when funding is available), message box.
            2. Copy the form GUID from the embed code and replace
               {{HS_FORM_GUID}} below.
            3. Verify the region value matches the embed code
@@ -531,7 +533,6 @@
       </ul>
       <ul>
         <li><a href="https://www.kydongrp.com">Kydon Group</a></li>
-        <li><a href="https://opc.kydongrp.com">The OPC Programme</a></li>
         <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
         <li><a href="policies.html">Policies</a></li>
         <li><a href="policies.html#privacy">Privacy</a></li>
@@ -546,7 +547,7 @@
   <a class="sb-wa" id="sb-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses.">WhatsApp</a>
   <a class="sb-enq" href="#contact">Enquire</a>
 </div>
-
+{{DIRECTORY_MODAL}}
 <script>
 // Mobile menu
 const btn=document.querySelector('.menu-btn');
@@ -618,6 +619,32 @@ if(corpCta){corpCta.addEventListener('click',()=>{
     if(typeof fbq==='function'){fbq('trackCustom','WhatsAppClick',{placement:id});}
   });}
 });
+// Programme directory. The link and the dialog are both rendered only when the
+// PDF is on disk, so everything here is guarded and simply does nothing when
+// they are absent. The HubSpot embed loads asynchronously, so the form is
+// created the first time the dialog opens rather than at page load.
+const dirOpen=document.getElementById('directory-open');
+const dirModal=document.getElementById('directory-modal');
+if(dirOpen&&dirModal){
+  dirOpen.addEventListener('click',()=>{
+    if(typeof gtag==='function'){gtag('event','directory_request');}
+    if(typeof fbq==='function'){fbq('trackCustom','DirectoryRequest');}
+    const host=document.getElementById('directory-form');
+    if(host&&!host.dataset.built&&window.hbspt){
+      host.dataset.built='1';
+      hbspt.forms.create({
+        region:host.dataset.region,portalId:host.dataset.portal,formId:host.dataset.form,
+        target:'#directory-form',
+        onFormSubmitted:()=>{const r=document.getElementById('directory-ready');if(r){r.hidden=false;}}
+      });
+    }
+    dirModal.showModal();
+  });
+  // Clicking the backdrop closes it. Escape and focus handling come from the
+  // dialog element itself.
+  dirModal.addEventListener('click',e=>{if(e.target===dirModal){dirModal.close();}});
+}
+
 const fundingCta=document.getElementById('funding-cta');
 if(fundingCta){fundingCta.addEventListener('click',()=>{
   if(typeof gtag==='function'){gtag('event','funding_interest_click');}

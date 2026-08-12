@@ -306,6 +306,48 @@ function brochureBtn(slug, label, cls) {
 }
 
 /**
+ * The programme directory: one PDF covering all eight programmes, offered from
+ * the homepage hero.
+ *
+ * Gated on the file being on disk exactly as the brochures are, so the link is
+ * never dead. Unlike a brochure it is not handed over directly. A brochure is
+ * for reading and carries no gate; the directory is a lead capture asset, so
+ * the link opens a dialog: the HubSpot form when a real form GUID is
+ * configured, and an email fallback carrying the subject line when it is not.
+ * `hubspotFormGuid` ships as the placeholder FORM_GUID_HERE, which is not a
+ * form, so it counts as unset here.
+ */
+const DIRECTORY_PDF = "assets/brochures/programme-directory.pdf";
+const hasDirectory = () => fs.existsSync(path.join(ROOT, "static", DIRECTORY_PDF));
+const hasHubspotForm = s => Boolean(s.hubspotFormGuid) && s.hubspotFormGuid !== "FORM_GUID_HERE";
+
+function directoryLink() {
+  if (!hasDirectory()) return "";
+  return `<button class="hero-directory" id="directory-open" type="button" aria-haspopup="dialog">Download the programme directory</button>`;
+}
+
+function directoryModal(s) {
+  if (!hasDirectory()) return "";
+  const subject = encodeURIComponent("Programme directory request");
+  const body = hasHubspotForm(s)
+    ? `      <div id="directory-form" data-region="${s.hubspotFormRegion}" data-portal="${s.hubspotPortalId}" data-form="${s.hubspotFormGuid}"></div>
+      <p class="modal-note" id="directory-ready" hidden>Thank you. <a href="${DIRECTORY_PDF}" target="_blank" rel="noopener">Open the programme directory</a>.</p>`
+    : `      <p class="modal-note">Email us and the directory comes back with our reply, usually within one working day.</p>
+      <a class="btn btn-solid" href="mailto:${s.enquiryEmail}?subject=${subject}">Email ${s.enquiryEmail}</a>`;
+  return `
+<!-- ================= PROGRAMME DIRECTORY ================= -->
+<dialog class="modal" id="directory-modal" aria-labelledby="directory-title">
+  <form method="dialog" class="modal-dismiss">
+    <button class="modal-close" aria-label="Close">&times;</button>
+  </form>
+  <h2 id="directory-title">The programme directory</h2>
+  <p>All eight programmes in one document: what each one covers, who it is for, the hours, and what you leave with.</p>
+${body}
+</dialog>
+`;
+}
+
+/**
  * Intake cards. An empty schedule is stated plainly rather than hidden: a
  * missing section reads worse than an acknowledged one.
  * Filter tabs are deliberately not built yet, because there is nothing to
@@ -570,6 +612,8 @@ function formatUpdated(d) {
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
     ADOPTION_CARDS: renderAdoptionCards(content),
+    DIRECTORY_LINK: directoryLink(),
+    DIRECTORY_MODAL: directoryModal(s),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,
     HS_PORTAL: s.hubspotPortalId, HS_FORM_GUID: s.hubspotFormGuid,
     HS_REGION: s.hubspotFormRegion, EMAIL: s.enquiryEmail, SITE_URL: s.siteUrl,
