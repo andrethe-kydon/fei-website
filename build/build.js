@@ -358,7 +358,7 @@ function renderCoursePage(template, n, c, content, s) {
     "@context": "https://schema.org", "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${s.siteUrl}/` },
-      { "@type": "ListItem", position: 2, name: "Courses", item: `${s.siteUrl}/#courses` },
+      { "@type": "ListItem", position: 2, name: "Programmes", item: `${s.siteUrl}/#courses` },
       { "@type": "ListItem", position: 3, name: fullTitle, item: canonical }],
   });
   const relCards = c.related.map(([rn, why]) => {
