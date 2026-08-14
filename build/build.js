@@ -16,6 +16,9 @@ const path = require("path");
 const ROOT = path.join(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 
+// Social share fallback for any page without its own banner.
+const OG_FALLBACK = "assets/brand/fei_logo_primary_1200.png";
+
 // ---------- content loading ----------
 /**
  * Turn a Sanity image asset reference into a CDN URL.
@@ -194,7 +197,7 @@ function renderCourseCards(content) {
   for (const [n, c] of catalogueEntries(content)) {
     const adoption = c.series === "Adoption";
     // The "ai" filter segment is derived from aiTags, never hardcoded, so the
-    // filter and the orange capability tags can never disagree. The audience
+    // filter and the blue capability tags can never disagree. The audience
     // segment is derived from series for the same reason.
     const segs = [
       ...c.tags.map(segMap),
@@ -540,7 +543,10 @@ function renderCoursePage(template, n, c, content, s) {
     TRAINER_SECTION: renderTrainers(c.trainers || []),
     PATHWAY_BLOCK: pathwayBlock(),
     BANNER_SRC: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
-    OG_IMAGE: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
+    // The banner path may not exist yet: in the page the placeholder shows
+    // instead, but a scraper has no such fallback, so og:image points at the
+    // logo until a purpose made share image exists.
+    OG_IMAGE: c.bannerUrl || OG_FALLBACK,
   });
 }
 
@@ -602,7 +608,7 @@ function renderWorkshopPage(template, n, w, s) {
     BROCHURE_HERO_BTN: brochureBtn(w.slug, "Download the brochure", "btn btn-ghost"),
     PATHWAY_BLOCK: pathwayBlock(),
     BANNER_SRC: w.bannerUrl || `assets/courses/${w.slug}.jpg`,
-    OG_IMAGE: w.bannerUrl || `assets/courses/${w.slug}.jpg`,
+    OG_IMAGE: w.bannerUrl || OG_FALLBACK,
   });
 }
 

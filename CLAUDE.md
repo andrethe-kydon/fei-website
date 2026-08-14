@@ -89,7 +89,25 @@ The brochure button appears only when `static/assets/brochures/<slug>.pdf` exist
 
 1. **British spelling** throughout (organisation, programme, recognised, licence as noun).
 2. **No dashes in prose.** No em dashes, no en dashes, and no hyphens used as punctuation. Use colons, full stops or lists. Hyphens survive only inside proper nouns and established compounds: human-in-the-loop, go-to-market, Without-You Test, n8n node names, Pte. Ltd.
-3. **Brand:** navy `#1C3557`, orange `#F15522` (matching the live kydongrp.com), with the light theme tokens defined at the top of `styles.css`. Purple `#5B2D86` is reserved for assessment materials and is not used on the website. Use the existing CSS custom properties; do not introduce new raw hex values.
+3. **Brand:** navy and blue, **not** Kydon orange. FEI has its own identity: the wordmark led lockup with navy "Future", blue "Edge", spaced INSTITUTE between two rules, and the tagline **Future Ready. Future Strong**. Kydon orange `#F15522` was retired from this site and must not come back; purple `#5B2D86` is reserved for assessment materials and is not used on the website. Use the CSS custom properties at the top of `styles.css`; do not introduce new raw hex values.
+
+   | Token | Hex | Use |
+   | --- | --- | --- |
+   | `--navy` | `#122C50` | Wordmark, headings, dark panels |
+   | `--navy-deep` | `#0C1F3A` | Footer, the dark end of panel gradients |
+   | `--ink` | `#16304F` | Body text default |
+   | `--blue` | `#2196CC` | **Decorative only.** Eyebrow labels, section rules, AI capability tags, list markers, active indicators |
+   | `--blue-dark` | `#1B7BA8` | **Interactive only.** Buttons, links, the sticky mobile bar, anything solid carrying white text |
+   | `--blue-light` | `#7FC4E2` | Accents that sit on a navy or dark panel |
+   | `--blue-dim` | `rgba(33,150,204,.12)` | Tint backgrounds and hover washes |
+   | `--slate` | `#5A6B82` | Secondary text |
+   | `--fog` | `#8494A8` | Muted labels and captions |
+   | `--line` | `#DDE4EC` | Borders and dividers |
+   | `--bg` / `--bg-alt` | `#F6F9FC` / `#EDF3F8` | Page and alternating section backgrounds |
+
+   **Why there are two blues.** The logo blue `--blue` measures 3.33:1 against white, which fails the WCAG AA 4.5:1 threshold for normal text and only passes for large text. `--blue-dark` measures 4.72:1 and passes. So the logo blue stays decorative, and everything clickable or carrying white text uses `--blue-dark`. Both read as the same colour family to a visitor. Never put white text on `--blue`, and never use `--blue-dark` for decoration where `--blue` belongs.
+
+   Brand assets live in `static/assets/brand/`. The header uses `fei_logo_secondary_notag.svg` (no tagline: it is illegible at 44px), the footer uses `fei_logo_mono_white.svg`, and `fei_icon_navy.svg` is the watermark behind card thumbnail numbers. The favicon set and `site.webmanifest` sit at the root of `static/` so they serve from the site root.
 4. **No fees, prices or unverified figures anywhere on the site.** Fees are not set. Enquiries route to `sales@kydongrp.com` and WhatsApp. Any number that appears must be verifiable (course hours, days, Kydon's published track record).
 5. **Funding language is exact:** FEI *is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG)*. Never imply courses are SkillsFuture claimable, WSQ accredited or subsidised. Never state or imply RTP registration is granted.
 6. **AOP 106 and AOP 101 Day 4 are awareness only:** never legal, tax or accounting advice. Keep the existing disclaimers intact.
@@ -103,10 +121,10 @@ The brochure button appears only when `static/assets/brochures/<slug>.pdf` exist
 - Assessment modes are only ever **Practical Exam, Project, Oral Interview**, and only ever on Operator courses. Pass threshold 70 percent, attendance 75 percent.
 - Operator certificates are **Certificates of Completion issued by Future Edge Institute**, awarded on evidence. Adoption workshops issue a **digital certificate of participation** from Future Edge Institute within 24 hours, recognising participation and output. Never blur the two.
 - Segment tags used for catalogue filtering: Operations, Marketing, Sales, Business Foundations. Adoption workshops carry segment tags too, but the filter belongs to the AOP catalogue only.
-- **AI capability tags** (`aiTags`, orange pills) are separate from the segment tags and are not filterable. They appear only where the curriculum genuinely teaches AI: AOP 101 to 104, and both AIA workshops. AOP 105 and 106 must not carry them unless a curriculum revision introduces real AI content. Do not add tags to make the catalogue look uniform.
+- **AI capability tags** (`aiTags`, blue pills) are separate from the segment tags and are not filterable. They appear only where the curriculum genuinely teaches AI: AOP 101 to 104, and both AIA workshops. AOP 105 and 106 must not carry them unless a curriculum revision introduces real AI content. Do not add tags to make the catalogue look uniform.
 - HubSpot portal `2457674` is live and correct. GA4 and Meta Pixel IDs are placeholders until supplied.
 - Conversion events already fire on: course enquiry clicks, course detail clicks, workshop detail clicks (tagged with the AIA code), WhatsApp clicks (tagged by placement), funding interest, corporate enquiry, and course outline opens. An enquiry click on an AIA card reports as `corporate_enquiry_click` with the workshop code, because that is what it is. Preserve these when editing; add matching events for any new call to action.
 
 ## Known pending items
 
-Domain (canonical URLs currently use a placeholder), Kydon logo file (text wordmark until then), GA4 and Meta Pixel IDs, HubSpot form GUID, course and workshop images, faculty section (trainers not confirmed), and a legal and policies page. `policies.html` still describes the assessed courses only: it needs a pass on the Adoption workshops (in house delivery, engagement pricing, cancellation by the client organisation) once the commercial terms are set.
+Domain (canonical URLs currently use a placeholder), GA4 and Meta Pixel IDs, HubSpot form GUID, course and workshop images, faculty section (trainers not confirmed), and a legal and policies page. A purpose made social share image at 1200 x 630 is still outstanding: `og:image` falls back to `assets/brand/fei_logo_primary_1200.png` on every page. The nine brochures in `static/assets/brochures/` still carry the retired orange and the old text wordmark, and the course image prompts still specify the old orange as the accent: both need regenerating against the new palette. `policies.html` still describes the assessed courses only: it needs a pass on the Adoption workshops (in house delivery, engagement pricing, cancellation by the client organisation) once the commercial terms are set.

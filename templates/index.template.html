@@ -8,12 +8,13 @@
 
 <!-- ============================================================
      OPEN GRAPH / SOCIAL
-     TODO: supply assets/og-image.jpg (1200 x 630) before launch
+     Falls back to the primary logo at 1200px. TODO: supply a purpose made
+     share image at 1200 x 630 and point og:image at it.
 ============================================================= -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Future Edge Institute | Train the AI Factory Workforce">
 <meta property="og:description" content="Eight programmes from Future Edge Institute: six assessed professional courses for individuals, and two AI adoption workshops for organisations. Built first, not lectured.">
-<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image" content="assets/brand/fei_logo_primary_1200.png">
 <meta property="og:url" content="{{SITE_URL}}/">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -103,7 +104,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%231C3557"/><path d="M8 24V8h14v4h-9v3h8v4h-8v5z" fill="%23F15522"/></svg>'>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -113,11 +118,7 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="#top" aria-label="Future Edge Institute home">
-      <span class="brand-mark">FE</span>
-      <span class="brand-text">
-        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
-        <span class="byline">A Kydon Group Company</span>
-      </span>
+      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="116" height="44">
     </a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
       <span></span><span></span><span></span>
@@ -522,7 +523,7 @@
   <div class="wrap">
     <div class="foot">
       <div>
-        <span class="wordmark">FUTURE EDGE <span>INSTITUTE</span></span>
+        <img class="foot-logo" src="assets/brand/fei_logo_mono_white.svg" alt="Future Edge Institute" width="100" height="50">
         <small>Future Edge Institute Private Limited is a wholly owned subsidiary of Kydon Holdings Pte. Ltd., Singapore. The education institute of the Kydon Group. Home of The AI Operator Professional Series.</small>
       </div>
       <ul>
