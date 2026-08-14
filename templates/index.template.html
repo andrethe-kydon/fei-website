@@ -90,12 +90,12 @@
   "@type": "FAQPage",
   "mainEntity": [
     {"@type":"Question","name":"Do I need prior experience or my own business to join?","acceptedAnswer":{"@type":"Answer","text":"No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one."}},
-    {"@type":"Question","name":"Are the courses SkillsFuture claimable?","acceptedAnswer":{"@type":"Answer","text":"Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). AOP courses are currently premium commercial programmes. You can register interest to be notified when funding support becomes available."}},
+    {"@type":"Question","name":"Are the courses SkillsFuture claimable?","acceptedAnswer":{"@type":"Answer","text":"Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). Operator Series courses are currently premium commercial programmes. You can register interest to be notified when funding support becomes available."}},
     {"@type":"Question","name":"What certificate do I receive?","acceptedAnswer":{"@type":"Answer","text":"A Certificate of Completion issued by Future Edge Institute, awarded on meeting all deliverable gates and passing every declared assessment for the course."}},
     {"@type":"Question","name":"What do I actually leave with?","acceptedAnswer":{"@type":"Answer","text":"Working assets, not notes. Depending on the course: tested AI agents, a live knowledge base, running n8n automations, a priced offer with a real pipeline, or a launch ready business, all built and assessed live during the course."}},
     {"@type":"Question","name":"How are classes delivered?","acceptedAnswer":{"@type":"Answer","text":"Full day, in person, hands on sessions of 8 hours (6.5 taught plus breaks), in small cohorts. Courses run on consecutive days or one day per week without any change to content."}},
     {"@type":"Question","name":"Do I need to buy any software?","acceptedAnswer":{"@type":"Answer","text":"No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop."}},
-    {"@type":"Question","name":"Can my company book a private run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any course can run privately for your team, at your office or our venue, and courses can be combined into capability pathways or scoped as a custom programme after a needs discovery session."}},
+    {"@type":"Question","name":"Can my company book a private run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any programme can run privately for your team, at your office or our venue, and programmes can be combined into capability pathways or scoped as a custom programme after a needs discovery session."}},
     {"@type":"Question","name":"Where do these courses come from?","acceptedAnswer":{"@type":"Answer","text":"They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates. The fourteen year story behind the method is on the about page."}}
   ]
 }
@@ -128,7 +128,7 @@
       <li><a href="#courses">Programmes</a></li>
       <li><a href="#pathway">The Pathways</a></li>
       <li><a href="#corporate">For Organisations</a></li>
-      <li><a class="nav-wa" id="nav-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>WhatsApp</a></li>
+      <li><a class="nav-wa" id="nav-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20programmes%20at%20Future%20Edge%20Institute."><span class="wa-dot"></span>WhatsApp</a></li>
       <li><a href="#contact" class="nav-cta">Enquire</a></li>
     </ul>
   </div>
@@ -299,7 +299,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">Who It Is For</span>
       <h2>Three ways people arrive here</h2>
-      <p>The courses are the same. What changes is where you apply them.</p>
+      <p>The programmes are the same. What changes is where you apply them.</p>
     </div>
     <div class="aud-grid">
       <article class="aud-card reveal">
@@ -318,17 +318,19 @@
         <a class="aud-start" href="#courses" data-filter-target="organisations">See the Adoption Series</a>
       </article>
     </div>
-    <p class="aud-team reveal"><a href="about.html#team">Meet the team behind Future Edge Institute</a></p>
+    <!-- Rendered only when a person is published: the team section, and so the
+         #team anchor, does not exist otherwise. See teamLink() in build.js. -->
+    {{TEAM_LINK}}
   </div>
 </section>
 
 <!-- ================= FOR ORGANISATIONS =================
      The two Adoption Series workshops lead the section, because they are what
-     an organisation buys first. Private runs of the Operator Series are the
-     secondary option below them, and the engagement flow covers both.
-     The workshop cards are rendered from content by renderAdoptionCards() in
-     build.js, so their copy, hours and group sizes cannot drift from the
-     catalogue cards above or from the workshop pages.
+     an organisation buys first. They are described here and pointed at, never
+     carded: their full cards are in the catalogue one screen above, and
+     rendering them twice on one page reads as a mistake.
+     Private runs of the Operator Series are the secondary option below, and
+     the engagement flow covers both.
      The id stays #corporate so every existing link keeps working.
 ============================================================= -->
 <section class="section corporate" id="corporate">
@@ -337,10 +339,7 @@
       <span class="eyebrow">For Organisations</span>
       <h2>Bring AI into your organisation</h2>
       <p>Two workshops take an organisation from talking about AI to using it. AI for Leaders gives the executive team the strategy, the investment case, the governance and a board ready 90 day roadmap. AI at Work gives every level of the organisation the hands on capability to act on it. Both are delivered in person, at your premises or ours, and both sit in <a href="#courses">the catalogue above</a>.</p>
-    </div>
-
-    <div class="org-grid">
-{{ADOPTION_CARDS}}
+      <p class="corp-pointer"><a href="#courses">Both workshops are in the programme catalogue above, with full details on their own pages.</a></p>
     </div>
 
     <div class="org-band">
@@ -417,12 +416,13 @@
     <div class="reveal">
       <span class="eyebrow">Fees and Funding</span>
       <h2>Straight answers on fees and subsidies</h2>
-      <p>AOP courses are premium commercial programmes. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG); until that registration is granted, courses are not eligible for SkillsFuture Credit or other government subsidies, and we will not pretend otherwise.</p>
-      <p>Fees, intake dates and corporate rates are shared on enquiry, and every course lists exactly what you will have built by the final day, so you can judge the value on the assets you leave with.</p>
+      <p>Operator Series courses are premium commercial programmes. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG); until that registration is granted, these courses are not eligible for SkillsFuture Credit or other government subsidies, and we will not pretend otherwise.</p>
+      <p>Adoption Series workshops are corporate training, delivered in house and priced per engagement. They are not government subsidised and are not expected to become so.</p>
+      <p>Fees, intake dates and corporate rates are shared on enquiry, and every programme lists exactly what you will have built by the final day, so you can judge the value on the assets you leave with.</p>
     </div>
     <div class="funding-card reveal">
       <h3>Be first to know when funding lands</h3>
-      <p>Leave your details and we will notify you the moment subsidy support becomes available for any AOP course.</p>
+      <p>Leave your details and we will notify you the moment subsidy support becomes available for any Operator Series course.</p>
       <a class="btn btn-solid" id="funding-cta" href="#contact">Register my interest</a>
     </div>
   </div>
@@ -442,7 +442,7 @@
       </details>
       <details class="faq-item">
         <summary>Are the courses SkillsFuture claimable?</summary>
-        <div class="faq-a">Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). AOP courses are currently premium commercial programmes. You can <a href="#contact">register interest</a> to be notified the moment funding support becomes available.</div>
+        <div class="faq-a">Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). Operator Series courses are currently premium commercial programmes. You can <a href="#contact">register interest</a> to be notified the moment funding support becomes available.</div>
       </details>
       <details class="faq-item">
         <summary>What certificate do I receive?</summary>
@@ -462,7 +462,7 @@
       </details>
       <details class="faq-item">
         <summary>Can my company book a private run?</summary>
-        <div class="faq-a">Yes. Any course can run privately for your team, at your office or our venue, and courses can be combined into capability pathways or scoped as a custom programme after a needs discovery session. See <a href="#corporate">For Organisations</a>.</div>
+        <div class="faq-a">Yes. Any programme can run privately for your team, at your office or our venue, and programmes can be combined into capability pathways or scoped as a custom programme after a needs discovery session. See <a href="#corporate">For Organisations</a>.</div>
       </details>
       <details class="faq-item">
         <summary>Where do these courses come from?</summary>
@@ -478,7 +478,7 @@
     <div class="contact-copy reveal">
       <span class="eyebrow">Enquire</span>
       <h2>Bring the AI Factory workforce to your team, or to yourself.</h2>
-      <p>Tell us which course caught your eye, or describe the capability you want to build. We run public intakes and private corporate runs, in Singapore and with international delivery partners.</p>
+      <p>Tell us which programme caught your eye, or describe the capability you want to build. We run public intakes and private corporate runs, in Singapore and with international delivery partners.</p>
       <p>Fees, upcoming intake dates and corporate arrangements are shared on enquiry.</p>
     </div>
     <div class="contact-card reveal">
@@ -512,8 +512,8 @@
         }
       </script>
 
-      <p class="form-fallback">Prefer email? Write to <a href="mailto:{{EMAIL}}?subject=AOP%20Course%20Enquiry">{{EMAIL}}</a>.</p>
-      <a class="contact-wa" id="contact-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses."><span class="wa-dot"></span>Or message us on WhatsApp for a faster reply</a>
+      <p class="form-fallback">Prefer email? Write to <a href="mailto:{{EMAIL}}?subject=Programme%20enquiry">{{EMAIL}}</a>.</p>
+      <a class="contact-wa" id="contact-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20programmes%20at%20Future%20Edge%20Institute."><span class="wa-dot"></span>Or message us on WhatsApp for a faster reply</a>
     </div>
   </div>
 </section>
@@ -524,7 +524,7 @@
     <div class="foot">
       <div>
         <img class="foot-logo" src="assets/brand/fei_logo_mono_white.svg" alt="Future Edge Institute" width="100" height="50">
-        <small>Future Edge Institute Private Limited is a wholly owned subsidiary of Kydon Holdings Pte. Ltd., Singapore. The education institute of the Kydon Group. Home of The AI Operator Professional Series.</small>
+        <small>Future Edge Institute Private Limited is a wholly owned subsidiary of Kydon Holdings Pte. Ltd., Singapore. The education institute of the Kydon Group. Home of The AI Operator Professional Series and The AI Adoption Series.</small>
       </div>
       <ul>
         <li><a href="about.html">About</a></li>
@@ -546,7 +546,7 @@
 
 <!-- Sticky mobile action bar -->
 <div class="sticky-bar" aria-hidden="false">
-  <a class="sb-wa" id="sb-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20AOP%20courses.">WhatsApp</a>
+  <a class="sb-wa" id="sb-wa" href="https://wa.me/{{WHATSAPP}}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20the%20programmes%20at%20Future%20Edge%20Institute.">WhatsApp</a>
   <a class="sb-enq" href="#contact">Enquire</a>
 </div>
 {{DIRECTORY_MODAL}}
@@ -589,9 +589,7 @@ document.querySelectorAll('[data-filter-target]').forEach(a=>a.addEventListener(
 // the event is chosen from the card's series: an Adoption card reports a
 // workshop detail click, and its enquiry reports as a corporate enquiry, because
 // that is what it is.
-// The organisations section leads with the same two workshops, in a shorter
-// card, so its links are bound by the same rule and report the same events.
-document.querySelectorAll('.course-grid .c-foot a, .org-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
+document.querySelectorAll('.course-grid .c-foot a').forEach(a=>a.addEventListener('click',()=>{
   const card=a.closest('.course-card');
   const code=card.querySelector('.c-code').textContent.trim();
   const adoption=card.dataset.series==='Adoption';

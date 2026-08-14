@@ -155,7 +155,7 @@ function waLink(number, code) {
   const text = encodeURIComponent(
     code
       ? `Hi, I'd like to know more about ${code} at Future Edge Institute.`
-      : "Hi, I'd like to know more about the AOP courses.");
+      : "Hi, I'd like to know more about the programmes at Future Edge Institute.");
   return `https://wa.me/${number}?text=${text}`;
 }
 
@@ -249,42 +249,6 @@ function renderCourseCards(content) {
       </article>`;
   }
   return out;
-}
-
-/**
- * The two Adoption Series workshops, leading the organisations section on the
- * homepage. They are rendered from the same content as the catalogue cards, so
- * the two presentations of a workshop cannot disagree.
- *
- * A shorter card than the catalogue one: no thumbnail and no deliverable list,
- * because the full card sits further up the same page. The summary stretches
- * instead, which is what `.org-grid .c-sub` is for. Participation based, so the
- * meta bar carries taught hours, days and group size, and never an assessment
- * mode or a pass threshold.
- */
-function renderAdoptionCards(content) {
-  return Object.entries(content.workshops)
-    .sort(([a], [b]) => Number(a) - Number(b))
-    .map(([n, w]) => {
-      const tags = w.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
-      const aiRow = aiTagRow(w.aiTags, "\n          ");
-      return `
-      <article class="course-card reveal" data-series="${w.series}">
-        <div class="c-body">
-          <div class="c-top">
-            <span class="c-code">${w.codePrefix} ${n}</span>
-            <div class="c-tags">${tags}</div>
-          </div>
-          <div class="c-series-row"><span class="c-series">${w.series} Series</span></div>
-          <h3>${w.title}: ${w.subtitle}</h3>
-          <p class="c-sub">${w.tileCopy || w.tag}</p>
-          ${aiRow}<div class="c-meta">
-            <span><b>${w.taughtHours}</b> taught hours</span><span><b>${w.days}</b> days</span><span>${w.groupSize}</span>
-          </div>
-          <div class="c-foot"><a class="cf-primary" href="${w.slug}.html">Full workshop details</a><a href="#contact">Enquire</a></div>
-        </div>
-      </article>`;
-    }).join("");
 }
 
 /**
@@ -402,6 +366,21 @@ function renderIntakes(intakes, code) {
   return `${tabs}\n      <div class="intake-grid">${cards}</div>`;
 }
 
+/** The people who appear in the team grid, in the order they render. */
+function teamPeople(team) {
+  return (team || []).filter(p => p && p.name);
+}
+
+/**
+ * The homepage line pointing at the team grid. It is gated on the same list the
+ * grid is built from: with no person published there is no team section, so no
+ * #team anchor, and the link would land at the top of the about page instead.
+ */
+function teamLink(team) {
+  if (!teamPeople(team).length) return "";
+  return `<p class="aud-team reveal"><a href="about.html#team">Meet the team behind Future Edge Institute</a></p>`;
+}
+
 /**
  * Initials for a photo placeholder: at most two, from the first and last word
  * of the name.
@@ -424,7 +403,7 @@ function initials(name) {
  * them rather than to an empty box.
  */
 function renderTeam(team) {
-  const people = (team || []).filter(p => p && p.name);
+  const people = teamPeople(team);
   if (!people.length) return "";
   const cards = people.map(p => `
       <article class="person-card reveal">
@@ -680,7 +659,7 @@ function formatUpdated(d) {
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
-    ADOPTION_CARDS: renderAdoptionCards(content),
+    TEAM_LINK: teamLink(content.team),
     DIRECTORY_LINK: directoryLink(),
     DIRECTORY_MODAL: directoryModal(s),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,

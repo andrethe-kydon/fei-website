@@ -449,6 +449,14 @@ header{
 
 /* ============ CORPORATE ============ */
 .corporate{background:#fff;border-top:1px solid var(--line)}
+/* The pointer up to the two workshop cards in the catalogue, in place of
+   repeating the cards themselves here. */
+.corp-pointer{margin-top:18px;font-size:.95rem}
+.corp-pointer a{
+  font-family:var(--display);font-weight:600;color:var(--blue-dark);
+  text-decoration:none;border-bottom:1px solid rgba(27,123,168,.35);padding-bottom:2px;
+}
+.corp-pointer a:hover{border-bottom-color:var(--blue-dark)}
 .corp-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:start}
 .corp-copy p{color:var(--slate);margin-top:16px;font-weight:400}
 .corp-copy .btn{margin-top:30px}
@@ -960,9 +968,6 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
   text-transform:uppercase;color:var(--navy);
   background:var(--bg-alt);border:1px solid var(--line);border-radius:999px;padding:4px 11px;
 }
-.org-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
-/* Two cards of unequal copy length still line their footers up. */
-.org-grid .c-sub{flex:1}
 .org-band{
   margin-top:56px;padding-top:48px;border-top:1px solid var(--line);
   display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:start;
@@ -971,7 +976,6 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .org-band-copy p{color:var(--slate);margin-top:16px;font-weight:400}
 .org-band-copy .btn{margin-top:30px}
 @media (max-width:880px){
-  .org-grid{grid-template-columns:1fr}
   .org-band{grid-template-columns:1fr;gap:38px;margin-top:44px;padding-top:38px}
 }
 /* Narrow screens: the code takes its own row so it stops being squeezed onto two
