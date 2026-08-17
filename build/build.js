@@ -219,7 +219,14 @@ function renderCourseCards(content) {
       : `<span><b>${c.hours}</b> hours</span>`;
     // AI capability tags: only the programmes that genuinely teach AI carry them,
     // and an empty list renders nothing at all, not an empty row.
-    const aiRow = aiTagRow(c.aiTags, "\n          ");
+    // In the catalogue the row is always present, even when a programme teaches
+    // no AI, so every card reserves the same height for it and the titles below
+    // stay on one line across a row. Empty is rendered as an empty row here,
+    // never on the course and workshop pages, where nothing sits below it to
+    // knock out of alignment.
+    const aiRow = c.aiTags && c.aiTags.length
+      ? aiTagRow(c.aiTags, "\n          ")
+      : `<div class="c-tags-ai"></div>\n          `;
     const thumbSrc = c.thumbUrl || `assets/courses/${c.slug}.jpg`;
     const kind = adoption ? "workshop" : "course";
     out += `
@@ -233,9 +240,9 @@ function renderCourseCards(content) {
         <div class="c-body">
           <div class="c-top">
             <span class="c-code">${c.codePrefix} ${n}</span>
+            <span class="c-series">${c.series} Series</span>
             <div class="c-tags">${tags}</div>
           </div>
-          <div class="c-series-row"><span class="c-series">${c.series} Series</span></div>
           <h3>${c.title}: ${c.subtitle}</h3>
           <p class="c-sub">${adoption ? (c.tileCopy || c.tag) : c.tag}</p>
           ${aiRow}<div class="c-meta">
