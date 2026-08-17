@@ -800,11 +800,6 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .policy-table-scroll{overflow-x:auto;margin-top:18px}
 .policy-doc .day-table td:first-child{font-family:var(--display);font-weight:600;color:var(--navy)}
 
-.tbc{
-  display:inline;background:var(--blue-dim);border:1px solid rgba(33,150,204,.35);
-  color:var(--blue);font-size:.86em;padding:2px 8px;border-radius:4px;
-}
-
 /* No sticky action bar on this page, so drop the space reserved for it. */
 @media (max-width:820px){body.policy-page{padding-bottom:0}}
 
