@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 460" role="img" aria-label="A diagram showing a knowledge base feeding AI agents, feeding an automated workflow with a human approval gate">
+<title>How an AI operator builds a system</title>
+<defs>
+<linearGradient id="feiPanel" x1="0" y1="0" x2="0.4" y2="1">
+<stop offset="0" stop-color="#16355F"/><stop offset="1" stop-color="#0B1D36"/>
+</linearGradient>
+<linearGradient id="feiBar" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#1B7BA8"/><stop offset="1" stop-color="#2196CC"/>
+</linearGradient>
+<radialGradient id="feiHalo"><stop offset="0" stop-color="#2196CC" stop-opacity="0.55"/><stop offset="1" stop-color="#2196CC" stop-opacity="0"/></radialGradient>
+<filter id="feiGlow" x="-60%" y="-60%" width="220%" height="220%">
+<feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<filter id="feiSoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
+<pattern id="feiGrid" width="34" height="34" patternUnits="userSpaceOnUse">
+<path d="M34 0H0V34" fill="none" stroke="#7FC4E2" stroke-opacity="0.07" stroke-width="1"/>
+</pattern>
+</defs>
+
+<rect x="8" y="8" width="544" height="444" rx="22" fill="url(#feiPanel)"/>
+<rect x="8" y="8" width="544" height="444" rx="22" fill="url(#feiGrid)"/>
+<ellipse cx="280" cy="150" rx="200" ry="120" fill="url(#feiHalo)" opacity="0.5"/>
+
+<g stroke="#7FC4E2" stroke-opacity="0.28" stroke-width="1.5" fill="none">
+<path id="feiK1" d="M280 344 C280 316 130 320 130 288"/>
+<path id="feiK2" d="M280 344 C280 316 230 320 230 288"/>
+<path id="feiK3" d="M280 344 C280 316 330 320 330 288"/>
+<path id="feiK4" d="M280 344 C280 316 430 320 430 288"/>
+<path id="feiA1" d="M130 232 C130 200 280 204 280 172"/>
+<path id="feiA2" d="M230 232 C230 200 280 204 280 172"/>
+<path id="feiA3" d="M330 232 C330 200 280 204 280 172"/>
+<path id="feiA4" d="M430 232 C430 200 280 204 280 172"/>
+</g>
+
+<g class="fei-motion" fill="#7FC4E2">
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0s"><mpath href="#feiK1"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.6s" repeatCount="indefinite" begin="0.5s"><mpath href="#feiK2"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.6s" repeatCount="indefinite" begin="1.1s"><mpath href="#feiK3"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.6s" repeatCount="indefinite" begin="1.7s"><mpath href="#feiK4"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.3s"><mpath href="#feiA1"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.2s"><mpath href="#feiA2"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.9s"><mpath href="#feiA3"/></animateMotion></circle>
+<circle r="3.5" opacity="0.95"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.8s"><mpath href="#feiA4"/></animateMotion></circle>
+</g>
+
+<g>
+<rect x="140" y="392" width="280" height="26" rx="8" fill="#16355F" opacity="0.55"/>
+<rect x="158" y="374" width="244" height="26" rx="8" fill="#1E4577" opacity="0.8"/>
+<rect x="176" y="356" width="208" height="28" rx="8" fill="#27568F"/>
+<rect x="192" y="366" width="60" height="4" rx="2" fill="#7FC4E2" opacity="0.7"/>
+<rect x="260" y="366" width="34" height="4" rx="2" fill="#7FC4E2" opacity="0.35"/>
+</g>
+<text x="280" y="440" text-anchor="middle" font-family="'Space Grotesk',system-ui,sans-serif" font-size="14" font-weight="500" fill="#9FBBD4">Your business knowledge</text>
+
+<g>
+<rect x="100" y="238" width="60" height="52" rx="12" fill="#16355F" stroke="#3C6A9E" stroke-width="1.5"/>
+<rect x="114" y="256" width="30" height="4" rx="2" fill="#2196CC"/><rect x="114" y="266" width="18" height="4" rx="2" fill="#3C6A9E"/>
+<rect x="200" y="238" width="60" height="52" rx="12" fill="#16355F" stroke="#3C6A9E" stroke-width="1.5"/>
+<rect x="214" y="256" width="30" height="4" rx="2" fill="#2196CC"/><rect x="214" y="266" width="18" height="4" rx="2" fill="#3C6A9E"/>
+<rect x="300" y="238" width="60" height="52" rx="12" fill="#16355F" stroke="#3C6A9E" stroke-width="1.5"/>
+<rect x="314" y="256" width="30" height="4" rx="2" fill="#2196CC"/><rect x="314" y="266" width="18" height="4" rx="2" fill="#3C6A9E"/>
+<rect x="400" y="238" width="60" height="52" rx="12" fill="#16355F" stroke="#3C6A9E" stroke-width="1.5"/>
+<rect x="414" y="256" width="30" height="4" rx="2" fill="#2196CC"/><rect x="414" y="266" width="18" height="4" rx="2" fill="#3C6A9E"/>
+<g class="fei-motion">
+<rect x="100" y="238" width="60" height="52" rx="12" fill="none" stroke="#2196CC" stroke-width="1.5" opacity="0"><animate attributeName="opacity" values="0;0.9;0" dur="3.2s" begin="0s" repeatCount="indefinite"/></rect>
+<rect x="200" y="238" width="60" height="52" rx="12" fill="none" stroke="#2196CC" stroke-width="1.5" opacity="0"><animate attributeName="opacity" values="0;0.9;0" dur="3.2s" begin="0.8s" repeatCount="indefinite"/></rect>
+<rect x="300" y="238" width="60" height="52" rx="12" fill="none" stroke="#2196CC" stroke-width="1.5" opacity="0"><animate attributeName="opacity" values="0;0.9;0" dur="3.2s" begin="1.6s" repeatCount="indefinite"/></rect>
+<rect x="400" y="238" width="60" height="52" rx="12" fill="none" stroke="#2196CC" stroke-width="1.5" opacity="0"><animate attributeName="opacity" values="0;0.9;0" dur="3.2s" begin="2.4s" repeatCount="indefinite"/></rect>
+</g>
+</g>
+<text x="280" y="318" text-anchor="middle" font-family="'Space Grotesk',system-ui,sans-serif" font-size="14" font-weight="500" fill="#9FBBD4">Agents that answer from it</text>
+
+<ellipse cx="280" cy="146" rx="150" ry="34" fill="#2196CC" opacity="0.16" filter="url(#feiSoft)"/>
+<rect x="130" y="118" width="300" height="56" rx="14" fill="#0E2846" stroke="#3C6A9E" stroke-width="1.5"/>
+<circle cx="180" cy="146" r="8" fill="#7FC4E2"/>
+<path d="M200 146 H244" stroke="#7FC4E2" stroke-width="2" stroke-opacity="0.5"/>
+<rect x="252" y="132" width="56" height="28" rx="9" fill="url(#feiBar)" filter="url(#feiGlow)"/>
+<path d="M266 146 l7 7 13 -14" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M316 146 H360" stroke="#7FC4E2" stroke-width="2" stroke-opacity="0.5"/>
+<circle cx="380" cy="146" r="8" fill="#7FC4E2"/>
+<g class="fei-motion">
+<circle cx="280" cy="146" r="30" fill="none" stroke="#2196CC" stroke-width="1.5" opacity="0"><animate attributeName="r" values="20;44" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0" dur="2.8s" repeatCount="indefinite"/></circle>
+</g>
+<text x="280" y="96" text-anchor="middle" font-family="'Space Grotesk',system-ui,sans-serif" font-size="14" font-weight="500" fill="#9FBBD4">A workflow that runs without you</text>
+
+<g>
+<rect x="352" y="52" width="112" height="28" rx="14" fill="#2196CC" fill-opacity="0.16" stroke="#2196CC" stroke-opacity="0.5"/>
+<text x="408" y="71" text-anchor="middle" font-family="'Space Grotesk',system-ui,sans-serif" font-size="12.5" font-weight="500" fill="#7FC4E2">You approve</text>
+<path d="M362 80 C336 96 316 112 300 124" stroke="#2196CC" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+</g>
+</svg>

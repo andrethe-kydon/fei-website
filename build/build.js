@@ -16,8 +16,19 @@ const path = require("path");
 const ROOT = path.join(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 
-// Social share fallback for any page without its own banner.
-const OG_FALLBACK = "assets/brand/fei_logo_primary_1200.png";
+/**
+ * Social sharing images.
+ *
+ * Crawlers fetch og:image from their own servers, with no page context, so a
+ * relative path is simply dropped and the link renders without a preview. Every
+ * og:image on the site is therefore absolute, built from siteUrl.
+ *
+ * The site image is 1200 x 630 JPEG, matching the og:image:width, height and
+ * type declared in the templates. WhatsApp in particular wants those before it
+ * will render a large preview.
+ */
+const OG_SITE_IMAGE = "assets/og-image.jpg";
+const siteOgImage = s => `${s.siteUrl}/${OG_SITE_IMAGE}`;
 
 // ---------- content loading ----------
 /**
@@ -33,6 +44,18 @@ function sanityImageUrl(img, projectId, dataset, width) {
   if (!assetId || !dims || !ext) return null;
   const base = `https://cdn.sanity.io/images/${projectId}/${dataset}/${assetId}-${dims}.${ext}`;
   return width ? `${base}?w=${width}&auto=format&fit=crop` : base;
+}
+
+/**
+ * The same image asset, cropped to the share ratio. A course banner is 16 by 5,
+ * so it is requested at 1200 x 630 rather than passed through at its own size:
+ * the width, height and type tags on the page then describe the file that is
+ * actually served. Format is pinned to JPEG rather than left to auto, for the
+ * same reason.
+ */
+function sanityOgImage(img, projectId, dataset) {
+  const url = sanityImageUrl(img, projectId, dataset);
+  return url ? `${url}?w=1200&h=630&fit=crop&fm=jpg` : null;
 }
 
 async function loadFromSanity(projectId, dataset) {
@@ -93,6 +116,7 @@ async function loadFromSanity(projectId, dataset) {
       disclaim: c.disclaimer || null,
       thumbUrl: sanityImageUrl(c.thumbnail, projectId, dataset, 1200),
       bannerUrl: sanityImageUrl(c.banner, projectId, dataset, 1600),
+      ogImageUrl: sanityOgImage(c.banner, projectId, dataset),
       // Adoption series fields. Empty on every Operator document.
       groupSize: c.groupSize || "",
       taughtHours: c.taughtHours || c.hours,
@@ -205,10 +229,10 @@ function renderCourseCards(content) {
       adoption ? "organisations" : "individuals",
     ].join(" ");
     const tags = c.tags.map(t => `<span class="c-tag">${t}</span>`).join("");
-    // An Operator course lists what participants build; an Adoption workshop
-    // lists what they leave with. Same slot, different field.
-    const takes = (adoption ? c.deliverables : c.builds)
-      .map(b => `<li>${b}</li>`).join("\n            ");
+    // Catalogue cards carry no takeaway list. Eight cards times three bullets was
+    // a quarter of the homepage's text for content that is already on each
+    // programme page, which the card's own buttons link to. `builds` and
+    // `deliverables` are still rendered in full there.
     // Assessment modes on Operator cards only. An Adoption workshop shows who is
     // in the room instead, because it declares no assessment at all.
     const thirdMeta = adoption
@@ -248,9 +272,6 @@ function renderCourseCards(content) {
           ${aiRow}<div class="c-meta">
             ${hoursMeta}<span><b>${c.days}</b> days</span>${thirdMeta}
           </div>
-          <ul class="c-take">
-            ${takes}
-          </ul>
           <div class="c-foot"><a class="cf-primary" href="${c.slug}.html">Full ${kind} details</a><a href="#contact">Enquire</a></div>
         </div>
       </article>`;
@@ -289,6 +310,60 @@ function pathwayBlock() {
 function brochureBtn(slug, label, cls) {
   if (!fs.existsSync(path.join(ROOT, "static/assets/brochures", `${slug}.pdf`))) return "";
   return `<a class="${cls} brochure-link" href="assets/brochures/${slug}.pdf" target="_blank" rel="noopener">${label}</a>`;
+}
+
+/**
+ * The animated hero illustration.
+ *
+ * Inlined rather than referenced, because its animation is SMIL and a browser
+ * ignores that when an SVG arrives through <img src>. The file on disk stays
+ * the single source: it is read here at build time, never copied into a
+ * template. Its animated elements carry .fei-motion, which the reduced motion
+ * rule in styles.css hides, leaving the static composition.
+ *
+ * Absent file, absent column: the hero falls back to the single column it had
+ * before, with no gap and no broken image.
+ */
+const HERO_ILLUSTRATION = "static/assets/brand/hero-illustration.svg";
+const HERO_NARROW_VIEWBOX = "70 8 420 444";
+
+function heroIllustration() {
+  const file = path.join(ROOT, HERO_ILLUSTRATION);
+  if (!fs.existsSync(file)) return "";
+  const svg = fs.readFileSync(file, "utf8").trim();
+  return `<div class="hero-art" aria-hidden="true">
+${heroIllustrationCopy(svg, "wide")}
+${heroIllustrationCopy(svg, "narrow")}
+    </div>`;
+}
+
+/**
+ * One of the two copies of the illustration. Both ship; a media query shows one.
+ * That costs about 7KB of duplicated inline markup and buys a crop that needs no
+ * script, on an element that is decorative.
+ *
+ * The narrow copy is cropped to the central column, and has its accessible name
+ * stripped: one diagram should not be described twice, and the wrapper is
+ * aria-hidden regardless.
+ *
+ * Its ids are also namespaced, which is not cosmetic. The animation elements
+ * address their targets by href, as in `<animate href="#feiA1">`, and a
+ * duplicated id resolves to the first match in the document. Without the
+ * suffix, the narrow copy's eight animations would drive the wide copy's nodes,
+ * so the phone would show a diagram with those parts frozen while the hidden
+ * copy animated twice.
+ */
+function heroIllustrationCopy(svg, variant) {
+  let out = svg.replace(/^<svg\b/, `<svg class="hero-art-${variant}" aria-hidden="true"`);
+  if (variant !== "narrow") return out;
+  return out
+    .replace(/viewBox="[^"]*"/, `viewBox="${HERO_NARROW_VIEWBOX}"`)
+    .replace(/\s*role="img"/, "")
+    .replace(/\s*aria-label="[^"]*"/, "")
+    .replace(/<title>[\s\S]*?<\/title>\s*/, "")
+    .replace(/id="([^"]+)"/g, 'id="$1-n"')
+    .replace(/href="#([^"]+)"/g, 'href="#$1-n"')
+    .replace(/url\(#([^)]+)\)/g, "url(#$1-n)");
 }
 
 /**
@@ -532,7 +607,7 @@ function renderCoursePage(template, n, c, content, s) {
     // The banner path may not exist yet: in the page the placeholder shows
     // instead, but a scraper has no such fallback, so og:image points at the
     // logo until a purpose made share image exists.
-    OG_IMAGE: c.bannerUrl || OG_FALLBACK,
+    OG_IMAGE: c.ogImageUrl || siteOgImage(s),
   });
 }
 
@@ -594,7 +669,7 @@ function renderWorkshopPage(template, n, w, s) {
     BROCHURE_HERO_BTN: brochureBtn(w.slug, "Download the brochure", "btn btn-ghost"),
     PATHWAY_BLOCK: pathwayBlock(),
     BANNER_SRC: w.bannerUrl || `assets/courses/${w.slug}.jpg`,
-    OG_IMAGE: w.bannerUrl || OG_FALLBACK,
+    OG_IMAGE: w.ogImageUrl || siteOgImage(s),
   });
 }
 
@@ -667,6 +742,7 @@ function formatUpdated(d) {
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
     TEAM_LINK: teamLink(content.team),
+    HERO_ILLUSTRATION: heroIllustration(),
     DIRECTORY_LINK: directoryLink(),
     DIRECTORY_MODAL: directoryModal(s),
     WHATSAPP: s.whatsappNumber, GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId,

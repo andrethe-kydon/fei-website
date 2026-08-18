@@ -77,16 +77,37 @@ header{
   border-bottom:1px solid var(--line);
 }
 .nav{display:flex;align-items:center;justify-content:space-between;height:84px}
-.brand{display:flex;align-items:center;text-decoration:none}
+/* Logo over tagline, as one link. */
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-decoration:none}
 /* The lockup is a single SVG, so the wordmark, the rules and the spacing are
    the artwork's own. Height is fixed and width is auto, so it can never be
    stretched by the flex row it sits in. */
-.brand-logo{height:56px;width:auto;display:block}
+.brand-logo{height:46px;width:auto;display:block}
+/* Live text rather than the tagline baked into the logo file, which renders at
+   about 4px at this size. Never wraps: a second line would push the header
+   taller than the row it sits in. */
+/* The logo file carries its own padding: at a 46px render the artwork sits
+   7.75px in from the left edge and stops 9px above the bottom. The negative
+   margin and the left padding cancel that, so the optical gap under the
+   INSTITUTE rule is 7px and the two left edges line up. Both insets scale with
+   the logo, so the 36px header below has its own pair of values. */
+.brand-tagline{
+  font-family:var(--display);font-size:9.5px;font-weight:400;color:var(--fog);
+  letter-spacing:.04em;white-space:nowrap;
+  margin-top:-3px;padding-left:7.5px;
+}
 .nav-links{display:flex;gap:30px;align-items:center;list-style:none}
 .nav-links a{
   text-decoration:none;font-size:.9rem;font-weight:500;color:var(--slate);
+  /* A label that breaks in two reads as two items. It never wraps: the row
+     tightens its gap instead, below. */
+  white-space:nowrap;
   transition:color .15s;
 }
+/* The tagline widened the brand block, so between the mobile breakpoint and
+   1080px the row needs a tighter gap to keep all six items on one line. Below
+   901px the mobile rules take over and set their own layout. */
+@media (max-width:1080px){.nav-links{gap:18px}}
 .nav-links a:hover,.nav-links a:focus-visible{color:var(--navy)}
 .nav-cta{
   background:var(--navy);color:#fff!important;
@@ -101,7 +122,9 @@ header{
 .menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
 .menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 @media (max-width:900px){
-  .brand-logo{height:46px}
+  .brand-logo{height:36px}
+  /* 36px logo: 6.07px left inset, 7.04px below the rule. */
+  .brand-tagline{margin-top:-1px;padding-left:6px}
   .menu-btn{display:block}
   .nav-links{
     position:absolute;top:84px;left:0;right:0;
@@ -134,6 +157,42 @@ header{
   mask-image:radial-gradient(900px 640px at 60% 0%, #000 30%, transparent 80%);
   -webkit-mask-image:radial-gradient(900px 640px at 60% 0%, #000 30%, transparent 80%);
   pointer-events:none;
+}
+/* One column by default, in DOM order: copy, illustration, actions. Row gap is
+   0 because each block carries its own top margin; a grid gap on top of those
+   would double the spacing. */
+.hero-grid{display:grid;grid-template-columns:1fr;row-gap:0;align-items:center}
+/* Two columns above 900px, and only when there is an illustration to put in the
+   second one: the file is optional, and an empty column would otherwise squeeze
+   the headline to half the wrap for nothing. A browser without :has() keeps the
+   single column, which is the safe side. The copy and the actions stack in
+   column one, the illustration spans both rows in column two. */
+@media (min-width:901px){
+  .hero-grid:has(.hero-art){grid-template-columns:1.05fr .95fr;column-gap:48px}
+  .hero-grid:has(.hero-art) .hero-copy{grid-column:1;grid-row:1}
+  .hero-grid:has(.hero-art) .hero-actions{grid-column:1;grid-row:2}
+  .hero-grid:has(.hero-art) .hero-art{grid-column:2;grid-row:1 / span 2;align-self:center}
+}
+/* The illustration is inline SVG, so it is sized here rather than by attributes
+   on the file. */
+.hero-art svg{width:100%;height:auto;max-width:560px;display:block}
+/* Two copies ship, one cropped, and a media query picks which is shown, so the
+   crop needs no script. The selectors carry the svg to beat the display:block
+   above, which would otherwise reveal both. */
+.hero-art svg.hero-art-narrow{display:none}
+@media (max-width:900px){
+  /* Between the lede and the buttons, centred. The explicit width matters: auto
+     margins stop a grid item stretching, so without it the box shrinks to the
+     300px default width of an SVG that carries no width attribute of its own. */
+  .hero-art{width:100%;max-width:460px;margin:24px auto 28px}
+  .hero-art svg{max-width:100%;margin:0 auto}
+}
+/* On a phone the cropped copy takes over: its viewBox holds the central column,
+   so the labels stay at a readable size instead of scaling to about 10px. */
+@media (max-width:600px){
+  .hero-art{max-width:300px;margin:18px auto 22px}
+  .hero-art svg.hero-art-wide{display:none}
+  .hero-art svg.hero-art-narrow{display:block}
 }
 .hero-badge{
   display:inline-flex;align-items:center;flex-wrap:wrap;gap:10px;max-width:100%;
@@ -427,13 +486,11 @@ header{
   padding:12px 0;margin-bottom:18px;
 }
 .c-meta b{color:var(--blue);font-weight:700}
-.c-take{list-style:none;flex:1}
-.c-take li{position:relative;padding-left:24px;font-size:.88rem;color:#41546E;margin-bottom:9px;font-weight:400}
-.c-take li::before{
-  content:"";position:absolute;left:0;top:7px;width:11px;height:11px;
-  border-radius:3px;background:linear-gradient(135deg,var(--blue),var(--blue-light));
-}
-.c-foot{margin-top:20px}
+/* margin-top:auto, not a fixed margin: the takeaway list used to be the flex
+   spacer that held the buttons at the foot of the card, so with the list gone
+   the footer has to do that itself or the buttons sit at a different height in
+   every card of a row. */
+.c-foot{margin-top:auto;padding-top:20px}
 .c-foot a{
   display:inline-block;text-decoration:none;font-family:var(--display);
   font-weight:600;font-size:.88rem;color:var(--navy);
@@ -639,6 +696,10 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .faq-item[open] summary::after{transform:rotate(45deg)}
 .faq-item .faq-a{padding:0 22px 20px;font-size:.92rem;color:var(--slate);font-weight:400}
 .faq-item .faq-a a{color:var(--blue-dark);font-weight:600}
+/* The pointer to the questions answered on the other page. Set quieter than the
+   list itself: it is a signpost, not a sixth question. */
+.faq-more{max-width:820px;margin-top:22px;font-size:.86rem;color:var(--slate);font-weight:400}
+.faq-more a{color:var(--blue-dark);font-weight:600}
 
 /* ============ WHATSAPP + STICKY MOBILE BAR ============ */
 .nav-wa{
@@ -819,7 +880,12 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 /* ============ THE OPERATOR DIFFERENCE (navy contrast band) ============
    The homepage's dark band. It carries the weight the page lost when the
    market context section, the old dark band, moved to the about page, and it
-   follows the same conventions as .pain there. */
+   follows the same conventions as .pain there.
+
+   Everything inside it is set for a navy ground: the dots run white to blue
+   light with navy numerals, the labels are white, the supporting lines and the
+   lead are #9FBBD4, and the closing line is blue light. Do not lighten the
+   section to suit an element; adapt the element. */
 .difference{
   background:
     radial-gradient(900px 460px at 88% -10%, rgba(127,196,226,.16), transparent 55%),
@@ -827,43 +893,122 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
   color:#fff;
 }
 .difference .section-head h2{color:#fff}
-.difference .section-head p{color:#B9C6D8}
+.difference .section-head p{color:#9FBBD4}
+/* Brand rule: on navy the accent is blue light, never the brand blue. The base
+   .eyebrow is --blue, which is why both of these overrides have to exist. */
 .difference .eyebrow{color:var(--blue-light)}
 .difference .eyebrow::before{background:var(--blue-light)}
-.diff-lead{max-width:760px;margin-bottom:44px}
-.diff-lead p{color:#B9C6D8;font-size:1.02rem}
-.diff-lead p + p{margin-top:16px}
-.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.diff-card{
-  display:flex;gap:18px;align-items:flex-start;
-  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);
-  border-radius:var(--radius);
-  padding:26px 28px;transition:border-color .2s,background .2s;
+.diff-lead{max-width:720px;margin-bottom:56px;color:#9FBBD4;font-size:1.05rem}
+
+.flow{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:0 24px}
+.flow-step{position:relative}
+/* The rail is drawn as three segments, one per gap between dots, rather than one
+   line across the whole list. Each dot sits at the start of its grid column, not
+   its centre, so a single line placed by percentage cannot land on the first and
+   last dot centres: it ends up offset by half a column. Each segment instead
+   runs from its own dot's edge to the next dot's edge, where left:46px is the
+   dot's width and right:-24px is the column gap. Every segment carries the
+   gradient step between its own two dot colours, so the three read as one
+   continuous white to blue light rail. */
+.flow-step::before{
+  content:"";position:absolute;left:46px;right:-24px;top:21.5px;height:3px;
+  border-radius:2px;
 }
-.diff-card:hover{border-color:rgba(127,196,226,.55);background:rgba(255,255,255,.09)}
-.diff-card h3{font-family:var(--display);font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:6px}
-.diff-card p{font-size:.92rem;color:#B9C6D8;font-weight:400}
-/* The numbered marker, which had no rule of its own before this band existed. */
-.diff-card .f-icon{
-  flex:0 0 42px;width:42px;height:42px;border-radius:12px;
-  background:rgba(127,196,226,.18);border:1px solid rgba(127,196,226,.5);
+.flow-step:last-child::before{display:none}
+.flow-step:nth-child(1)::before{background:linear-gradient(90deg,#FFFFFF,#C4E3F3)}
+.flow-step:nth-child(2)::before{background:linear-gradient(90deg,#C4E3F3,#A2D3E9)}
+.flow-step:nth-child(3)::before{background:linear-gradient(90deg,#A2D3E9,#7FC4E2)}
+.flow-dot{
+  width:46px;height:46px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--display);font-weight:700;font-size:1rem;color:var(--blue-light);
+  /* All four fills are light, so every numeral is navy. A white numeral would
+     vanish on the first dot and sit near 1.9:1 on the last. */
+  font-family:var(--display);font-weight:700;font-size:1rem;color:var(--navy);
+  position:relative;z-index:1;margin-bottom:22px;
 }
-@media (max-width:820px){.diff-grid{grid-template-columns:1fr}}
-/* The base band is light: it is also the "how we teach" block on a workshop
-   page. Only the copy inside the navy section is inverted. */
+/* Four stops running white to --blue-light, the same progression the rail
+   carries, so the sequence reads before any label does. The two middle values
+   are interpolated steps rather than palette colours, which is why they are raw
+   hex: only the far end exists as a token. Brand rule for a navy panel, so the
+   brand blue appears nowhere in here. */
+.flow-step:nth-child(1) .flow-dot{background:#FFFFFF}
+.flow-step:nth-child(2) .flow-dot{background:#C4E3F3}
+.flow-step:nth-child(3) .flow-dot{background:#A2D3E9}
+.flow-step:nth-child(4) .flow-dot{background:var(--blue-light)}
+.flow-body h3{
+  font-family:var(--display);font-size:1rem;font-weight:700;
+  color:#fff;line-height:1.3;margin-bottom:8px;
+}
+.flow-body p{font-size:.88rem;color:#9FBBD4;font-weight:400;line-height:1.55}
+.flow-close{
+  margin-top:52px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.16);
+  font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:1.05rem;line-height:1.5;color:var(--blue-light);max-width:780px;
+}
+@media (max-width:820px){
+  /* The rail turns vertical and runs down the left, each step's copy beside its
+     own dot. Same three segments, rotated: each runs from the bottom of its dot
+     to the top of the next one, so the rail stops at the last dot rather than
+     trailing on to the end of that step's copy. */
+  .flow{grid-template-columns:minmax(0,1fr);gap:0}
+  .flow-step{
+    display:grid;grid-template-columns:46px minmax(0,1fr);gap:0 20px;
+    padding:0 0 30px;
+  }
+  .flow-step:last-child{padding-bottom:0}
+  .flow-step::before{
+    left:21.5px;right:auto;top:46px;bottom:0;width:3px;height:auto;
+  }
+  .flow-step:nth-child(1)::before{background:linear-gradient(180deg,#FFFFFF,#C4E3F3)}
+  .flow-step:nth-child(2)::before{background:linear-gradient(180deg,#C4E3F3,#A2D3E9)}
+  .flow-step:nth-child(3)::before{background:linear-gradient(180deg,#A2D3E9,#7FC4E2)}
+  .flow-dot{margin-bottom:0}
+  .flow-body{padding-top:9px}
+}
+/* The light band on a workshop page, where it is the "how we teach" block. It
+   was also the closing statement of the section above until that became the
+   flow-close line, so these are now its only use. */
 .statement-band{
   margin-top:44px;border:1px solid rgba(33,150,204,.35);background:var(--blue-dim);
   border-radius:var(--radius);padding:34px 36px;
 }
 .statement-band p{font-family:var(--display);font-size:1.15rem;font-weight:500;line-height:1.5;color:var(--navy)}
-.difference .statement-band{
-  border-color:rgba(127,196,226,.45);
-  background:linear-gradient(120deg,rgba(127,196,226,.16),rgba(255,255,255,.05));
-}
-.difference .statement-band p{color:#fff}
 @media (max-width:640px){.statement-band{padding:26px 24px}.statement-band p{font-size:1.02rem}}
+
+/* ============ WHAT YOU LEAVE WITH ============
+   Five asset cards. White band so the cards, which are --bg, read as cards
+   against it, and so it alternates with the --bg-alt band above.
+------------------------------------------------------------ */
+.leavewith{background:#fff;border-top:1px solid var(--line)}
+/* Five across, then three, then two. Five is deliberate at the top size: these
+   are the five assets, and splitting them 3 and 2 on a wide screen would imply
+   two groups. */
+.asset-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
+@media (max-width:900px){.asset-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:600px){.asset-grid{grid-template-columns:repeat(2,1fr)}}
+.asset-card{
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 22px;transition:border-color .2s,box-shadow .2s,transform .25s;
+}
+.asset-card:hover{
+  border-color:rgba(33,150,204,.4);box-shadow:var(--shadow-sm);
+  transform:translateY(-3px);
+}
+/* currentColor carries the navy, so each glyph needs only its blue parts named:
+   .gs strokes, .gf fills. Set in the stylesheet rather than as presentation
+   attributes on the shapes, because var() in a presentation attribute is not
+   dependably supported. */
+.asset-glyph{
+  width:48px;height:48px;display:block;margin-bottom:18px;
+  color:var(--navy);stroke-linejoin:round;
+}
+.asset-glyph .gs{stroke:var(--blue)}
+.asset-glyph .gf{fill:var(--blue)}
+.asset-card h3{
+  font-family:var(--display);font-size:.98rem;font-weight:700;
+  color:var(--navy);line-height:1.3;margin-bottom:7px;
+}
+.asset-card p{font-size:.86rem;color:var(--slate);font-weight:400;line-height:1.55}
 
 /* ============ WHO IT IS FOR ============ */
 .audience{background:var(--bg-alt);border-top:1px solid var(--line)}
@@ -1177,3 +1322,23 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
   .hero{padding:40px 0 0}
   .hero-stats{margin-top:48px}
 }
+
+/* ------------------------------------------------------------
+   REDUCED MOTION
+   The hero illustration animates in SMIL, which the global
+   animation:none rule above cannot reach. Its moving elements
+   carry .fei-motion, so hiding them leaves the static
+   composition intact for anyone who has asked their system to
+   suppress animation.
+------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .fei-motion { display: none; }
+}
+
+/* On a phone the tagline stays, one step smaller, so the lockup still reads as
+   a lockup beside the hamburger. */
+@media (max-width:600px){.brand-tagline{font-size:8.5px}}
+
+/* The hero lede's closing sentence, dropped on a phone where the illustration
+   carries the same point and the paragraph would otherwise run to five lines. */
+@media (max-width:600px){.lede-tail{display:none}}

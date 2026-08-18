@@ -8,15 +8,26 @@
 
 <!-- ============================================================
      OPEN GRAPH / SOCIAL
-     Falls back to the primary logo at 1200px. TODO: supply a purpose made
-     share image at 1200 x 630 and point og:image at it.
+     og:image must be absolute: a crawler fetches it from its own
+     server with no page context, so a relative path yields no
+     preview at all. The URL is built from siteUrl, and the file is
+     static/assets/og-image.jpg at 1200 x 630, which is what the
+     width, height and type tags below declare.
 ============================================================= -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Future Edge Institute | Train the AI Factory Workforce">
+<!-- Deliberately not the same as <title>. The page title is written for search
+     results, this one for a WhatsApp, LinkedIn or Facebook card, where the
+     tagline does more work than the positioning line. -->
+<meta property="og:title" content="Future Edge Institute | Future Ready. Future Strong">
 <meta property="og:description" content="Eight programmes from Future Edge Institute: six assessed professional courses for individuals, and two AI adoption workshops for organisations. Built first, not lectured.">
-<meta property="og:image" content="assets/brand/fei_logo_primary_1200.png">
+<meta property="og:image" content="{{SITE_URL}}/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="Future Edge Institute. We train people to operate AI.">
 <meta property="og:url" content="{{SITE_URL}}/">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{SITE_URL}}/assets/og-image.jpg">
 
 <!-- ============================================================
      TRACKING LAYER
@@ -89,14 +100,11 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {"@type":"Question","name":"Do I need prior experience or my own business to join?","acceptedAnswer":{"@type":"Answer","text":"No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one."}},
     {"@type":"Question","name":"Are the courses SkillsFuture claimable?","acceptedAnswer":{"@type":"Answer","text":"Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). Operator Series courses are currently premium commercial programmes. You can register interest to be notified when funding support becomes available."}},
     {"@type":"Question","name":"What certificate do I receive?","acceptedAnswer":{"@type":"Answer","text":"A Certificate of Completion issued by Future Edge Institute, awarded on meeting all deliverable gates and passing every declared assessment for the course."}},
     {"@type":"Question","name":"What do I actually leave with?","acceptedAnswer":{"@type":"Answer","text":"Working assets, not notes. Depending on the course: tested AI agents, a live knowledge base, running n8n automations, a priced offer with a real pipeline, or a launch ready business, all built and assessed live during the course."}},
     {"@type":"Question","name":"How are classes delivered?","acceptedAnswer":{"@type":"Answer","text":"Full day, in person, hands on sessions of 8 hours (6.5 taught plus breaks), in small cohorts. Courses run on consecutive days or one day per week without any change to content."}},
-    {"@type":"Question","name":"Do I need to buy any software?","acceptedAnswer":{"@type":"Answer","text":"No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop."}},
-    {"@type":"Question","name":"Can my company book a private run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any programme can run privately for your team, at your office or our venue, and programmes can be combined into capability pathways or scoped as a custom programme after a needs discovery session."}},
-    {"@type":"Question","name":"Where do these courses come from?","acceptedAnswer":{"@type":"Answer","text":"They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates. The fourteen year story behind the method is on the about page."}}
+    {"@type":"Question","name":"Can my company book a private run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any programme can run privately for your team, at your office or our venue, and programmes can be combined into capability pathways or scoped as a custom programme after a needs discovery session."}}
   ]
 }
 </script>
@@ -118,7 +126,12 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="#top" aria-label="Future Edge Institute home">
-      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="116" height="44">
+      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="121" height="46">
+      <!-- The logo file is the version without the tagline, because a baked in
+           tagline renders at about 4px at header size. This is the tagline set
+           as live text instead. aria-hidden: the img alt already names the
+           brand, and a screen reader should not read it twice. -->
+      <span class="brand-tagline" aria-hidden="true">Future Ready. Future Strong</span>
     </a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
       <span></span><span></span><span></span>
@@ -136,17 +149,32 @@
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="top">
-  <div class="wrap">
-    <span class="hero-badge"><span class="pulse"></span>For <b>individuals</b> and <b>organisations</b> · Singapore</span>
-    <h1>We train people to <span class="grad">operate AI</span>.<br>Not just talk about it.</h1>
-    <p class="lede">Future Edge Institute builds the AI Factory workforce: working adults who run AI agents, knowledge bases and automated workflows as everyday business assets. Every programme ends with something built, tested and working.</p>
-    <div class="hero-ctas">
-      <a class="btn btn-solid" href="#courses">Browse the programmes</a>
-      <a class="btn btn-ghost" href="#corporate">For organisations</a>
+  <!-- Three grid children, in the order a phone should read them: copy, then
+       illustration, then the calls to action. Above 900px the grid puts the copy
+       and the actions in column one and lifts the illustration into column two,
+       so the same DOM serves both without duplicating anything. -->
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="hero-badge"><span class="pulse"></span>For <b>individuals</b> and <b>organisations</b> · Singapore</span>
+      <h1>We train people to <span class="grad">operate AI</span>.<br>Not just talk about it.</h1>
+      <!-- The closing sentence is hidden below 600px: the illustration makes the
+           same point, and the full paragraph is five lines on a phone. -->
+      <p class="lede">Future Edge Institute builds the AI Factory workforce: working adults who run AI agents, knowledge bases and automated workflows as everyday business assets. <span class="lede-tail">Every programme ends with something built, tested and working.</span></p>
     </div>
-    <!-- Rendered only when static/assets/brochures/programme-directory.pdf is on
-         disk, so it is never a dead link. See directoryLink() in build.js. -->
-    {{DIRECTORY_LINK}}
+    <!-- The illustration is inlined, not linked: its animation is SMIL, which
+         browsers ignore inside <img src>. build.js reads the file from
+         static/assets/brand/ at build time, so the file on disk stays the one
+         source. Absent file, absent column: see heroIllustration() in build.js. -->
+    {{HERO_ILLUSTRATION}}
+    <div class="hero-actions">
+      <div class="hero-ctas">
+        <a class="btn btn-solid" href="#courses">Browse the programmes</a>
+        <a class="btn btn-ghost" href="#corporate">For organisations</a>
+      </div>
+      <!-- Rendered only when static/assets/brochures/programme-directory.pdf is on
+           disk, so it is never a dead link. See directoryLink() in build.js. -->
+      {{DIRECTORY_LINK}}
+    </div>
   </div>
   <div class="hero-stats" role="list">
     <!-- The em is the unit, not the figure: on the navy strip the figures are
@@ -255,42 +283,114 @@
       <span class="eyebrow">Why This Matters</span>
       <h2>Every business is leaking hours. Most people cannot see where.</h2>
     </div>
-    <div class="diff-lead reveal">
-      <p>Think about the work that quietly eats a week. The quotation that takes three days because someone has to dig out the last five like it. The enquiry that arrives on Friday evening and gets answered on Monday afternoon. The report rebuilt by hand every month. The answer that only one person in the company actually knows, so everything stops when they are on leave.</p>
-      <p>Everyone can feel that this is wasteful. Very few people can look at it and say precisely which parts a machine should carry, which parts still need a human decision, and how to build the thing that closes the gap. That is the skill this series teaches, and it is worth considerably more than knowing how to prompt a chatbot.</p>
+    <p class="diff-lead reveal">Very few people can look at a process and say which parts a machine should carry, which still need a human, and how to build the thing that closes the gap. That is the skill.</p>
+    <!-- The four steps of the method, as one progression rather than four cards.
+         An ordered list, because the order is the point: you cannot decide what
+         a machine should hold before you have seen where the hours go. The rail
+         and the dot colours run navy to blue in step order, so the sequence
+         reads before any of the labels are. Two short lines per step, never a
+         paragraph: the detail belongs on the programme pages. -->
+    <ol class="flow reveal">
+      <li class="flow-step">
+        <span class="flow-dot" aria-hidden="true">1</span>
+        <div class="flow-body">
+          <h3>See the work</h3>
+          <p>Take a real process apart.</p>
+          <p>Follow where the hours go.</p>
+        </div>
+      </li>
+      <li class="flow-step">
+        <span class="flow-dot" aria-hidden="true">2</span>
+        <div class="flow-body">
+          <h3>Decide what the machine holds</h3>
+          <p>Which model suits which job.</p>
+          <p>Where a human still approves.</p>
+        </div>
+      </li>
+      <li class="flow-step">
+        <span class="flow-dot" aria-hidden="true">3</span>
+        <div class="flow-body">
+          <h3>Build it</h3>
+          <p>Agents on your own knowledge.</p>
+          <p>Workflows that run end to end.</p>
+        </div>
+      </li>
+      <li class="flow-step">
+        <span class="flow-dot" aria-hidden="true">4</span>
+        <div class="flow-body">
+          <h3>Prove it holds</h3>
+          <p>Stress tested and costed.</p>
+          <p>You know how it fails first.</p>
+        </div>
+      </li>
+    </ol>
+    <p class="flow-close reveal">Put all four together and you are not someone who uses AI at work: you are the person a business calls in.</p>
+  </div>
+</section>
+
+<!-- ================= WHAT YOU LEAVE WITH =================
+     The five assets the programmes produce, as glyphs rather than prose. This is
+     the "what do I actually leave with" FAQ answer promoted into the page, since
+     it is the question the catalogue cards used to answer with three bullets
+     each. Each glyph is inline SVG, geometric and drawn from the palette: no
+     icon font, no external request, and it inherits currentColor for the navy.
+============================================================= -->
+<section class="section leavewith" id="outcomes">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">What You Leave With</span>
+      <h2>Working assets, not notes</h2>
+      <p>Every programme ends with something built, tested and running. Which of these you leave with depends on the programme you take.</p>
     </div>
-    <div class="diff-grid">
-      <article class="diff-card reveal">
-        <div class="f-icon">01</div>
-        <div>
-          <h3>You learn to see the work</h3>
-          <p>How to take a real process apart, follow where the hours actually go, and separate the steps that need judgement from the steps that only need doing.</p>
-        </div>
+    <div class="asset-grid">
+      <article class="asset-card reveal">
+        <svg class="asset-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <rect x="10" y="14" width="28" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <circle class="gf" cx="18" cy="24" r="2.75"/>
+          <circle class="gf" cx="30" cy="24" r="2.75"/>
+          <path d="M18 30.5h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path class="gs" d="M24 8v6" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h3>AI agents</h3>
+        <p>Tested agents that do a defined job on your own material.</p>
       </article>
-      <article class="diff-card reveal">
-        <div class="f-icon">02</div>
-        <div>
-          <h3>You learn to decide what a machine should hold</h3>
-          <p>Which model suits which job, what your business knows that the AI needs access to, and where to put an approval gate so nothing reaches a customer unchecked. Knowing what to keep human is as much of the skill as knowing what to automate.</p>
-        </div>
+      <article class="asset-card reveal">
+        <svg class="asset-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <ellipse cx="24" cy="13" rx="14" ry="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M10 13v22c0 2.8 6.3 5 14 5s14-2.2 14-5V13" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path class="gs" d="M10 24c0 2.8 6.3 5 14 5s14-2.2 14-5" fill="none" stroke-width="2.5"/>
+        </svg>
+        <h3>A knowledge base</h3>
+        <p>A live store your agents answer from, in your own voice.</p>
       </article>
-      <article class="diff-card reveal">
-        <div class="f-icon">03</div>
-        <div>
-          <h3>You learn to build it</h3>
-          <p>Agents that work from your business knowledge rather than generic guesswork. Workflows that run a process end to end. Systems that keep running when you are not watching.</p>
-        </div>
+      <article class="asset-card reveal">
+        <svg class="asset-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <circle cx="13" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <circle class="gs" cx="35" cy="24" r="5" fill="none" stroke-width="2.5"/>
+          <circle cx="13" cy="34" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path class="gs" d="M18 16.5l12 5.5M18 31.5l12-5.5" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Running automations</h3>
+        <p>Workflows that carry a process end to end without you.</p>
       </article>
-      <article class="diff-card reveal">
-        <div class="f-icon">04</div>
-        <div>
-          <h3>You learn to prove it holds</h3>
-          <p>Stress test it, cost it, and know how it fails before it fails on a client.</p>
-        </div>
+      <article class="asset-card reveal">
+        <svg class="asset-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path d="M12 10h24v28H12z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M18 19h12M18 25h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path class="gs" d="M18 31h7" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+          <circle class="gf" cx="33" cy="31" r="4.5"/>
+        </svg>
+        <h3>A priced offer</h3>
+        <p>An offer validated with real prospects and a live pipeline.</p>
       </article>
-    </div>
-    <div class="statement-band reveal">
-      <p>Put those together and you are not someone who uses AI at work. You are the person who is called in when a team is drowning in manual work, who can diagnose the problem, design the system, build it, and show that it runs. Inside a company, that is the person who becomes indispensable. On your own, that is what an AI consultant does, and it is work businesses are actively paying for.</p>
+      <article class="asset-card reveal">
+        <svg class="asset-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path d="M24 8l12 9v21H12V17z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <path class="gs" d="M20 38V26h8v12" fill="none" stroke-width="2.5"/>
+        </svg>
+        <h3>A launch ready business</h3>
+        <p>Registered, able to take payment, and stress tested on the numbers.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -418,9 +518,9 @@
     <div class="reveal">
       <span class="eyebrow">Fees and Funding</span>
       <h2>Straight answers on fees and subsidies</h2>
-      <p>Operator Series courses are premium commercial programmes. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG); until that registration is granted, these courses are not eligible for SkillsFuture Credit or other government subsidies, and we will not pretend otherwise.</p>
-      <p>Adoption Series workshops are corporate training, delivered in house and priced per engagement. They are not government subsidised and are not expected to become so.</p>
-      <p>Fees, intake dates and corporate rates are shared on enquiry, and every programme lists exactly what you will have built by the final day, so you can judge the value on the assets you leave with.</p>
+      <!-- The SSG sentence is verbatim and must stay that way: it is the exact
+           wording the funding claim rests on. See house rules in CLAUDE.md. -->
+      <p>Operator Series courses are premium commercial programmes, and Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG); until that registration is granted, these courses are not eligible for SkillsFuture Credit or other government subsidies. Adoption Series workshops are corporate training, priced per engagement and not government subsidised, and fees, intake dates and corporate rates are shared on enquiry, with each <a href="#courses">programme page</a> setting out exactly what you will have built by the final day.</p>
     </div>
     <div class="funding-card reveal">
       <h3>Be first to know when funding lands</h3>
@@ -437,11 +537,10 @@
       <span class="eyebrow">Questions, Answered</span>
       <h2>What people ask before they enrol</h2>
     </div>
+    <!-- Five questions, deliberately. Prerequisites, software and where the
+         courses came from moved to about.html, which is where a reader who wants
+         that level of detail is already heading. -->
     <div class="faq-list reveal">
-      <details class="faq-item">
-        <summary>Do I need prior experience or my own business to join?</summary>
-        <div class="faq-a">No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one.</div>
-      </details>
       <details class="faq-item">
         <summary>Are the courses SkillsFuture claimable?</summary>
         <div class="faq-a">Not yet. Future Edge Institute is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG). Operator Series courses are currently premium commercial programmes. You can <a href="#contact">register interest</a> to be notified the moment funding support becomes available.</div>
@@ -459,18 +558,11 @@
         <div class="faq-a">Full day, in person, hands on sessions of 8 hours (6.5 taught plus breaks), in small cohorts. Courses run on consecutive days or one day per week without any change to content.</div>
       </details>
       <details class="faq-item">
-        <summary>Do I need to buy any software?</summary>
-        <div class="faq-a">No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop.</div>
-      </details>
-      <details class="faq-item">
         <summary>Can my company book a private run?</summary>
         <div class="faq-a">Yes. Any programme can run privately for your team, at your office or our venue, and programmes can be combined into capability pathways or scoped as a custom programme after a needs discovery session. See <a href="#corporate">For Organisations</a>.</div>
       </details>
-      <details class="faq-item">
-        <summary>Where do these courses come from?</summary>
-        <div class="faq-a">They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates. The fourteen year story behind the method is on our <a href="about.html">about page</a>.</div>
-      </details>
     </div>
+    <p class="faq-more">Prerequisites, the software you will need and where these courses came from are answered on the <a href="about.html#faq">about page</a>.</p>
   </div>
 </section>
 

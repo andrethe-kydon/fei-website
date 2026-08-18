@@ -19,8 +19,13 @@
 <meta property="og:title" content="{{CODE}} · {{FULL_TITLE}} | Future Edge Institute">
 <meta property="og:description" content="{{META_DESC}}">
 <meta property="og:image" content="{{OG_IMAGE}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="Future Edge Institute. We train people to operate AI.">
 <meta property="og:url" content="{{CANONICAL}}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{OG_IMAGE}}">
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{GA4_ID}}"></script>
 <script>
@@ -59,7 +64,12 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="index.html" aria-label="Future Edge Institute home">
-      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="116" height="44">
+      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="121" height="46">
+      <!-- The logo file is the version without the tagline, because a baked in
+           tagline renders at about 4px at header size. This is the tagline set
+           as live text instead. aria-hidden: the img alt already names the
+           brand, and a screen reader should not read it twice. -->
+      <span class="brand-tagline" aria-hidden="true">Future Ready. Future Strong</span>
     </a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
       <span></span><span></span><span></span>

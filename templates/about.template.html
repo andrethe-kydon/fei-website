@@ -9,8 +9,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="About | Future Edge Institute">
 <meta property="og:description" content="Future Edge Institute was founded by the team behind Kydon Group, who spent fourteen years building the systems Singapore's institutions learn on">
-<meta property="og:image" content="assets/brand/fei_logo_primary_1200.png">
+<meta property="og:image" content="{{SITE_URL}}/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="Future Edge Institute. We train people to operate AI.">
 <meta property="og:url" content="{{SITE_URL}}/about.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{SITE_URL}}/assets/og-image.jpg">
 <!-- GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{GA4_ID}}"></script>
 <script>
@@ -32,6 +38,19 @@
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{META_PIXEL_ID}}&ev=PageView&noscript=1" alt=""></noscript>
 <!-- HubSpot tracking -->
 <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/{{HS_PORTAL}}.js"></script>
+<!-- The three questions that moved off the homepage FAQ. Their FAQPage entries
+     move with them, so no two pages claim the same question. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Do I need prior experience or my own business to join?","acceptedAnswer":{"@type":"Answer","text":"No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one."}},
+    {"@type":"Question","name":"Do I need to buy any software?","acceptedAnswer":{"@type":"Answer","text":"No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop."}},
+    {"@type":"Question","name":"Where do these courses come from?","acceptedAnswer":{"@type":"Answer","text":"They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates."}}
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -47,7 +66,12 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="index.html" aria-label="Future Edge Institute home">
-      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="116" height="44">
+      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="121" height="46">
+      <!-- The logo file is the version without the tagline, because a baked in
+           tagline renders at about 4px at header size. This is the tagline set
+           as live text instead. aria-hidden: the img alt already names the
+           brand, and a screen reader should not read it twice. -->
+      <span class="brand-tagline" aria-hidden="true">Future Ready. Future Strong</span>
     </a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
       <span></span><span></span><span></span>
@@ -160,6 +184,35 @@
     <div class="pain-answer reveal">
       <p>Our answer is the <em>AI Factory workforce</em>: individuals trained to design, run and maintain AI workflows and models as dependable working assets, in their job or in a business of their own.</p>
     </div>
+  </div>
+</section>
+
+<!-- ================= PRACTICAL QUESTIONS =================
+     The three detail questions moved off the homepage FAQ, which now carries the
+     five a prospect asks before enrolling. These are the ones a reader asks once
+     they are already interested enough to be on this page.
+============================================================= -->
+<section class="section faq" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Practical Questions</span>
+      <h2>Before you enrol</h2>
+    </div>
+    <div class="faq-list reveal">
+      <details class="faq-item">
+        <summary>Do I need prior experience or my own business to join?</summary>
+        <div class="faq-a">No. There are no prerequisites beyond basic computer literacy and a laptop. Participants without their own venture build on Brightleaf Bookkeeping, a fully prepared reference business supplied in every course starter pack, so every exercise runs on real material from day one.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to buy any software?</summary>
+        <div class="faq-a">No. Courses run on free tier accounts of the platforms taught, such as Claude, Notion and n8n, set up before Day 1 via joining instructions. You need your own laptop.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Where do these courses come from?</summary>
+        <div class="faq-a">They are extracted from Kydon's flagship five month AI entrepreneurship programme, the One Person Company Launchpad, rebuilt as six standalone professional courses with the same build first method and assessment gates. The fourteen year story behind the method is <a href="#story">above on this page</a>.</div>
+      </details>
+    </div>
+    <p class="faq-more">Fees, certificates, delivery and private runs are answered on the <a href="index.html#faq">homepage FAQ</a>.</p>
   </div>
 </section>
 

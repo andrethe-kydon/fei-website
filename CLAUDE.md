@@ -45,13 +45,35 @@ Build and check: `npm run build`, then `npx serve dist`. A correct build reports
 | `aop101.html` to `aop106.html` | `course.template.html` | One per Operator course, rendered from content. |
 | `aia101.html` to `aia102.html` | `workshop.template.html` | One per Adoption workshop, rendered from content. |
 
-**Homepage section order:** hero, trust strip, marquee, catalogue (`#courses`), pathway (`#pathway`), the operator difference (`#difference`), who it is for (`#audience`), organisations (`#corporate`), funding (`#funding`), FAQ (`#faq`), contact (`#contact`).
+**Homepage section order:** hero, trust strip, marquee, catalogue (`#courses`), pathway (`#pathway`), why this matters (`#difference`), what you leave with (`#outcomes`), who it is for (`#audience`), organisations (`#corporate`), funding (`#funding`), FAQ (`#faq`), contact (`#contact`).
+
+**The homepage is deliberately light on prose.** It carries the argument in visuals and reaches the catalogue quickly; the detail lives on the programme pages and on `about.html`. Three rules follow from that, and reversing any of them puts the text back:
+
+- `#difference` is a **four step flow**, not prose: one lead sentence, four steps of a bold label and two short lines, one closing line. Two short lines per step, never a paragraph.
+- `#outcomes` is the five assets as glyphs and one line each. It is the promoted answer to "what do I actually leave with".
+- The FAQ is **five questions**. Prerequisites, software and provenance moved to `about.html#faq`. Each page carries the `FAQPage` JSON-LD for its own questions only, so no two pages claim the same question: move the schema entry whenever you move a question.
+
+`#difference` is a **navy** band, on the same gradient as `.pain` on the about page. Everything inside it is set for a navy ground, and the brand rule for a dark panel holds throughout: **blue light for accents, never the brand blue.** The base `.eyebrow` is `--blue`, so the section has to override it.
+
+| Element | Colour |
+| --- | --- |
+| Heading, step labels | `#FFFFFF` |
+| Eyebrow, closing italic line | `--blue-light` |
+| Lead sentence, the two lines under each step | `#9FBBD4` |
+| Step dots, in order | `#FFFFFF`, `#C4E3F3`, `#A2D3E9`, `--blue-light` |
+| Dot numerals, all four | `--navy` |
+| Rail | gradient `#FFFFFF` to `--blue-light` |
+| Hairline rule under the closing line | `rgba(255,255,255,.16)` |
+
+The dot fills are all light, so every numeral is `--navy`: worst case is 7.26:1 on the last dot, where white would sit near 1.9:1. If an element does not work on the band, adapt the element. Do not lighten the section.
 
 The organisations section keeps the id `#corporate` from when it was the corporates section, so every existing link into it still works. It covers **private delivery only**: the three engagement formats and the four step discover, design, deliver, evidence flow, because that consultative process is what corporate buyers respond to. It does not list the AIA workshops, which live in the catalogue with everything else; it carries one line pointing readers up to them.
 
 **Catalogue filter row**, in order: All programmes, For individuals, For organisations, a decorative divider, then AI Skills, Operations, Marketing, Sales, Business Foundations. The divider is a 1px rule, `aria-hidden`, and takes no tab stop, so the tablist still reads as eight tabs. The row scrolls horizontally on narrow screens; it is not meant to wrap.
 
-**Card composition is driven by `series`, and the meta bar is the part that matters.** An Operator card shows hours, days and assessment modes. An Adoption card shows taught hours, days and group size, and must never show assessment modes or a pass threshold. Operator cards list `builds`, Adoption cards list `deliverables`. Keep these derived from `series` so they cannot drift as content changes.
+**Card composition is driven by `series`, and the meta bar is the part that matters.** An Operator card shows hours, days and assessment modes. An Adoption card shows taught hours, days and group size, and must never show assessment modes or a pass threshold. Keep these derived from `series` so they cannot drift as content changes.
+
+**Catalogue cards carry no takeaway list.** Eight cards times three bullets was about a quarter of the homepage's text, for content already on each programme page. `builds` and `deliverables` are still rendered in full there, and the card's own buttons link to them: do not put the list back on the card. The card's footer uses `margin-top:auto` to hold the buttons at the foot, which is the job the list used to do.
 
 The **story** (`#story`) and **market context** (`#why`) sections live on `about.html` and must not be reintroduced to the homepage: the homepage reaches the catalogue quickly by design. Anything linking to them points at `about.html`, never `index.html#story` or `index.html#why`.
 
