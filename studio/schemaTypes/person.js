@@ -23,12 +23,15 @@ export default {
       type: 'text',
       rows: 4,
     },
+    // A figure rather than a plain image: hotspot comes with it, and so do alt
+    // text and the licence record. Switch "Library photo" off on every portrait.
+    // A real name over a purchased face misrepresents the institute, and this is
+    // the one field on the site where that mistake is possible.
     {
       name: 'photo',
       title: 'Photo',
-      description: 'Square works best: it is cropped to 1:1. Leave empty and a branded placeholder carrying the initials is used instead.',
-      type: 'image',
-      options: {hotspot: true},
+      description: 'A real photograph of this person, never a library photograph. Square works best: it is cropped to 1:1. Leave empty and a branded placeholder carrying the initials is used instead.',
+      type: 'figure',
     },
     {
       name: 'order',

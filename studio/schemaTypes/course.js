@@ -168,7 +168,16 @@ export default {
       preview: {select: {title: 'why'}},
     }]},
     {name: 'disclaimer', title: 'Disclaimer (awareness not advice), optional', type: 'text', rows: 3},
-    {name: 'banner', title: 'Banner image (1600 x 640)', type: 'image'},
+    // A figure rather than a plain image, so the banner carries its own alt
+    // text, licence record and focal point. The stored shape is unchanged, so
+    // sanityImageUrl() in build.js keeps reading banner.asset._ref exactly as
+    // before and the eight banners already uploaded are untouched.
+    {
+      name: 'banner',
+      title: 'Banner image (1600 x 640)',
+      description: 'Keyed to what this course actually produces, not a generic classroom: a node based automation canvas for AOP 104, a person presenting to a seated panel for AOP 106, an assistant interface on screen for AOP 102. If the photograph would suit any training company in the world, it is the wrong photograph.',
+      type: 'figure',
+    },
     {name: 'thumbnail', title: 'Card thumbnail (1200 x 750)', type: 'image'},
   ],
   orderings: [{title: 'Course number', name: 'numberAsc', by: [{field: 'number', direction: 'asc'}]}],

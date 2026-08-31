@@ -2,6 +2,10 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {schemaTypes} from './schemaTypes'
 
+// One document each, edited in place: never created from the "create new" menu,
+// never deleted, never duplicated.
+const SINGLETONS = ['siteSettings', 'homePage', 'aboutPage']
+
 export default defineConfig({
   name: 'default',
   title: 'Future Edge Institute',
@@ -24,6 +28,27 @@ export default defineConfig({
                   .schemaType('siteSettings')
                   .documentId('siteSettings')
                   .title('Site Settings')
+              ),
+            // Page photography. Neither page has its copy in the CMS: these
+            // documents exist so the images on them are editable without the
+            // prose following them in.
+            S.listItem()
+              .title('Homepage')
+              .id('homePage')
+              .child(
+                S.document()
+                  .schemaType('homePage')
+                  .documentId('homePage')
+                  .title('Homepage')
+              ),
+            S.listItem()
+              .title('About Page')
+              .id('aboutPage')
+              .child(
+                S.document()
+                  .schemaType('aboutPage')
+                  .documentId('aboutPage')
+                  .title('About Page')
               ),
             S.divider(),
             // One document type, two series, two lists. Keeping them apart in
@@ -76,8 +101,8 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     templates: (prev) => [
-      // Hide Site Settings from the "create new" menu: there is only ever one
-      ...prev.filter((t) => t.schemaType !== 'siteSettings'),
+      // Hide the singletons from the "create new" menu: there is only ever one
+      ...prev.filter((t) => !SINGLETONS.includes(t.schemaType)),
       // One template per series, so creating a document from inside either list
       // lands in that list instead of defaulting to Operator.
       {
@@ -96,9 +121,9 @@ export default defineConfig({
   },
 
   document: {
-    // Remove the delete action for the settings singleton
+    // Remove the delete and duplicate actions from the singletons
     actions: (prev, {schemaType}) =>
-      schemaType === 'siteSettings'
+      SINGLETONS.includes(schemaType)
         ? prev.filter(({action}) => action !== 'delete' && action !== 'duplicate')
         : prev,
   },

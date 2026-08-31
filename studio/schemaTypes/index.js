@@ -1,5 +1,11 @@
+import aboutPage from './aboutPage'
 import course from './course'
+import figure from './figure'
+import heroMedia from './heroMedia'
+import homePage from './homePage'
 import person from './person'
 import siteSettings from './siteSettings'
 
-export const schemaTypes = [course, person, siteSettings]
+// Objects first, then documents. figure and heroMedia are referenced by the
+// documents below, and heroMedia references figure in turn.
+export const schemaTypes = [figure, heroMedia, aboutPage, course, homePage, person, siteSettings]
