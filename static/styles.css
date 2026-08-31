@@ -1342,3 +1342,95 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 /* The hero lede's closing sentence, dropped on a phone where the illustration
    carries the same point and the paragraph would otherwise run to five lines. */
 @media (max-width:600px){.lede-tail{display:none}}
+
+/* ============ PAGE PHOTOGRAPHY ============
+   Four optional placements, driven from Sanity. Every rule here is reached only
+   through a class the build emits when a photograph is actually set, so with
+   none set not one of them applies and the pages are unchanged.
+
+   The two veiled placements sit on a photograph rather than a flat panel, so
+   the brand rule for a dark ground holds inside them: white for the heading,
+   blue light for the eyebrow, and white at opacity for body text. Neither veil
+   introduces a colour: both are --navy-deep at an opacity, which is why the
+   about hero can take its strength straight from the Studio as --veil.
+------------------------------------------------------------ */
+.photo{margin:0}
+.photo img{
+  display:block;width:100%;height:auto;
+  border-radius:var(--radius);background:var(--navy);
+}
+.photo figcaption{
+  margin-top:14px;padding-left:12px;border-left:3px solid var(--blue);
+  font-size:.82rem;line-height:1.55;color:var(--slate);
+}
+
+/* --- For Organisations, homepage --- */
+.corp-photo{margin-top:8px}
+
+/* --- Enquiry band, homepage ---
+   The section is otherwise light: navy heading, slate body, a white card. Under
+   a veil none of that reads, so the modifier adapts the section's own text for
+   the dark ground. The card stays white, which is correct on navy and is what
+   the summary card already does elsewhere. */
+.contact.has-photo{position:relative;isolation:isolate;background:var(--navy-deep)}
+.contact.has-photo .contact-bg{
+  position:absolute;inset:0;z-index:-2;
+  width:100%;height:100%;object-fit:cover;border-radius:0;
+}
+.contact.has-photo::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:var(--navy-deep);opacity:.88;
+}
+.contact.has-photo h2{color:var(--white)}
+.contact.has-photo .contact-copy p{color:rgba(255,255,255,.86)}
+.contact.has-photo .eyebrow{color:var(--blue-light)}
+.contact.has-photo .eyebrow::before{background:var(--blue-light)}
+
+/* --- About hero, split ---
+   The photograph joins the existing children through the grid, so the crumb,
+   the heading and the lede keep their place in the DOM and nothing is wrapped
+   in a new element to make room for it. */
+.policy-head.hero-split .wrap{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,38%);
+  gap:48px;align-items:center;
+}
+.policy-head.hero-split .crumb,
+.policy-head.hero-split h1,
+.policy-head.hero-split .policy-lede{grid-column:1}
+.policy-head.hero-split .hero-photo{grid-column:2;grid-row:1 / span 3}
+
+/* --- About hero, full width ---
+   --veil is written onto the section by the build, from the Studio, as a
+   fraction. The fallback matches the schema default. */
+.policy-head.hero-full{
+  position:relative;isolation:isolate;
+  background:var(--navy-deep);border-bottom:0;
+}
+.policy-head.hero-full .hero-bg{
+  position:absolute;inset:0;z-index:-2;
+  width:100%;height:100%;object-fit:cover;border-radius:0;
+}
+.policy-head.hero-full::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:var(--navy-deep);opacity:var(--veil,.72);
+}
+.policy-head.hero-full h1{color:var(--white)}
+.policy-head.hero-full .policy-lede{color:rgba(255,255,255,.86)}
+.policy-head.hero-full .crumb,
+.policy-head.hero-full .crumb a{color:rgba(255,255,255,.74)}
+
+/* --- Story photo, about page --- */
+.story.has-photo .wrap{
+  display:grid;grid-template-columns:minmax(0,1fr) 300px;
+  gap:52px;align-items:start;
+}
+.story.has-photo .section-head,
+.story.has-photo .timeline{grid-column:1}
+.story-photo{grid-column:2;grid-row:1 / span 2}
+
+@media (max-width:900px){
+  .policy-head.hero-split .wrap{grid-template-columns:1fr;gap:30px}
+  .policy-head.hero-split .hero-photo{grid-column:1;grid-row:auto}
+  .story.has-photo .wrap{grid-template-columns:1fr;gap:0}
+  .story-photo{grid-column:1;grid-row:auto;margin-bottom:34px}
+}

@@ -37,13 +37,97 @@ const siteOgImage = s => `${s.siteUrl}/${OG_SITE_IMAGE}`;
  * Returns null when there is no image, so the build falls back to
  * the local static path and then to the branded placeholder.
  */
-function sanityImageUrl(img, projectId, dataset, width) {
+function sanityImageUrl(img, projectId, dataset, opts) {
   const ref = img && img.asset && img.asset._ref;
   if (!ref) return null;
   const [, assetId, dims, ext] = ref.split("-");
   if (!assetId || !dims || !ext) return null;
   const base = `https://cdn.sanity.io/images/${projectId}/${dataset}/${assetId}-${dims}.${ext}`;
-  return width ? `${base}?w=${width}&auto=format&fit=crop` : base;
+  // The fourth argument was a width and still may be. It is now also an options
+  // object, {w, h}, so one function serves both the single sized course images
+  // and the page photography, which needs a height to crop to a ratio and a
+  // rung for every srcset width. There is deliberately no second URL builder:
+  // everything that makes a Sanity CDN URL goes through here.
+  const o = typeof opts === "number" ? { w: opts } : (opts || {});
+  if (!o.w && !o.h) return base;
+  const q = [];
+  if (o.w) q.push(`w=${Math.round(o.w)}`);
+  if (o.h) q.push(`h=${Math.round(o.h)}`);
+  // The focal point, and only when an editor has actually set one. A figure
+  // with no hotspot keeps the centred crop it has always had, which is what
+  // holds the course banners and thumbnails already published byte identical.
+  const hs = img.hotspot;
+  if (hs && typeof hs.x === "number" && typeof hs.y === "number") {
+    q.push(`fp-x=${+hs.x.toFixed(4)}`, `fp-y=${+hs.y.toFixed(4)}`, "crop=focalpoint");
+  }
+  q.push("auto=format", "fit=crop");
+  return `${base}?${q.join("&")}`;
+}
+
+/**
+ * Placement geometry. Each page photograph has one fixed shape, so its ratio,
+ * its srcset rungs and its sizes attribute live here rather than being restated
+ * at each call site.
+ */
+const PHOTO = {
+  corporate: { ratio: 16 / 9, widths: [640, 960, 1280], sizes: "(min-width:900px) 1100px, 100vw" },
+  cta: { ratio: 32 / 9, widths: [1024, 1440, 1920], sizes: "100vw" },
+  heroSplit: { ratio: 4 / 5, widths: [480, 720, 960], sizes: "(min-width:880px) 38vw, 100vw" },
+  heroFull: { ratio: 21 / 9, widths: [1024, 1440, 1920], sizes: "100vw" },
+  story: { ratio: 4 / 5, widths: [400, 600, 800], sizes: "(min-width:900px) 300px, 100vw" },
+};
+
+/**
+ * A figure from Sanity resolved into everything the markup needs, or null when
+ * no photograph is set, which is the state every one of these ships in. This
+ * maps a placement onto sanityImageUrl; it builds no URLs of its own.
+ */
+function sanityFigure(fig, projectId, dataset, place) {
+  const w = place.widths[place.widths.length - 1];
+  const h = Math.round(w / place.ratio);
+  const src = sanityImageUrl(fig, projectId, dataset, { w, h });
+  if (!src) return null;
+  return {
+    src,
+    srcset: place.widths
+      .map(x => `${sanityImageUrl(fig, projectId, dataset, { w: x, h: Math.round(x / place.ratio) })} ${x}w`)
+      .join(", "),
+    sizes: place.sizes,
+    width: w, height: h,
+    alt: fig.alt || "", caption: fig.caption || "",
+  };
+}
+
+/**
+ * The two photography documents, resolved into the internal shape. Both are
+ * singletons that may not exist at all: an absent document, an absent field and
+ * an empty field are the same thing here, and all three render nothing.
+ *
+ * The hero photograph is cropped to its treatment, portrait beside the copy and
+ * wide behind it, so the ratio follows the layout rather than the other way
+ * round. A treatment chosen without a photograph falls back to no photograph,
+ * because the Studio allows that combination as a warning rather than an error.
+ */
+function pagePhotos(home, about, projectId, dataset) {
+  const fig = (f, place) => sanityFigure(f, projectId, dataset, place);
+  const h = home || {}, a = about || {};
+  const heroLayout = (a.hero && a.hero.layout) || "none";
+  const heroPhoto = heroLayout === "none" ? null
+    : fig(a.hero && a.hero.photo, heroLayout === "full" ? PHOTO.heroFull : PHOTO.heroSplit);
+  return {
+    homePage: {
+      corporatePhoto: fig(h.corporatePhoto, PHOTO.corporate),
+      ctaPhoto: fig(h.ctaPhoto, PHOTO.cta),
+    },
+    aboutPage: {
+      hero: {
+        layout: heroPhoto ? heroLayout : "none",
+        veil: typeof (a.hero && a.hero.veil) === "number" ? a.hero.veil : 72,
+        photo: heroPhoto,
+      },
+      storyPhoto: fig(a.storyPhoto, PHOTO.story),
+    },
+  };
 }
 
 /**
@@ -61,8 +145,13 @@ function sanityOgImage(img, projectId, dataset) {
 async function loadFromSanity(projectId, dataset) {
   // Trainers are references to person documents, so they are dereferenced in
   // the query and arrive in the same shape the local content file uses.
+  // homePage and aboutPage hold page photography and nothing else. Neither is
+  // projected: like siteSettings they are taken whole, because the figures are
+  // read as raw asset references rather than dereferenced.
   const query = encodeURIComponent(`{
     "settings": *[_type == "siteSettings"][0],
+    "homePage": *[_type == "homePage"][0],
+    "aboutPage": *[_type == "aboutPage"][0],
     "courses": *[_type == "course"] | order(number asc){
       ...,
       "trainers": trainers[]->{name, role, bio, photo}
@@ -132,7 +221,10 @@ async function loadFromSanity(projectId, dataset) {
     name: p.name, role: p.role, bio: p.bio || "",
     photoUrl: sanityImageUrl(p.photo, projectId, dataset, 600),
   }));
-  return { settings: result.settings, courses, workshops, team };
+  return {
+    settings: result.settings, courses, workshops, team,
+    ...pagePhotos(result.homePage, result.aboutPage, projectId, dataset),
+  };
 }
 
 function loadLocal() {
@@ -163,7 +255,19 @@ function splitSeries(content) {
     };
     (doc.series === "Adoption" ? workshops : courses)[n] = doc;
   }
-  return { ...content, courses, workshops };
+  // Page photography comes from Sanity only: content.json carries the keys so
+  // the two sources stay in step, but a local build has no CDN to serve from,
+  // so both documents normalise to empty and every placement renders nothing.
+  const home = content.homePage || {};
+  const about = content.aboutPage || {};
+  return {
+    ...content, courses, workshops,
+    homePage: { corporatePhoto: null, ctaPhoto: null, ...home },
+    aboutPage: {
+      storyPhoto: null, ...about,
+      hero: { layout: "none", veil: 72, photo: null, ...(about.hero || {}) },
+    },
+  };
 }
 
 // ---------- rendering ----------
@@ -192,6 +296,84 @@ function aiTagRow(aiTags, after = "") {
   if (!aiTags || !aiTags.length) return "";
   const pills = aiTags.map(t => `<span class="c-tag-ai">${t}</span>`).join("");
   return `<div class="c-tags-ai">${pills}</div>${after}`;
+}
+
+/**
+ * Page photography.
+ *
+ * Four placements, every one of them optional. Each renderer returns the empty
+ * string when its photograph is not set, and each token in the templates abuts
+ * the markup that follows it, so an empty placement leaves the page byte for
+ * byte what it was. That is the property the whole feature rests on: the schema
+ * and the rendering ship now, the photographs arrive whenever they arrive, and
+ * nothing changes on the site until they do.
+ */
+function photoImg(p, cls, { decorative = false, eager = false } = {}) {
+  // A photograph behind a veil carries nothing a screen reader needs, and an
+  // empty alt is how you say so. Everything else uses the alt from the Studio.
+  const alt = decorative ? "" : p.alt;
+  return `<img${cls ? ` class="${cls}"` : ""} src="${esc(p.src)}" srcset="${esc(p.srcset)}"`
+    + ` sizes="${esc(p.sizes)}" width="${p.width}" height="${p.height}" alt="${esc(alt)}"`
+    + ` loading="${eager ? "eager" : "lazy"}" decoding="async">`;
+}
+
+/** A caption, or nothing. Never an empty figcaption taking up space. */
+function photoCaption(p) {
+  return p.caption ? `\n        <figcaption>${esc(p.caption)}</figcaption>` : "";
+}
+
+/** The For Organisations photograph, between the section head and the band. */
+function corporatePhoto(p) {
+  if (!p) return "";
+  return `<figure class="photo corp-photo reveal">
+        ${photoImg(p)}${photoCaption(p)}
+      </figure>
+
+    `;
+}
+
+/**
+ * The enquiry band photograph. This section is light: navy heading, slate body,
+ * a white card. A photograph behind it only works under a veil, and under a
+ * veil none of those colours do, so the section carries a modifier that adapts
+ * its own text for a dark ground rather than the photograph being lightened
+ * until it stops being a photograph. Both halves are absent together.
+ */
+const contactMod = p => (p ? " has-photo" : "");
+function ctaPhoto(p) {
+  if (!p) return "";
+  return `${photoImg(p, "contact-bg", { decorative: true })}\n  `;
+}
+
+/**
+ * The about page hero, in three treatments. Split puts the photograph beside
+ * the copy through the grid, so the existing children keep their place in the
+ * DOM and no wrapper is introduced. Full puts it behind, under a veil whose
+ * strength is set in the Studio. No photograph renders the header exactly as it
+ * is today.
+ */
+const aboutHeroMod = h => (h.layout === "split" ? " hero-split" : h.layout === "full" ? " hero-full" : "");
+const aboutHeroStyle = h => (h.layout === "full" ? ` style="--veil:${(h.veil / 100).toFixed(2)}"` : "");
+function aboutHeroBg(h) {
+  if (h.layout !== "full") return "";
+  return `${photoImg(h.photo, "hero-bg", { decorative: true, eager: true })}\n  `;
+}
+function aboutHeroFig(h) {
+  if (h.layout !== "split") return "";
+  return `    <figure class="photo hero-photo">
+      ${photoImg(h.photo, null, { eager: true })}${photoCaption(h.photo)}
+    </figure>
+`;
+}
+
+/** The story photograph, in the second column beside the timeline. */
+const storyMod = p => (p ? " has-photo" : "");
+function storyPhoto(p) {
+  if (!p) return "";
+  return `<figure class="photo story-photo reveal">
+        ${photoImg(p)}${photoCaption(p)}
+      </figure>
+    `;
 }
 
 /**
@@ -694,9 +876,16 @@ function renderPoliciesPage(template, body, s, updated) {
  * About page. Story and market context live here, not on the homepage.
  * Static content, so this only fills the shared tracking and contact tokens.
  */
-function renderAboutPage(template, s, team) {
+function renderAboutPage(template, s, team, page) {
+  const hero = page.hero;
   return fill(template, {
     TEAM_SECTION: renderTeam(team),
+    ABOUT_HERO_MOD: aboutHeroMod(hero),
+    ABOUT_HERO_STYLE: aboutHeroStyle(hero),
+    ABOUT_HERO_BG: aboutHeroBg(hero),
+    ABOUT_HERO_FIG: aboutHeroFig(hero),
+    STORY_MOD: storyMod(page.storyPhoto),
+    STORY_PHOTO: storyPhoto(page.storyPhoto),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -741,6 +930,9 @@ function formatUpdated(d) {
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
     COURSE_CARDS: renderCourseCards(content),
+    CORPORATE_PHOTO: corporatePhoto(content.homePage.corporatePhoto),
+    CONTACT_MOD: contactMod(content.homePage.ctaPhoto),
+    CTA_PHOTO: ctaPhoto(content.homePage.ctaPhoto),
     TEAM_LINK: teamLink(content.team),
     HERO_ILLUSTRATION: heroIllustration(),
     DIRECTORY_LINK: directoryLink(),
@@ -767,7 +959,8 @@ function formatUpdated(d) {
 
   // about
   const aTpl = fs.readFileSync(path.join(ROOT, "templates/about.template.html"), "utf8");
-  fs.writeFileSync(path.join(DIST, "about.html"), renderAboutPage(aTpl, s, content.team));
+  fs.writeFileSync(path.join(DIST, "about.html"),
+    renderAboutPage(aTpl, s, content.team, content.aboutPage));
 
   // policies
   const pTpl = fs.readFileSync(path.join(ROOT, "templates/policies.template.html"), "utf8");
