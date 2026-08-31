@@ -184,7 +184,15 @@ export default {
       description: 'Keyed to what this course actually produces, not a generic classroom: a node based automation canvas for AOP 104, a person presenting to a seated panel for AOP 106, an assistant interface on screen for AOP 102. If the photograph would suit any training company in the world, it is the wrong photograph.',
       type: 'figure',
     },
-    {name: 'thumbnail', title: 'Card thumbnail (1200 x 750)', type: 'image'},
+    // A figure for the same reason the banner is one: the catalogue card is the
+    // most seen image on the site, and it was the only photograph left without
+    // alt text or a licence record.
+    {
+      name: 'thumbnail',
+      title: 'Card thumbnail (1200 x 750)',
+      description: 'The catalogue card image on the homepage. Same subject as the banner is fine: this is the crop that has to work small.',
+      type: 'figure',
+    },
   ],
   orderings: [{title: 'Course number', name: 'numberAsc', by: [{field: 'number', direction: 'asc'}]}],
   preview: {
