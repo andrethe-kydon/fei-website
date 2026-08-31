@@ -12,7 +12,13 @@
 // An unset series counts as Operator, the same default build.js applies, so
 // documents that predate the series field behave correctly in the Studio until
 // scripts/backfill-series.js has run.
-const seriesOf = doc => doc?.series || 'Operator'
+// These read Sanity's conditional property context, which is
+// {document, parent, value, currentUser} and not the document itself. Reading
+// `series` straight off it always yielded undefined, so seriesOf() always fell
+// through to its Operator default: isAdoption() was never true and every
+// Adoption only field below was permanently hidden in the Studio, whatever the
+// document's series actually was. The series lives on the `document` key.
+const seriesOf = doc => doc?.document?.series || 'Operator'
 const isAdoption = doc => seriesOf(doc) === 'Adoption'
 const isOperator = doc => seriesOf(doc) === 'Operator'
 
