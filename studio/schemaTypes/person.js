@@ -24,14 +24,20 @@ export default {
       rows: 4,
     },
     // A figure rather than a plain image: hotspot comes with it, and so do alt
-    // text and the licence record. Switch "Library photo" off on every portrait.
-    // A real name over a purchased face misrepresents the institute, and this is
-    // the one field on the site where that mistake is possible.
+    // text and the licence record.
+    //
+    // figure defaults "Library photo" to on, which is right everywhere except
+    // here. This is the one field on the site where a purchased face could end
+    // up under a real name, so the default is overridden to off: a portrait has
+    // to be claimed as a library photograph deliberately rather than by leaving
+    // a toggle alone. initialValue applies to new documents, so the three people
+    // already published keep whatever they carry until someone edits them.
     {
       name: 'photo',
       title: 'Photo',
       description: 'A real photograph of this person, never a library photograph. Square works best: it is cropped to 1:1. Leave empty and a branded placeholder carrying the initials is used instead.',
       type: 'figure',
+      initialValue: {_type: 'figure', isStock: false},
     },
     {
       name: 'order',
