@@ -65,8 +65,11 @@
     {{EYEBROW}}<h1>{{TITLE}}</h1>
     <p class="csub">{{SUBTITLE}}</p>
     <p class="lede">{{STANDFIRST}}</p>
-    <div class="chero-ctas">
-      <a class="btn btn-solid" id="enq-hero" href="#enquire">Enquire about this programme</a>
+    {{ENROLMENT_LINE}}<div class="chero-ctas">
+      <!-- The primary label is derived from the enrolment deadline: it says
+           "closes this month" only while that is true, and stops offering
+           enrolment once the deadline has passed. See enrolment() in build.js. -->
+      <a class="btn btn-solid" id="enq-hero" href="#enquire">{{CTA_PRIMARY}}</a>
       <a class="btn btn-ghost" href="#modules">See the modules</a>
     </div>
     {{STAT_BAR}}{{HERO_FIG}}  </div>

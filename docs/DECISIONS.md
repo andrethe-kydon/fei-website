@@ -24,15 +24,10 @@ anywhere on the site. Three items sit against it.
 | --- | --- | --- |
 | Programme fees for the AOP courses | David | Six Operator courses. Until set, every summary card shows "Fees confirmed at enquiry", which is the built in empty state of `feeDisplay` and needs no change to ship. |
 | Programme fees for the AIA workshops | David | Two Adoption workshops. Priced per engagement, so these may never appear on the site at all. |
-| Whether published SCTP fees may appear on the OPC Launchpad page | David | The five fee tiers are already published by Singapore Polytechnic under a government subsidy scheme. See the scope amendment below: this is a rule change, not an exception, and `CLAUDE.md` must record it before the page publishes. |
 
-**The `CLAUDE.md` amendment this requires.** Rule 4 currently reads as an
-absolute. It needs to distinguish two cases: published subsidised fees for a
-programme delivered by a partner under a government scheme may appear, because
-they are already public and funding is the first question the audience asks;
-Future Edge Institute's own commercial fees may not. Without that wording the
-OPC page reads as a violation of the house rules rather than a scoped exception
-to them.
+Publishing subsidised SCTP fees on the OPC Launchpad page is **settled**: see
+Decisions made, below. House rule 4 now carries its scope, so the two rows above
+are the only fee questions still open.
 
 ## Blocking: publishing the OPC Launchpad page
 
@@ -42,12 +37,9 @@ from the built page until it is settled.
 
 | Item | Where | Decided by | Note |
 | --- | --- | --- | --- |
-| Cohort status, and whether "Market Sensing Phase" still applies | Hero eyebrow, section 1 | David | The eyebrow currently reads Cohort 1, September 2026. |
-| Intake month and venue | The five months, section 4 | David | Stated as September 2026 at Singapore Polytechnic. |
 | Cohort size of 30 | Who it is for, section 6 | David | |
+| Programme end date | Course information, section 7 | Singapore Polytechnic | The start date is confirmed as 5 October 2026. The end date previously circulated, 4 March 2027, was derived from a 6 September start and is therefore wrong. Omitted from the page rather than recalculated: five months from October is an inference, not a date Singapore Polytechnic has given. FAQ answer 6 sends anyone asking to enquiry for it. |
 | TGS code | Course information, section 7 | Singapore Polytechnic | The source itself says "to be confirmed", so this is genuinely unissued rather than merely unrecorded. |
-| Course duration, 6 September 2026 to 4 March 2027 | Course information, section 7 | Singapore Polytechnic | |
-| Registration period, 24 May 2026 to 16 August 2026 | Course information, section 7 | David | This window has already closed. Publishing it unchanged would advertise a shut door. |
 | Whether the Startup SG Founder figure is reinstated | Partners, section 8 | David | The source page states graduates can access up to $50,000. It was removed: the amount is set by Enterprise Singapore rather than by us, the grant is not guaranteed, and a specific figure on a training page reads as a promise. Reinstate only on an explicit instruction. |
 | Whether Kydon client names appear | Removed content | David | Korn Ferry, ResMed, Australian Volunteers, UWC South East Asia. These are Kydon's clients on a Future Edge Institute page. Only with each client's agreement, and only labelled as Kydon's. |
 | Which HubSpot form, and whether the action is waitlist or enquiry | Enquiry, section 10 | David, with Kydon marketing for the form itself | Bound to the closed registration window above: the right call depends on whether there is a live intake to join. |
@@ -111,3 +103,15 @@ Launchpad, **Singapore Polytechnic issues all eight certificates**, one per
 module. The attribution paragraph on that page says so, and it is not editorial
 prose to be shortened for style: it is what keeps the SCTP subsidy claims from
 contradicting the SSG line carried on the eight short course pages.
+
+---
+
+## Decisions made
+
+Kept rather than deleted, because a settled decision is the thing people
+re-litigate. If one of these is reopened, it comes back to the list above.
+
+| Decision | Made by | Date | What changed |
+| --- | --- | --- | --- |
+| Published subsidised SCTP fees may appear on the OPC Launchpad page | David | 1 September 2026 | House rule 4 in `CLAUDE.md` now carries its scope: a fee already published by a partner under a government subsidy scheme may appear on that programme's own page, and nowhere else. FEI's own commercial fees for the AOP courses and AIA workshops may not appear anywhere on the site, which is unchanged. `showFees` is on for this document, and the funding scope note renders with the figures. |
+| Cohort 1 dates | David | 1 September 2026 | Starts 5 October 2026. Enrolment is open and closes 30 September 2026. The page reads as open for applications: the hero states both dates, the primary action reads "Enrol now, closes this month" while that is true, and the programme details table takes its date rows from the same two fields so they cannot drift. The earlier 6 September start, the 24 May to 16 August registration window and the Market Sensing Phase framing are gone. None of them had ever been loaded: all three were omitted as unconfirmed when the document was created. |

@@ -1708,3 +1708,21 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
     display:block;margin:26px 0 10px;font-size:.8rem;color:var(--fog);
   }
 }
+
+/* The enrolment line. It sits between the standfirst and the buttons because
+   it is the fact that decides whether a reader acts now or later. Open reads
+   as live; a passed deadline keeps the same shape in muted colour rather than
+   disappearing, because a closed cohort is information too. */
+.enrolment{
+  display:inline-flex;align-items:center;gap:9px;margin-top:24px;
+  padding:9px 16px;border-radius:999px;
+  background:var(--bg-alt);border:1px solid var(--line);
+  font-family:var(--display);font-size:.88rem;font-weight:600;color:var(--slate);
+}
+.enrolment.is-open{background:var(--blue-dim);border-color:transparent;color:var(--navy)}
+.enrolment.is-open::before{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--blue-dark);
+  flex:0 0 auto;
+}
+.phero.hero-full .enrolment{background:rgba(255,255,255,.14);border-color:transparent;color:var(--white)}
+.phero.hero-full .enrolment.is-open::before{background:var(--blue-light)}

@@ -153,12 +153,12 @@ unconfirmed goes on the page. There is no confirmation style on this site: an
 unsettled value is omitted and recorded in `docs/DECISIONS.md`. Do not invent a
 marker for one.
 
-**Fees.** House rule 4 says no fee appears anywhere on the site. This page is the
-one place that may change, because the SCTP fees are already published by
-Singapore Polytechnic under a government subsidy scheme. `showFees` is off by
-default and the decision is still with David: see `docs/DECISIONS.md`. Until it
-is made, rule 4 stands as written. The commercial fees of Future Edge Institute
-never appear, whatever is decided about the subsidised ones.
+**Fees.** House rule 4 carries a scoped exception for exactly this case, and it
+is the only page using it: the SCTP fee tiers are already published by Singapore
+Polytechnic under a government subsidy scheme, so they may appear here.
+`showFees` is on for the OPC Launchpad, approved by David on 1 September 2026.
+`showFees` still defaults to off for a new programme, and the commercial fees of
+Future Edge Institute never appear anywhere, which is not affected by this.
 
 **Section 3 of the page, why now, is static prose in the template** and has no
 schema fields. It is FEI's market argument rather than any one programme's, it
@@ -207,7 +207,14 @@ here, as above.
    **Why there are two blues.** The logo blue `--blue` measures 3.33:1 against white, which fails the WCAG AA 4.5:1 threshold for normal text and only passes for large text. `--blue-dark` measures 4.72:1 and passes. So the logo blue stays decorative, and everything clickable or carrying white text uses `--blue-dark`. Both read as the same colour family to a visitor. Never put white text on `--blue`, and never use `--blue-dark` for decoration where `--blue` belongs.
 
    Brand assets live in `static/assets/brand/`. The header uses `fei_logo_secondary_notag.svg` (no tagline: it is illegible at 44px), the footer uses `fei_logo_mono_white.svg`, and `fei_icon_navy.svg` is the watermark behind card thumbnail numbers. The favicon set and `site.webmanifest` sit at the root of `static/` so they serve from the site root.
-4. **No fees, prices or unverified figures anywhere on the site.** Fees are not set. Enquiries route to `sales@kydongrp.com` and WhatsApp. Any number that appears must be verifiable (course hours, days, Kydon's published track record).
+4. **No fees, prices or unverified figures anywhere on the site, with one scoped exception.** Any number that appears must be verifiable (course hours, days, Kydon's published track record).
+
+   | Fees | May they appear |
+   | --- | --- |
+   | FEI's own commercial fees for the AOP courses and AIA workshops | **No, nowhere on the site.** They are not set, and they would not go on the site if they were. Enquiries route to `sales@kydongrp.com` and WhatsApp. |
+   | Published subsidised fees for a partner delivered programme, on that programme's own page | **Yes.** They are already published by the partner under a government subsidy scheme, and funding is the first question that audience asks. |
+
+   The exception is narrow and deliberate: it covers a fee somebody else has already published, on the page for that programme, and nowhere else. It does not open the door to FEI pricing. The OPC Launchpad is the only page it currently applies to, where `showFees` is on and the SCTP tiers are shown. Approved by David on 1 September 2026: see `docs/DECISIONS.md`. Wherever a subsidised fee appears, the funding scope note appears with it, which is a separate rule and not optional.
 5. **Funding language is exact:** FEI *is working on obtaining its licence as a Registered Training Provider from SkillsFuture Singapore (SSG)*. Never imply courses are SkillsFuture claimable, WSQ accredited or subsidised. Never state or imply RTP registration is granted.
 6. **AOP 106 and AOP 101 Day 4 are awareness only:** never legal, tax or accounting advice. Keep the existing disclaimers intact.
 7. **No Anthropic attribution** anywhere in the site or its content.

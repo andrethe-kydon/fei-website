@@ -175,6 +175,8 @@ function mapCareerProgrammes(docs, projectId, dataset) {
     title: p.title, subtitle: p.subtitle || "",
     attribution: p.attribution || "",
     eyebrow: p.eyebrow || "",
+    startDate: p.startDate || "",
+    enrolmentDeadline: p.enrolmentDeadline || "",
     standfirst: p.standfirst || "",
     stats: (p.stats || []).map(x => ({
       value: x.value, label: x.label, attribution: x.attribution || "",
@@ -1131,6 +1133,59 @@ function renderWorkshopPage(template, n, w, s, programmes) {
 
 // ---------- career programme page ----------
 /**
+ * A Sanity date, "YYYY-MM-DD", as a local date and as prose.
+ *
+ * Parsed from its parts rather than handed to the Date constructor, which reads
+ * a bare date string as UTC midnight: in any timezone behind UTC that renders
+ * the day before, so a cohort starting on the 5th would advertise the 4th.
+ */
+function parseDate(iso) {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  return (y && m && d) ? new Date(y, m - 1, d) : null;
+}
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December"];
+function formatDate(iso) {
+  const d = parseDate(iso);
+  return d ? `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}` : "";
+}
+
+/**
+ * The hero enrolment line and the primary button.
+ *
+ * The button is time relative on purpose, because "closes this month" is what
+ * makes a deadline feel like one. That means the build has to know the date,
+ * and it means a stale deadline is a hazard, so this degrades in one direction
+ * only: once the deadline has passed the button stops claiming the cohort is
+ * open and the build says so on the console. It never invents urgency.
+ */
+function enrolment(p, now) {
+  const line = [];
+  if (p.startDate) line.push(`Cohort 1 starts ${formatDate(p.startDate)}.`);
+  const close = p.enrolmentDeadline ? parseDate(p.enrolmentDeadline) : null;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const open = close ? close >= today : null;
+  if (close) {
+    line.push(open
+      ? `Applications close ${formatDate(p.enrolmentDeadline)}.`
+      : `Applications for this cohort closed on ${formatDate(p.enrolmentDeadline)}.`);
+  }
+  let cta = "Enquire about this programme";
+  if (open) {
+    cta = (close.getFullYear() === now.getFullYear() && close.getMonth() === now.getMonth())
+      ? "Enrol now, closes this month"
+      : `Enrol now, closes ${close.getDate()} ${MONTHS[close.getMonth()]}`;
+  } else if (close) {
+    console.warn(`WARN: ${p.code} enrolment deadline ${p.enrolmentDeadline} has passed. The page no longer offers enrolment; set the next cohort or clear the date.`);
+  }
+  return {
+    cta,
+    line: line.length
+      ? `<p class="enrolment${open ? " is-open" : ""}">${line.join(" ")}</p>\n    `
+      : "",
+  };
+}
+/**
  * The attribution paragraph.
  *
  * Rendered by the build in two fixed places, never placed by an editor: under
@@ -1339,8 +1394,15 @@ function audienceSection(p) {
 
 /** The programme details table. */
 function infoSection(p) {
-  if (!p.details.length) return "";
-  const rows = p.details.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("\n        ");
+  // The date rows come from the two date fields rather than from hand typed
+  // detail rows, so the table and the hero cannot disagree.
+  const dated = [
+    ...(p.startDate ? [["Course start date", formatDate(p.startDate)]] : []),
+    ...(p.enrolmentDeadline ? [["Applications close", formatDate(p.enrolmentDeadline)]] : []),
+    ...p.details,
+  ];
+  if (!dated.length) return "";
+  const rows = dated.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("\n        ");
   return `<!-- ================= COURSE INFORMATION ================= -->
 <section class="cpage-section" id="details" style="background:var(--bg-alt)">
   <div class="wrap">
@@ -1502,7 +1564,8 @@ function faqSection(p) {
  * carries its actual issuer. Defaulting either to Future Edge Institute would
  * put a claim in the machine readable data that the visible page contradicts.
  */
-function renderProgrammePage(template, p, s) {
+function renderProgrammePage(template, p, s, now) {
+  const enrol = enrolment(p, now);
   const fullTitle = p.subtitle ? `${p.title}: ${p.subtitle}` : p.title;
   const canonical = `${s.siteUrl}/${p.slug}.html`;
   const desc = p.standfirst || p.subtitle || p.title;
@@ -1565,6 +1628,8 @@ function renderProgrammePage(template, p, s) {
     EYEBROW: p.eyebrow ? `<span class="eyebrow">${esc(p.eyebrow)}</span>\n    ` : "",
     STANDFIRST: esc(p.standfirst),
     STAT_BAR: statBar(p.stats),
+    ENROLMENT_LINE: enrol.line,
+    CTA_PRIMARY: esc(enrol.cta),
     ATTRIBUTION_HERO: attributionBlock(p.attribution, "hero"),
     POSITIONING_SECTION: positioningSection(p),
     MONTHS_SECTION: monthsSection(p),
@@ -1698,7 +1763,7 @@ function formatUpdated(d) {
   // already absent from the collection, so they reach neither.
   const prTpl = fs.readFileSync(path.join(ROOT, "templates/programme.template.html"), "utf8");
   const programmePages = content.careerProgrammes.map(p => ({
-    file: `${p.slug}.html`, html: renderProgrammePage(prTpl, p, s),
+    file: `${p.slug}.html`, html: renderProgrammePage(prTpl, p, s, new Date()),
   }));
   for (const { file, html } of programmePages) {
     fs.writeFileSync(path.join(DIST, file), html);

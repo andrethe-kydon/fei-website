@@ -59,6 +59,25 @@ export default {
       group: 'overview',
       initialValue: false,
     },
+    // The two dates the hero speaks with. They are the single source: the
+    // programme details table renders its start and enrolment rows from these,
+    // so a date cannot be right in one place and stale in another.
+    {
+      name: 'startDate',
+      title: 'Cohort start date',
+      description: 'Leave empty until it is confirmed. The hero then says nothing about when the cohort begins rather than guessing.',
+      type: 'date',
+      options: {dateFormat: 'D MMMM YYYY'},
+      group: 'overview',
+    },
+    {
+      name: 'enrolmentDeadline',
+      title: 'Applications close',
+      description: 'Drives the primary button. While the deadline falls in the current month the button reads "Enrol now, closes this month"; earlier in the year it names the date; once it has passed the button falls back to a plain enquiry and the build prints a warning. So a closed cohort can never be advertised as open, but a passed deadline still needs clearing.',
+      type: 'date',
+      options: {dateFormat: 'D MMMM YYYY'},
+      group: 'overview',
+    },
     {
       name: 'attribution',
       title: 'Delivery attribution',
