@@ -108,23 +108,37 @@ function sanityFigure(fig, projectId, dataset, place) {
  * round. A treatment chosen without a photograph falls back to no photograph,
  * because the Studio allows that combination as a warning rather than an error.
  */
+/**
+ * A heroMedia object resolved into the shape the templates read: a treatment, a
+ * veil strength and a photograph, or that same shape carrying no photograph.
+ * The about page and every career programme hold the identical heroMedia object,
+ * so they resolve through one function and cannot crop it differently.
+ *
+ * A treatment chosen without a photograph falls back to no photograph, because
+ * the Studio allows that combination as a warning rather than an error.
+ */
+function heroFigure(hero, projectId, dataset) {
+  const h = hero || {};
+  const layout = h.layout || "none";
+  const photo = layout === "none" ? null
+    : sanityFigure(h.photo, projectId, dataset, layout === "full" ? PHOTO.heroFull : PHOTO.heroSplit);
+  return {
+    layout: photo ? layout : "none",
+    veil: typeof h.veil === "number" ? h.veil : 72,
+    photo,
+  };
+}
+
 function pagePhotos(home, about, projectId, dataset) {
   const fig = (f, place) => sanityFigure(f, projectId, dataset, place);
   const h = home || {}, a = about || {};
-  const heroLayout = (a.hero && a.hero.layout) || "none";
-  const heroPhoto = heroLayout === "none" ? null
-    : fig(a.hero && a.hero.photo, heroLayout === "full" ? PHOTO.heroFull : PHOTO.heroSplit);
   return {
     homePage: {
       corporatePhoto: fig(h.corporatePhoto, PHOTO.corporate),
       ctaPhoto: fig(h.ctaPhoto, PHOTO.cta),
     },
     aboutPage: {
-      hero: {
-        layout: heroPhoto ? heroLayout : "none",
-        veil: typeof (a.hero && a.hero.veil) === "number" ? a.hero.veil : 72,
-        photo: heroPhoto,
-      },
+      hero: heroFigure(a.hero, projectId, dataset),
       storyPhoto: fig(a.storyPhoto, PHOTO.story),
     },
   };
@@ -142,6 +156,58 @@ function sanityOgImage(img, projectId, dataset) {
   return url ? `${url}?w=1200&h=630&fit=crop&fm=jpg` : null;
 }
 
+/**
+ * Career programmes, in menu order, mapped into the internal shape.
+ *
+ * Two gates, both in the query rather than here. `published` is the editorial
+ * one: off means absent from the menu, absent from the sitemap, and no page
+ * built at all. The drafts exclusion is the other half, and it is stated
+ * explicitly rather than left to the absence of a read token. This build has
+ * never sent one, so drafts have never arrived, but the day a token is added for
+ * any other reason an unpublished draft would otherwise reach the live site.
+ * The existing course, person and settings queries are unchanged and still rely
+ * on that absence.
+ */
+function mapCareerProgrammes(docs, projectId, dataset) {
+  return (docs || []).map(p => ({
+    code: p.code,
+    slug: (p.slug && p.slug.current) || p.slug,
+    title: p.title, subtitle: p.subtitle || "",
+    attribution: p.attribution || "",
+    standfirst: p.standfirst || "",
+    stats: (p.stats || []).map(x => ({
+      value: x.value, label: x.label, attribution: x.attribution || "",
+    })),
+    hero: heroFigure(p.hero, projectId, dataset),
+    arcs: (p.arcs || []).map(a => ({
+      label: a.label, deliveredBy: a.deliveredBy || "",
+      modules: (a.modules || []).map(m => ({
+        num: m.num, title: m.title, hours: m.hours,
+        deliveredBy: m.deliveredBy || "", certificate: m.certificate || "",
+        synopsis: m.synopsis || "", objectives: m.objectives || [],
+      })),
+    })),
+    pathways: (p.pathways || []).map(x => ({
+      tag: x.tag || "", title: x.title, body: x.body || "", points: x.points || [],
+    })),
+    details: (p.details || []).map(d => [d.label, d.value]),
+    entryRequirements: p.entryRequirements || [],
+    // showFees gates the whole block, the funding note included. A fee tier left
+    // in the document with the switch off never reaches the page.
+    showFees: Boolean(p.showFees),
+    fees: (p.fees || []).map(f => [f.eligibility, f.fee]),
+    feeNote: p.feeNote || "",
+    fundingNote: p.fundingNote || "",
+    paymentMethods: p.paymentMethods || [],
+    refundTerms: (p.refundTerms || []).map(r => [r.window, r.outcome]),
+    partners: (p.partners || []).map(x => ({
+      name: x.name, role: x.role || "", body: x.body || "",
+      url: x.url || "", disclaimer: x.disclaimer || "",
+    })),
+    faqs: (p.faqs || []).map(f => [f.q, f.a]),
+  }));
+}
+
 async function loadFromSanity(projectId, dataset) {
   // Trainers are references to person documents, so they are dereferenced in
   // the query and arrive in the same shape the local content file uses.
@@ -156,7 +222,8 @@ async function loadFromSanity(projectId, dataset) {
       ...,
       "trainers": trainers[]->{name, role, bio, photo}
     },
-    "team": *[_type == "person" && (!defined(showOnAbout) || showOnAbout == true)] | order(order asc, name asc)
+    "team": *[_type == "person" && (!defined(showOnAbout) || showOnAbout == true)] | order(order asc, name asc),
+    "careerProgrammes": *[_type == "careerProgramme" && published == true && !(_id in path("drafts.**"))] | order(code asc)
   }`);
   const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`;
   const headers = process.env.SANITY_READ_TOKEN
@@ -223,6 +290,7 @@ async function loadFromSanity(projectId, dataset) {
   }));
   return {
     settings: result.settings, courses, workshops, team,
+    careerProgrammes: mapCareerProgrammes(result.careerProgrammes, projectId, dataset),
     ...pagePhotos(result.homePage, result.aboutPage, projectId, dataset),
   };
 }
@@ -262,6 +330,10 @@ function splitSeries(content) {
   const about = content.aboutPage || {};
   return {
     ...content, courses, workshops,
+    // Career programmes come from Sanity only, for the same reason page
+    // photography does: content.json carries the key so the two sources stay in
+    // step, and a local build renders none.
+    careerProgrammes: content.careerProgrammes || [],
     homePage: { corporatePhoto: null, ctaPhoto: null, ...home },
     aboutPage: {
       storyPhoto: null, ...about,

@@ -84,6 +84,19 @@ export default defineConfig({
                   ])
               ),
             S.divider(),
+            // The long cohort programmes: OPC now, FDO later. A separate list
+            // rather than a third series of `course`, because they are
+            // deliberately outside the #courses catalogue and share none of the
+            // short course shape.
+            S.listItem()
+              .title('Career Programmes')
+              .schemaType('careerProgramme')
+              .child(
+                S.documentTypeList('careerProgramme')
+                  .title('Career Programmes')
+                  .defaultOrdering([{field: 'code', direction: 'asc'}])
+              ),
+            S.divider(),
             // People: trainers and the team grid on the about page, in the
             // order the grid renders them.
             S.listItem()
