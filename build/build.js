@@ -362,6 +362,48 @@ function loadLocal() {
 }
 
 /**
+ * Resolve {{EMAIL}} inside content.
+ *
+ * Templates read the enquiry address from siteSettings already. Content prose
+ * could not: a sentence like "write to us for the full timetable" had the
+ * address typed into it, in the CMS, where it goes stale silently. Content may
+ * now carry the {{EMAIL}} token and it is filled here, once, for both content
+ * sources, so the address lives in exactly one field.
+ *
+ * Every string in the tree is walked rather than a named list of fields,
+ * because the next field an editor puts an address in should not need a code
+ * change to be covered. That includes FAQ answers, which the FAQPage structured
+ * data is built from, so the schema data cannot disagree with the page.
+ *
+ * With the field unset the token is left visible rather than substituted away.
+ * A blank leaves "write to  for the timetable", which reads as a typo and
+ * survives review; a visible token does not. The build says so either way.
+ */
+function resolveContentTokens(content) {
+  const email = (content.settings && content.settings.enquiryEmail) || "";
+  let seen = 0;
+  const walk = v => {
+    if (typeof v === "string") {
+      if (!v.includes("{{EMAIL}}")) return v;
+      seen += 1;
+      return email ? v.split("{{EMAIL}}").join(email) : v;
+    }
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") {
+      const out = {};
+      for (const k of Object.keys(v)) out[k] = walk(v[k]);
+      return out;
+    }
+    return v;
+  };
+  const resolved = walk(content);
+  if (seen && !email) {
+    console.warn(`WARN: ${seen} content string(s) contain {{EMAIL}} but settings.enquiryEmail is empty. The token is left visible rather than replaced with nothing.`);
+  }
+  return resolved;
+}
+
+/**
  * Normalise either content source into the same shape: two collections, keyed
  * by number, with series and codePrefix always set. Content written before the
  * Adoption series existed carries neither field, so it defaults to Operator and
@@ -1528,7 +1570,7 @@ function fileSize(bytes) {
  * space, and the page is byte for byte what it was. The venue is read from the
  * existing details rows rather than stored twice.
  */
-function scheduleSection(p) {
+function scheduleSection(p, email) {
   if (!hasSchedule(p)) return "";
   const sc = p.schedule || {};
   const s = moduleSchedule(p);
@@ -1587,6 +1629,21 @@ function scheduleSection(p) {
   // scans for facts.
 
   const files = (sc.files || []);
+
+  /**
+   * The route to the day by day schedule, which resolves itself.
+   *
+   * Files attached: the downloads. None attached: an invitation to ask for it.
+   * Never both, and never neither while there is an address to ask. A future
+   * intake whose files nobody remembered to upload still gives a reader
+   * somewhere to go, rather than a section that simply stops.
+   *
+   * The mailto is gated on the address being set, so an unset field cannot
+   * render a link that goes nowhere.
+   */
+  const byEmail = email
+    ? `<p class="sched-note reveal"><b>The day by day schedule.</b> Request it from <a href="mailto:${esc(email)}?subject=${encodeURIComponent(`${p.title} detailed schedule request`)}">${esc(email)}</a> and we will send it over.</p>`
+    : "";
   const downloads = files.length ? `<h3 class="block-h3 reveal">Download the schedule</h3>
     <div class="related-grid reveal">
       ${files.map(f => `<a class="rel-card" href="${esc(f.url)}" target="_blank" rel="noopener" download>
@@ -1603,6 +1660,10 @@ function scheduleSection(p) {
       <span class="eyebrow">Schedule</span>
       <h2>When it runs</h2>
       <p>These are the dates for ${esc(cohort)}. A later intake runs to its own schedule, so check with us before planning around them.</p>
+      <!-- Hidden in markup and revealed by script, so a control that needs
+           JavaScript to do anything never appears without it. Hidden again in
+           print, where it would be an unusable button on paper. -->
+      <button class="print-btn" type="button" hidden>Print this schedule</button>
     </div>
     <div class="info-panel reveal">
       <dl class="sc-list">
@@ -1610,7 +1671,7 @@ function scheduleSection(p) {
       </dl>
     </div>
     ${table}
-    ${holidayLine}${downloads}
+    ${holidayLine}${files.length ? downloads : byEmail}
   </div>
 </section>
 
@@ -1989,7 +2050,7 @@ function renderProgrammePage(template, p, s, now) {
     POSITIONING_SECTION: positioningSection(p),
     MONTHS_SECTION: monthsSection(p),
     MODULES_SECTION: modulesSection(p),
-    SCHEDULE_SECTION: scheduleSection(p),
+    SCHEDULE_SECTION: scheduleSection(p, s.enquiryEmail),
     INTAKES_SECTION: intakesSection(p, now),
     AUDIENCE_SECTION: audienceSection(p),
     INFO_SECTION: infoSection(p),
@@ -2060,7 +2121,7 @@ function formatUpdated(d) {
     }
   }
   if (!content) { content = loadLocal(); source = "content/content.json"; }
-  content = splitSeries(content);
+  content = splitSeries(resolveContentTokens(content));
   const s = content.settings;
   // A series with no documents is not a build failure, but it does leave a
   // section heading standing over an empty grid, so say so loudly. The usual

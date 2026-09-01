@@ -33,6 +33,7 @@ Content driven static site. No framework, no dependencies for the site build.
 - `studio/` is the Sanity Studio (its own package.json; not part of the site build).
 - `dist/` is generated. Never edit it, never commit it.
 - `docs/DECISIONS.md` records every value the site needs and does not have, grouped by what it blocks, with the person who decides it. An unconfirmed value is omitted from the page and recorded there. Never left on the page as a marker.
+- The enquiry address lives in **one** field, `siteSettings.enquiryEmail`. Templates read it as `{{EMAIL}}`, and **content prose may carry `{{EMAIL}}` too**: `resolveContentTokens()` in `build.js` walks every string in the content tree and fills it, for both content sources, before anything renders. Never type an address into a CMS field or a template. The exception is the PDFs, which are images of text and carry whatever address they were built with: see below.
 - `.github/workflows/daily-rebuild.yml` calls a Vercel deploy hook once a day. **Anything on this site derived from the build date depends on it.** See below before writing more of it.
 
 Build and check: `npm run build`, then `npx serve dist`. A correct build reports **11 pages**.
@@ -204,6 +205,33 @@ can never contradict the module table under it. The section names the cohort it
 belongs to, so a visitor arriving for a later intake cannot read those dates as
 theirs. It renders nothing at all when the schedule object is empty.
 
+**Eleven PDFs carry a contact address that no field can reach.** The nine
+brochures in `static/assets/brochures/` and the two schedule PDFs in Sanity all
+have the enquiry address drawn into them, three occurrences each in the
+brochures and two and four in the schedule pair. Changing
+`siteSettings.enquiryEmail` does not touch them, and no build step can: they are
+rendered documents, not markup. Whenever that address changes, every one of them
+has to be reissued from its source, or pulled. This is already true: all eleven
+still say `sales@kydongrp.com`, which the site no longer uses.
+
+**The downloads block resolves itself.** Files attached renders the downloads;
+none attached renders a line inviting the reader to request the day by day
+schedule from the enquiry address. Never both, and never neither while there is
+an address to ask, so a future intake whose files nobody uploaded still gives a
+reader somewhere to go instead of a section that stops.
+
+**Printing.** "Print this schedule" prints a schedule, not the page. The print
+block in `styles.css` hides every direct child of the body except the header, the
+attribution, `#schedule` and the footer, and inside those it drops the navigation,
+the section bar, the download cards, the scroll hint and the print button itself.
+What survives is what a standalone document needs to be trusted: the logo, the
+attribution naming who delivers and who certifies, and the registered entity with
+its UEN. A4 portrait, table header rows repeat across pages, no row splits across
+a break, and no href is appended to a link. One rule there is load bearing:
+`.reveal` is forced visible, because reveal on scroll otherwise prints blank
+paper for anything below the fold. The control is `hidden` in the markup and
+revealed by script, so it never appears without the script that makes it work.
+
 **The schedule PDFs are file assets in Sanity, not files in `static/`.** They are
 attached by `studio/scripts/load-opc-schedule-files.js`, which is idempotent and
 reuses an already uploaded asset. **A `sanity dataset import` of `seed-opc.ndjson`
@@ -288,7 +316,7 @@ here, as above.
 
    | Fees | May they appear |
    | --- | --- |
-   | FEI's own commercial fees for the AOP courses and AIA workshops | **No, nowhere on the site.** They are not set, and they would not go on the site if they were. Enquiries route to `sales@kydongrp.com` and WhatsApp. |
+   | FEI's own commercial fees for the AOP courses and AIA workshops | **No, nowhere on the site.** They are not set, and they would not go on the site if they were. Enquiries route to `enquiry@futureedgeinstitute.com` and WhatsApp. |
    | Published subsidised fees for a partner delivered programme, on that programme's own page | **Yes.** They are already published by the partner under a government subsidy scheme, and funding is the first question that audience asks. |
 
    The exception is narrow and deliberate: it covers a fee somebody else has already published, on the page for that programme, and nowhere else. It does not open the door to FEI pricing. The OPC Launchpad is the only page it currently applies to, where `showFees` is on and the SCTP tiers are shown. Approved by David on 1 September 2026: see `docs/DECISIONS.md`. Wherever a subsidised fee appears, the funding scope note appears with it, which is a separate rule and not optional.

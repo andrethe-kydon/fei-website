@@ -1803,3 +1803,93 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
     -webkit-mask-image:linear-gradient(to right,black calc(100% - 34px),transparent 100%);
   }
 }
+
+/* Print control, beside the schedule heading. Reuses the button chrome of the
+   nav disclosure rather than introducing another. */
+.print-btn{
+  display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:9px 18px;cursor:pointer;
+  font-family:var(--body);font-size:.84rem;font-weight:600;color:var(--navy);
+  transition:border-color .15s,box-shadow .2s;
+}
+/* .print-btn sets display, so the hidden attribute needs a rule that outranks
+   it: the UA sheet's [hidden] is a lower specificity than a class. */
+.print-btn[hidden]{display:none}
+.print-btn:hover{border-color:var(--navy);box-shadow:var(--shadow-sm)}
+.print-btn::before{
+  content:"";width:11px;height:11px;flex:0 0 auto;
+  border:2px solid currentColor;border-top-width:4px;border-radius:2px;
+}
+
+/* ============ PRINT: THE CAREER PROGRAMME SCHEDULE ============
+   "Print this schedule" prints a schedule, not the whole page, so every section
+   but the schedule is dropped. What stays is what a standalone document needs to
+   be trusted on its own: the logo, the attribution naming who delivers and who
+   certifies, and the registered entity with its UEN. */
+@media print{
+  @page{size:A4 portrait;margin:16mm 14mm}
+
+  .programme-page > *{display:none!important}
+  .programme-page > header,
+  .programme-page > .attribution-hero,
+  .programme-page > #schedule,
+  .programme-page > footer{display:block!important}
+
+  /* Reveal on scroll leaves anything below the fold at opacity 0. Printing from
+     the top of the page would otherwise produce blank paper. */
+  .programme-page .reveal{opacity:1!important;transform:none!important}
+
+  /* The header keeps its logo and loses everything that is navigation. */
+  .programme-page header{
+    position:static!important;background:none;border-bottom:0;
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+  .programme-page .nav{height:auto;padding:0 0 8mm}
+  .programme-page .nav-links,
+  .programme-page .menu-btn{display:none!important}
+
+  /* Ink, not screen. The section carries its tint as an inline style, so it
+     needs outranking, and the table reads as lines on white. */
+  .programme-page #schedule{background:none!important;padding:0!important;border:0!important}
+  .programme-page .info-panel,
+  .programme-page .day-table,
+  .programme-page .attribution-hero{box-shadow:none!important;background:none!important}
+  .programme-page .attribution-hero{border-block:1px solid var(--line)}
+  .programme-page .day-table th{background:none;color:var(--navy)}
+
+  /* Screen affordances. The scroll wrapper and its hint mean nothing on paper,
+     and the table fits the page rather than forcing a minimum width. The
+     downloads are links to files: unusable printed, and their URLs are
+     deliberately not expanded either. */
+  .programme-page .policy-table-scroll{overflow:visible!important}
+  .programme-page .sched-table{min-width:0!important;font-size:9pt}
+  .programme-page .table-hint,
+  .programme-page .print-btn,
+  .programme-page .related-grid,
+  .programme-page .block-h3{display:none!important}
+
+  /* A row split across a page break is unreadable, and a table continuing onto
+     a second sheet repeats its header row. */
+  .programme-page thead{display:table-header-group}
+  .programme-page tr,
+  .programme-page .sc-list > div,
+  .programme-page .mod-summary{break-inside:avoid;page-break-inside:avoid}
+
+  /* Links print as their text. No href is appended: a schedule full of
+     parenthesised URLs reads worse than one a reader has to type from. The
+     logo lockup is a link too, and underlining the tagline inside it made the
+     brand look like a hyperlink, so it is excluded. */
+  .programme-page a{color:inherit!important;text-decoration:underline}
+  .programme-page .brand,
+  .programme-page .brand *{text-decoration:none!important}
+
+  /* The footer keeps the registered entity line and drops the rest, which is
+     the logo a second time and two lists of links. */
+  .programme-page footer{background:none!important;color:var(--ink)!important;padding:8mm 0 0!important}
+  .programme-page .foot{display:none!important}
+  .programme-page .legal{
+    border:0!important;padding:0!important;margin:0!important;
+    color:var(--ink)!important;font-size:8pt;
+  }
+}

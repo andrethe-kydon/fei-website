@@ -197,6 +197,17 @@
 document.querySelectorAll('.module-item').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open&&typeof gtag==='function'){gtag('event','course_outline_open',{programme:'{{CODE}}',module:d.dataset.module});}
 }));
+// Print control. Hidden in the markup and revealed here, so a button that needs
+// this script to do anything never appears without it.
+const printBtn=document.querySelector('.print-btn');
+if(printBtn){
+  printBtn.hidden=false;
+  printBtn.addEventListener('click',()=>{
+    if(typeof gtag==='function'){gtag('event','schedule_print',{programme:'{{CODE}}'});}
+    window.print();
+  });
+}
+
 // In page section menu. An IntersectionObserver rather than a scroll handler:
 // the callback fires when a boundary is crossed, not on every frame of a scroll.
 // Absent bar, absent behaviour, so a programme with too few sections to warrant

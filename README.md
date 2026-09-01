@@ -49,4 +49,4 @@ Course images can be uploaded in Sanity (served from its CDN) or committed to `s
 
 ## House rules baked into this site
 
-British spelling. No dashes in prose (colons and full stops instead). Brand: navy #1C3557, orange #F15522 (per the live kydongrp.com), purple reserved for assessment content and unused here. No fees anywhere until verified. All enquiries route to sales@kydongrp.com and WhatsApp. No Anthropic attribution.
+British spelling. No dashes in prose (colons and full stops instead). Brand: navy #1C3557, orange #F15522 (per the live kydongrp.com), purple reserved for assessment content and unused here. No fees anywhere until verified. All enquiries route to enquiry@futureedgeinstitute.com and WhatsApp. No Anthropic attribution.
