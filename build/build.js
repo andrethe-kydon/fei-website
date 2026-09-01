@@ -337,6 +337,28 @@ ${links}
 const waApostrophe = u => u.replace(/'/g, "%27");
 
 /**
+ * The mobile menu toggle, rendered once for every page, for the same reason the
+ * header itself is: this was five identical copies, and the next change to the
+ * nav would have had to land in all five.
+ *
+ * The second handler closes the panel when any link inside it is followed,
+ * which is right for a link and wrong for a control: anything added here that
+ * opens a submenu rather than navigating must be a button, or this will collapse
+ * the whole menu under it.
+ */
+function navScript() {
+  return `const btn=document.querySelector('.menu-btn');
+const links=document.getElementById('navlinks');
+btn.addEventListener('click',()=>{
+  const open=links.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open);
+});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  links.classList.remove('open');btn.setAttribute('aria-expanded','false');
+}));`;
+}
+
+/**
  * The header carried by every page that is neither the homepage nor a programme
  * page: about and policies. Both point Fees and Funding and Enquire back at the
  * homepage, because neither has a section of its own to jump to.
@@ -829,6 +851,7 @@ function renderCoursePage(template, n, c, content, s) {
         ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
+    NAV_SCRIPT: navScript(),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${c.title}`),
     TAGS: c.tags.map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -907,6 +930,7 @@ function renderWorkshopPage(template, n, w, s) {
         ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
+    NAV_SCRIPT: navScript(),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${w.title}`),
     TAGS: (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -937,6 +961,7 @@ function renderPoliciesPage(template, body, s, updated) {
   const withBody = template.replace("{{POLICY_BODY}}", () => body);
   return fill(withBody, {
     HEADER: staticPageHeader(s),
+    NAV_SCRIPT: navScript(),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -961,6 +986,7 @@ function renderAboutPage(template, s, team, page) {
     STORY_MOD: storyMod(page.storyPhoto),
     STORY_PHOTO: storyPhoto(page.storyPhoto),
     HEADER: staticPageHeader(s),
+    NAV_SCRIPT: navScript(),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -1010,6 +1036,7 @@ function formatUpdated(d) {
         ["The Pathways", "#pathway"], ["For Organisations", "#corporate"]],
       wa: waApostrophe(waLink(s.whatsappNumber)), cta: "#contact",
     }),
+    NAV_SCRIPT: navScript(),
     COURSE_CARDS: renderCourseCards(content),
     CORPORATE_PHOTO: corporatePhoto(content.homePage.corporatePhoto),
     CONTACT_MOD: contactMod(content.homePage.ctaPhoto),
