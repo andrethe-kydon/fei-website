@@ -68,7 +68,7 @@ from the built page until it is settled.
 | --- | --- | --- |
 | Registered office address | Kydon Group corporate secretarial | Does not appear anywhere on the site today. |
 | Data Protection Officer appointment | Kydon Group corporate secretarial | `policies.html` directs data protection questions to the general enquiry address. A named officer is a PDPA requirement. |
-| GST registration status | Kydon Group finance | `policies.html` states that Future Edge Institute is not currently registered for GST and that any change will be stated at enquiry. Confirm that remains true. |
+| GST registration status | Kydon Group finance | `policies.html` states that Future Edge Institute is not currently registered for GST and that any change will be stated at enquiry. Confirm that remains true. **Note the apparent clash and do not resolve it by editing either page.** The OPC Launchpad page states that its fees include 9 percent GST. Both are correct: those are Singapore Polytechnic's SCTP fees, charged by Singapore Polytechnic, and FEI's own GST position is a separate fact about a separate seller. If the FEI position changes, this is the row that governs `policies.html`; the OPC figure follows Singapore Polytechnic. |
 | Refund schedule | David | `policies.html` already publishes a schedule: full refund more than 14 days before the start date, 50 percent within 14 days, none on or after. This is therefore an **amendment to a published term**, not a blank waiting to be filled. Treat any change as a change of contract, not a gap. |
 
 Note also that the site deliberately publishes **no** cancellation terms for the
