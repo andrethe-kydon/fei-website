@@ -1755,12 +1755,20 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
    over both. */
 .sectionnav{
   position:sticky;top:84px;z-index:90;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  /* A hairline, no shadow. Two stacked bars should read as one piece of
-     furniture rather than two slabs. */
+  /* Opaque, not translucent, and the reason is measured. At
+     rgba(255,255,255,.92) the bar's effective colour ranged from #FFFFFF over a
+     white card to #ECEEF1 over the navy module summary, so every ratio on it was
+     a function of whatever happened to be scrolling underneath. That put the
+     active underline at 2.87:1 against the navy case, under the 3:1 a non text
+     indicator needs. Opaque makes all of them constants. */
+  background:var(--card);
+  /* A shadow as well as the hairline. The 1px --line border measures 1.28:1
+     against both the bar and the header, and the bar measured 1.01:1 against the
+     header, so two near white slabs read as a single piece of furniture. The
+     shadow is what separates them, and it is unconditional rather than applied
+     on scroll: no sentinel, no observer, and it still works with no JavaScript. */
   border-bottom:1px solid var(--line);
+  box-shadow:var(--shadow-sm);
 }
 /* The list is the scroller, on the same pattern as .filters on the homepage:
    it never wraps, because a nav that reflows to two rows changes the page
@@ -1772,15 +1780,20 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 .sectionnav ul::-webkit-scrollbar{display:none}
 .sectionnav a{
   display:block;white-space:nowrap;text-decoration:none;
-  padding:13px 12px;font-size:.84rem;font-weight:500;color:var(--slate);
-  border-bottom:2px solid transparent;
+  /* --ink, not --slate. Slate measured 4.68:1 against the darkest state the bar
+     could reach, which passes with 0.18 to spare and only because the bar was
+     translucent. --ink is 11.51:1 at the same point and does not depend on what
+     is behind it. */
+  padding:13px 12px;font-size:.84rem;font-weight:500;color:var(--ink);
+  border-bottom:3px solid transparent;
   transition:color .15s,border-color .15s;
 }
 .sectionnav a:hover{color:var(--navy)}
-/* Current section. The rule under the label carries the state as well as the
-   colour, so it does not depend on colour alone, and aria-current carries it to
-   a screen reader. */
-.sectionnav a[aria-current]{color:var(--navy);border-bottom-color:var(--blue)}
+/* Current section, carried three ways so it never depends on colour alone:
+   weight, the rule beneath the label, and aria-current for a screen reader.
+   Weight is the part that was missing, and it is why the active chip was hard
+   to pick out: it was 500 the same as every resting chip. */
+.sectionnav a[aria-current]{color:var(--navy);font-weight:700;border-bottom-color:var(--blue)}
 /* Anchor targets clear both bars with room to breathe. Measured, not guessed:
    the header is 85px including its border and this bar is 51px, so 136px of
    sticky chrome, and a heading landing at 142px sat 6px under the bar's edge.
@@ -1892,4 +1905,14 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
     border:0!important;padding:0!important;margin:0!important;
     color:var(--ink)!important;font-size:8pt;
   }
+}
+
+/* The group descriptor beside the footer logo. --blue-light because this sits on
+   a navy panel, which is exactly what that token is for, and it reads a step
+   brighter than the small print beneath it so the relationship is the thing a
+   visitor notices rather than something buried in legal text. */
+.foot-group{
+  margin-top:10px;
+  font-family:var(--display);font-size:.8rem;font-weight:600;
+  letter-spacing:.02em;color:var(--blue-light);
 }

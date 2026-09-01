@@ -514,6 +514,23 @@ function programmesItem(href, programmes) {
 }
 
 /**
+ * The group descriptor, beside the logo in every footer.
+ *
+ * Future Edge Institute Private Limited is a wholly owned subsidiary of Kydon
+ * Holdings Pte. Ltd., and the site names Kydon in a dozen places: the flagship
+ * method, the AI Marketplace, the partnership that delivers the OPC Launchpad.
+ * Without this line a visitor meets those as an unexplained third party. It is
+ * short deliberately. The precise subsidiary wording is the small print directly
+ * beneath it, and the fuller statement is on the about page.
+ *
+ * Driven from siteSettings, so it is one edit for the whole site, and absent
+ * entirely when the field is empty.
+ */
+const groupDescriptor = s => (s.groupDescriptor
+  ? `<p class="foot-group">${esc(s.groupDescriptor)}</p>\n        `
+  : "");
+
+/**
  * The site header, rendered once for every page.
  *
  * This was five hand maintained copies of the same block, one per template,
@@ -1154,6 +1171,7 @@ function renderCoursePage(template, n, c, content, s, now) {
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
     NAV_SCRIPT: navScript(programmes.length > 0),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${c.title}`),
     TAGS: c.tags.map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -1233,6 +1251,7 @@ function renderWorkshopPage(template, n, w, s, programmes) {
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
     NAV_SCRIPT: navScript(programmes.length > 0),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${w.title}`),
     TAGS: (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -2029,6 +2048,7 @@ function renderProgrammePage(template, p, s, now) {
       wa: waLink(s.whatsappNumber, p.code), cta: "#enquire",
     }),
     NAV_SCRIPT: navScript(true),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     WA_LINK: waLink(s.whatsappNumber, p.code),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${p.title}`),
@@ -2071,6 +2091,7 @@ function renderPoliciesPage(template, body, s, updated, programmes) {
   return fill(withBody, {
     HEADER: staticPageHeader(s, programmes),
     NAV_SCRIPT: navScript(programmes.length > 0),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -2096,6 +2117,7 @@ function renderAboutPage(template, s, team, page, programmes) {
     STORY_PHOTO: storyPhoto(page.storyPhoto),
     HEADER: staticPageHeader(s, programmes),
     NAV_SCRIPT: navScript(programmes.length > 0),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -2147,6 +2169,7 @@ function formatUpdated(d) {
       wa: waApostrophe(waLink(s.whatsappNumber)), cta: "#contact",
     }),
     NAV_SCRIPT: navScript(programmes.length > 0),
+    GROUP_DESCRIPTOR: groupDescriptor(s),
     COURSE_CARDS: renderCourseCards(content),
     CORPORATE_PHOTO: corporatePhoto(content.homePage.corporatePhoto),
     CONTACT_MOD: contactMod(content.homePage.ctaPhoto),

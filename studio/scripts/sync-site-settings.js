@@ -19,7 +19,7 @@ import {getCliClient} from 'sanity/cli'
 // Deliberately not every field. Tracking IDs and the HubSpot form GUID are
 // expected to be set in the Studio ahead of the repo, so pushing placeholders
 // over them would undo real configuration.
-const FIELDS = ['enquiryEmail', 'whatsappNumber', 'siteUrl', 'rtpStatement']
+const FIELDS = ['enquiryEmail', 'groupDescriptor', 'whatsappNumber', 'siteUrl', 'rtpStatement']
 
 const dryRun = process.argv.includes('--dry-run')
 const client = getCliClient({
