@@ -119,18 +119,22 @@ export default {
       type: 'string',
     },
     {name: 'audience', title: 'Who it is for', type: 'text', rows: 3},
-    {name: 'intakes', title: 'Intake schedule', description: 'Leave empty until dates are confirmed. The page says so honestly rather than hiding the section.', type: 'array', of: [{
-      type: 'object',
-      fields: [
-        {name: 'label', title: 'Label (e.g. Every Tuesday)', type: 'string'},
-        {name: 'dates', title: 'Dates (e.g. 14, 21 and 28 April 2026)', type: 'string'},
-        {name: 'timing', title: 'Timing', type: 'string', initialValue: '9:00 AM to 6:00 PM'},
-        {name: 'venue', title: 'Venue', type: 'string'},
-        {name: 'format', title: 'Format', type: 'string', options: {list: ['Weekday', 'Weekend', 'Custom']}},
-        {name: 'status', title: 'Status', type: 'string', options: {list: ['Open', 'Filling fast', 'Closed']}, initialValue: 'Open'},
-      ],
-      preview: {select: {title: 'label', subtitle: 'dates'}},
-    }]},
+    // The shared `intake` object, not an inline shape of its own: a second OPC
+    // cohort and a January date for AOP 102 are the same idea. The old inline
+    // fields held prose describing a date, which cannot be compared against
+    // today, so a past intake could not be filtered out by the build.
+    //
+    // Hidden on Adoption: those workshops are delivered in house per engagement
+    // and their template has no dates section, so a field that rendered nowhere
+    // would be a trap.
+    {
+      name: 'intakes',
+      title: 'Upcoming dates',
+      description: 'Leave empty until dates are confirmed. The page says so honestly rather than hiding the section. Past dates are never published: the build drops them.',
+      type: 'array',
+      hidden: isAdoption,
+      of: [{type: 'intake'}],
+    },
     // References, not inline objects: a trainer is one person document, pointed
     // at from every course they teach, so a change of role, bio or photo
     // reaches all of them at once. Create people under Team in the Studio.

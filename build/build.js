@@ -229,6 +229,7 @@ function mapCareerProgrammes(docs, projectId, dataset) {
     pathways: (p.pathways || []).map(x => ({
       tag: x.tag || "", title: x.title, body: x.body || "", points: x.points || [],
     })),
+    intakes: mapIntakes(p.intakes),
     audienceBody: p.audienceBody || "",
     details: (p.details || []).map(d => [d.label, d.value]),
     entryRequirements: p.entryRequirements || [],
@@ -246,6 +247,23 @@ function mapCareerProgrammes(docs, projectId, dataset) {
       url: x.url || "", disclaimer: x.disclaimer || "",
     })),
     faqs: (p.faqs || []).map(f => [f.q, f.a]),
+  }));
+}
+
+
+/**
+ * Intakes, from either document type, in one shape.
+ *
+ * Dates stay as dates all the way through. The field they replaced held prose
+ * describing a date, which is why the old intakes could never be filtered: you
+ * cannot compare "14, 21 and 28 April 2026" against today.
+ */
+function mapIntakes(list) {
+  return (list || []).map(i => ({
+    startDate: i.startDate || "", endDate: i.endDate || "",
+    registrationCloses: i.registrationCloses || "",
+    status: i.status || "scheduled",
+    label: i.label || "", venue: i.venue || "", note: i.note || "",
   }));
 }
 
@@ -303,10 +321,7 @@ async function loadFromSanity(projectId, dataset) {
       brks: String(c.breakHours),
       tags: c.tags || [], aiTags: c.aiTags || [], audience: c.audience,
       feeDisplay: c.feeDisplay || "",
-      intakes: (c.intakes || []).map(i => ({
-        label: i.label, dates: i.dates, timing: i.timing, venue: i.venue,
-        format: i.format || "Weekday", status: i.status || "Open",
-      })),
+      intakes: mapIntakes(c.intakes),
       trainers: (c.trainers || []).map(t => ({
         name: t.name, role: t.role, bio: t.bio,
         photoUrl: sanityImageUrl(t.photo, projectId, dataset, 400),
@@ -876,43 +891,85 @@ ${body}
 }
 
 /**
- * Intake cards. An empty schedule is stated plainly rather than hidden: a
- * missing section reads worse than an acknowledged one.
- * Filter tabs are deliberately not built yet, because there is nothing to
- * filter; the thresholds below decide when they become worth building.
+ * Upcoming intakes only, in date order.
+ *
+ * Filtered on the build date, so a past date is never in the HTML at all: not
+ * hidden by script, not merely styled as closed, absent. It cannot be scraped,
+ * indexed or read with JavaScript off.
+ *
+ * That is necessary and not sufficient, because a static build from last month
+ * still serves last month's answer. The build cannot solve that on its own: it
+ * needs the site rebuilt on a schedule. Note that the enrolment button on a
+ * career programme page already depends on build freshness in exactly the same
+ * way, so one daily rebuild settles both.
  */
-function renderIntakes(intakes, code) {
-  if (!intakes.length) {
+function upcomingIntakes(intakes, now) {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return (intakes || [])
+    .filter(i => {
+      const d = parseDate(i.startDate);
+      return d && d >= today;
+    })
+    .sort((a, b) => (a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0));
+}
+
+const STATUS_WORD = {
+  open: "Open", waitlist: "Waitlist", closed: "Closed", scheduled: "Scheduled",
+};
+
+/** An intake's run: both dates when there are two, the start alone otherwise. */
+function intakeDates(i) {
+  return i.endDate && i.endDate !== i.startDate
+    ? `${formatDate(i.startDate)} to ${formatDate(i.endDate)}`
+    : formatDate(i.startDate);
+}
+
+/** One intake card, shared by both page types. */
+function intakeCard(i) {
+  const closed = i.status === "closed";
+  const word = STATUS_WORD[i.status] || STATUS_WORD.scheduled;
+  // With no label the heading is the date range, so a Dates row would repeat it
+  // word for word two lines down.
+  const rows = [
+    ["Dates", i.label ? intakeDates(i) : ""],
+    ["Closes", i.registrationCloses ? formatDate(i.registrationCloses) : ""],
+    ["Venue", i.venue],
+    ["Note", i.note],
+  ].filter(([, v]) => v)
+    .map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("\n          ");
+  return `<article class="intake-card${closed ? " closed" : ""}">
+        <div class="intake-top">
+          <span class="intake-pill${i.status === "waitlist" ? " hot" : ""}">${word}</span>
+        </div>
+        <h3>${esc(i.label || intakeDates(i))}</h3>
+        <dl class="intake-rows">
+          ${rows}
+        </dl>
+        ${closed ? "" : `<a class="intake-link" href="#enquire">Enquire about this intake</a>`}
+      </article>`;
+}
+
+/**
+ * Intake cards for a course page.
+ *
+ * The empty state is unchanged and deliberately not silent: a course with no
+ * dates says so and routes to enquiry, which reads better than a missing
+ * section. It covers both empty cases, no dates recorded and every recorded
+ * date past, because to a reader they are the same situation.
+ */
+function renderIntakes(intakes, now) {
+  const upcoming = upcomingIntakes(intakes, now);
+  if (!upcoming.length) {
     return `<div class="intake-empty">
         <p>Intake dates for this course are confirmed at enquiry. We run small cohorts and schedule them around confirmed demand, so tell us which course you are interested in and we will come back with the next available dates, including weekday and weekend options.</p>
         <a class="btn btn-solid" href="#enquire">Ask about the next intake</a>
       </div>`;
   }
-  const months = new Set(intakes.map(i => String(i.dates).replace(/[^A-Za-z]/g, " ").trim()));
-  const needsFormatTabs = intakes.length > 4;
-  const needsMonthTabs = months.size > 1;
-  const cards = intakes.map(i => {
-    const closed = i.status === "Closed";
-    const pillClass = i.status === "Filling fast" ? "intake-pill hot" : "intake-pill";
-    return `<article class="intake-card${closed ? " closed" : ""}">
-        <div class="intake-top">
-          <span class="${pillClass}">${i.format}</span>
-          <span class="intake-status">${i.status}</span>
-        </div>
-        <h3>${i.label}</h3>
-        <dl class="intake-rows">
-          <div><dt>Dates</dt><dd>${i.dates}</dd></div>
-          <div><dt>Timing</dt><dd>${i.timing}</dd></div>
-          <div><dt>Venue</dt><dd>${i.venue}</dd></div>
-        </dl>
-        ${closed ? "" : `<a class="intake-link" href="#enquire">Enquire about this intake</a>`}
-      </article>`;
-  }).join("");
-  const tabs = [
-    needsFormatTabs ? `<!-- format filter tabs belong here once there are more than four intakes -->` : "",
-    needsMonthTabs ? `<!-- month tabs belong here once intakes span more than one month -->` : "",
-  ].filter(Boolean).join("\n      ");
-  return `${tabs}\n      <div class="intake-grid">${cards}</div>`;
+  // Filter tabs are deliberately not built yet: the threshold below marks where
+  // they become worth building.
+  const tabs = upcoming.length > 4
+    ? `<!-- format filter tabs belong here once there are more than four intakes -->\n      ` : "";
+  return `${tabs}<div class="intake-grid">${upcoming.map(intakeCard).join("")}</div>`;
 }
 
 /** The people who appear in the team grid, in the order they render. */
@@ -1007,7 +1064,7 @@ function renderTrainers(trainers) {
 `;
 }
 
-function renderCoursePage(template, n, c, content, s) {
+function renderCoursePage(template, n, c, content, s, now) {
   const programmes = content.careerProgrammes;
   const code = `${c.codePrefix} ${n}`;
   const fullTitle = `${c.title}: ${c.subtitle}`;
@@ -1075,7 +1132,7 @@ function renderCoursePage(template, n, c, content, s) {
     REL_CARDS: relCards,
     FEE_DISPLAY: c.feeDisplay || "Fees confirmed at enquiry",
     BROCHURE_BTN: brochureBtn(c.slug, "Read the course brochure", "sc-btn sc-btn-ghost"),
-    INTAKES: renderIntakes(c.intakes || [], code),
+    INTAKES: renderIntakes(c.intakes || [], now),
     TRAINER_SECTION: renderTrainers(c.trainers || []),
     PATHWAY_BLOCK: pathwayBlock(),
     BANNER_SRC: c.bannerUrl || `assets/courses/${c.slug}.jpg`,
@@ -1584,6 +1641,7 @@ function sectionNav(p) {
     ["#pathways", "The five months", hasMonths],
     ["#modules", "Modules", hasModules],
     ["#schedule", "Schedule", hasSchedule],
+    ["#intakes", "Upcoming dates", hasIntakes],
     ["#audience", "Who it is for", hasAudience],
     ["#details", "Programme details", hasDetails],
     [`#fees`, hasFees(p) ? "Fees" : "Funding", hasFeesSection],
@@ -1607,6 +1665,42 @@ ${links}
 }
 
 /**
+ * Upcoming dates on a career programme page.
+ *
+ * Absent while no intake is recorded, which is the state today: the schedule
+ * section already states the current cohort's dates and the hero states its
+ * enrolment deadline, so an empty "no upcoming dates" panel beside them would
+ * contradict both.
+ *
+ * Present but empty is a different situation and gets a different answer. If
+ * every recorded date has passed, silence would be wrong on a page inviting
+ * enquiries, so the section stays and routes to enquiry. So the rule is: nothing
+ * scheduled yet, say nothing; everything we listed has been and gone, say so.
+ */
+function intakesSection(p, now) {
+  if (!hasIntakes(p)) return "";
+  const upcoming = upcomingIntakes(p.intakes, now);
+  const body = upcoming.length
+    ? `<div class="intake-grid reveal">${upcoming.map(intakeCard).join("")}</div>`
+    : `<div class="intake-empty reveal">
+        <p>The dates listed for this programme have passed and the next cohort is not yet scheduled. Tell us you are interested and we will come back with the next intake as soon as it is confirmed.</p>
+        <a class="btn btn-solid" href="#enquire">Ask about the next cohort</a>
+      </div>`;
+  return `<!-- ================= UPCOMING DATES ================= -->
+<section class="cpage-section" id="intakes">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Upcoming Dates</span>
+      <h2>Future cohorts</h2>
+    </div>
+    ${body}
+  </div>
+</section>
+
+`;
+}
+
+/**
  * Which sections this programme actually has.
  *
  * One predicate each, and every consumer reads them: the section renderer that
@@ -1621,6 +1715,9 @@ const hasAudience = p => Boolean(p.audienceBody) || p.entryRequirements.length >
 const hasDetails = p => p.details.length > 0 || Boolean(p.startDate) || Boolean(p.enrolmentDeadline);
 const hasPartners = p => p.partners.length > 0;
 const hasFaqs = p => p.faqs.length > 0;
+// Presence, not freshness: a programme whose every date has passed still gets
+// the section, because that is worth saying. See intakesSection().
+const hasIntakes = p => p.intakes.length > 0;
 const hasSchedule = p => {
   const sc = p.schedule || {};
   return moduleSchedule(p).mods.some(m => m.dateFrom && m.dateTo)
@@ -1893,6 +1990,7 @@ function renderProgrammePage(template, p, s, now) {
     MONTHS_SECTION: monthsSection(p),
     MODULES_SECTION: modulesSection(p),
     SCHEDULE_SECTION: scheduleSection(p),
+    INTAKES_SECTION: intakesSection(p, now),
     AUDIENCE_SECTION: audienceSection(p),
     INFO_SECTION: infoSection(p),
     FEES_SECTION: feesSection(p),
@@ -2006,7 +2104,7 @@ function formatUpdated(d) {
   const cTpl = fs.readFileSync(path.join(ROOT, "templates/course.template.html"), "utf8");
   for (const [n, c] of Object.entries(content.courses)) {
     fs.writeFileSync(path.join(DIST, `${c.slug}.html`),
-      renderCoursePage(cTpl, n, c, content, s));
+      renderCoursePage(cTpl, n, c, content, s, new Date()));
   }
 
   // workshop pages: the participation based Adoption series

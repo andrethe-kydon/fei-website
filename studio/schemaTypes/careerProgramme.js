@@ -341,6 +341,14 @@ export default {
     },
     // ---- Details, fees, FAQ ---------------------------------------------
     {
+      name: 'intakes',
+      title: 'Upcoming dates',
+      description: 'Future cohorts. The section is absent while this is empty, because the schedule above already states the current cohort. Past dates are never published: the build drops them.',
+      type: 'array',
+      group: 'admin',
+      of: [{type: 'intake'}],
+    },
+    {
       name: 'audienceBody',
       title: 'Who it is for',
       type: 'text',
