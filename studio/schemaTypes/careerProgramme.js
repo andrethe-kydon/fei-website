@@ -185,6 +185,13 @@ export default {
       group: 'structure',
     },
     {
+      name: 'certificateAwarded',
+      title: 'Certificate awarded',
+      description: 'The exact credential and, where a partner issues it, the exact issuer. For example: 8 Certificates of Completion, one per module, issued by Singapore Polytechnic. It is printed in the module summary bar and is the credential in the structured data, so the issuer is never defaulted to Future Edge Institute.',
+      type: 'string',
+      group: 'structure',
+    },
+    {
       name: 'graduateRoles',
       title: 'Graduate roles',
       description: 'The roles the programme is aligned to. Only roles carried by the approved course outcomes.',

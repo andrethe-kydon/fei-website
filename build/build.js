@@ -196,6 +196,7 @@ function mapCareerProgrammes(docs, projectId, dataset) {
       points: (p.training && p.training.points) || [],
     },
     modulesStandfirst: p.modulesStandfirst || "",
+    certificateAwarded: p.certificateAwarded || "",
     graduateRoles: p.graduateRoles || [],
     arcs: (p.arcs || []).map(a => ({
       label: a.label, deliveredBy: a.deliveredBy || "",
@@ -1128,6 +1129,428 @@ function renderWorkshopPage(template, n, w, s, programmes) {
   });
 }
 
+// ---------- career programme page ----------
+/**
+ * The attribution paragraph.
+ *
+ * Rendered by the build in two fixed places, never placed by an editor: under
+ * the hero, and beside the certificate claim in the module summary. Those are
+ * the two points at which a reader learns who they are dealing with, and the
+ * paragraph resolves who delivers, who accredits and who issues certificates.
+ * It is what keeps the subsidy claims on this page from reading as a
+ * contradiction of the SSG line carried on the eight short course pages, so it
+ * is not editorial prose to be shortened for style or moved for layout.
+ */
+function attributionBlock(text, place) {
+  if (!text) return "";
+  // The hero copy is a band of its own and carries the layout wrap. The modules
+  // copy sits inside a section that already has one, so it adds none.
+  if (place === "modules") {
+    return `<aside class="attribution attribution-modules reveal" aria-label="How this programme is delivered"><p>${esc(text)}</p></aside>`;
+  }
+  return `<aside class="attribution attribution-hero" aria-label="How this programme is delivered">
+  <div class="wrap"><p>${esc(text)}</p></div>
+</aside>
+
+`;
+}
+
+/** The hero stat bar. Each figure that belongs to a partner says so. */
+function statBar(stats) {
+  if (!stats.length) return "";
+  const items = stats.map(s => `<div class="stat-item">
+        <strong>${esc(s.value)}</strong>
+        <small>${esc(s.label)}${s.attribution ? `<span class="stat-attr">${esc(s.attribution)}</span>` : ""}</small>
+      </div>`).join("\n      ");
+  return `<div class="stat-bar">
+      ${items}
+    </div>
+    `;
+}
+
+/**
+ * Where this programme sits beside the short courses.
+ *
+ * Both column headings come from the document rather than from here, so the
+ * next career programme can set itself against something else without a code
+ * change. The dimension is a row header rather than a cell: on a comparison
+ * table that is what lets a screen reader announce which row a value belongs
+ * to when reading across.
+ */
+function positioningSection(p) {
+  const pos = p.positioning;
+  if (!pos.rows.length && !pos.lead.length) return "";
+  const lead = pos.lead.map(t => `<p>${esc(t)}</p>`).join("\n        ");
+  const rows = pos.rows.map(([d, a, b]) => `<tr>
+          <th scope="row">${esc(d)}</th>
+          <td>${esc(a)}</td>
+          <td>${esc(b)}</td>
+        </tr>`).join("\n        ");
+  const table = pos.rows.length ? `<div class="policy-table-scroll reveal">
+      <table class="day-table compare-table">
+        <thead><tr>
+          <th scope="col"><span class="vh">Dimension</span></th>
+          <th scope="col">${esc(pos.programmeColumn)}</th>
+          <th scope="col">${esc(pos.alternativeColumn)}</th>
+        </tr></thead>
+        <tbody>
+        ${rows}
+        </tbody>
+      </table>
+    </div>` : "";
+  return `<!-- ================= WHERE THIS SITS ================= -->
+<section class="cpage-section positioning" id="positioning">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">One Programme, Or One Module At A Time</span>
+      <h2>Where this sits beside the short courses</h2>
+    </div>
+    <div class="why-body reveal">
+        ${lead}
+    </div>
+    ${table}
+  </div>
+</section>
+
+`;
+}
+
+/** The training block and the ways out of it. */
+function monthsSection(p) {
+  const t = p.training;
+  if (!t.body && !p.pathways.length) return "";
+  const points = t.points.length
+    ? `\n        <ul class="build-list">${t.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`
+    : "";
+  const training = t.body ? `<div class="training-block reveal">
+        ${t.label ? `<span class="eyebrow">${esc(t.label)}</span>` : ""}
+        <p>${esc(t.body)}</p>${points}
+      </div>` : "";
+  const paths = p.pathways.map(x => `<article class="pathway-card reveal">
+        ${x.tag ? `<span class="pc-tag">${esc(x.tag)}</span>` : ""}
+        <h3>${esc(x.title)}</h3>
+        ${x.body ? `<p>${esc(x.body)}</p>` : ""}
+        ${x.points.length ? `<ul class="build-list">${x.points.map(q => `<li>${esc(q)}</li>`).join("")}</ul>` : ""}
+      </article>`).join("\n      ");
+  return `<!-- ================= THE MONTHS AND THE WAYS FORWARD ================= -->
+<section class="cpage-section months" id="pathways">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">The Programme</span>
+      <h2>The training, and the two ways forward</h2>
+    </div>
+    ${training}
+    <div class="pathway-grid">
+      ${paths}
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/**
+ * The modules, grouped by arc.
+ *
+ * A details element rather than a scripted accordion: it opens with the
+ * keyboard, announces its own state, and prints expanded, with no code of ours
+ * standing between the reader and the content.
+ *
+ * The summary bar totals the hours from the modules rather than restating a
+ * figure, so it can never disagree with the list above it, and the attribution
+ * sits directly beneath it because that is where the certificate claim is made.
+ */
+function modulesSection(p) {
+  if (!p.arcs.length) return "";
+  let total = 0, count = 0;
+  const arcs = p.arcs.map(a => {
+    const mods = a.modules.map(m => {
+      total += Number(m.hours) || 0;
+      count += 1;
+      const by = m.deliveredBy || a.deliveredBy;
+      const meta = [`${m.hours} hours`, by].filter(Boolean).map(esc).join(" · ");
+      return `<details class="faq-item module-item" data-module="${esc(m.num || m.title)}">
+          <summary>
+            <span class="mod-head"><b>${esc(m.num ? `${m.num}: ` : "")}${esc(m.title)}</b><span class="mod-meta">${meta}</span></span>
+          </summary>
+          <div class="faq-a">
+            ${m.certificate ? `<p class="mod-cert">Certificate: ${esc(m.certificate)}</p>` : ""}
+            ${m.synopsis ? `<p>${esc(m.synopsis)}</p>` : ""}
+            ${m.objectives.length ? `<ul class="build-list">${m.objectives.map(o => `<li>${esc(o)}</li>`).join("")}</ul>` : ""}
+          </div>
+        </details>`;
+    }).join("\n        ");
+    return `<div class="arc reveal">
+        <h3 class="arc-label">${esc(a.label)}${a.deliveredBy ? ` <span class="arc-by">Delivered by ${esc(a.deliveredBy)}</span>` : ""}</h3>
+        ${mods}
+      </div>`;
+  }).join("\n      ");
+  // Trailing zeros are noise on a whole number and meaning on a half hour.
+  const hours = Number.isInteger(total) ? String(total) : total.toFixed(1);
+  const roles = p.graduateRoles.length
+    ? `<p class="mod-roles reveal"><b>Graduate roles:</b> ${p.graduateRoles.map(esc).join(", ")}. Aligned to the approved course outcomes.</p>`
+    : "";
+  return `<!-- ================= THE MODULES ================= -->
+<section class="cpage-section modules" id="modules">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:820px">
+      <span class="eyebrow">The Modules</span>
+      <h2>${count} modules. ${hours} hours. One programme.</h2>
+      ${p.modulesStandfirst ? `<p>${esc(p.modulesStandfirst)}</p>` : ""}
+    </div>
+    ${roles}
+    <div class="arc-list">
+      ${arcs}
+    </div>
+    <div class="mod-summary reveal">
+      <span><b>${hours}</b> total hours</span>
+      <span><b>${count}</b> modules</span>
+      ${p.certificateAwarded ? `<span>${esc(p.certificateAwarded)}</span>` : ""}
+    </div>
+    ${attributionBlock(p.attribution, "modules")}
+  </div>
+</section>
+
+`;
+}
+
+/** Who it is for, and who may apply. */
+function audienceSection(p) {
+  if (!p.audienceBody && !p.entryRequirements.length) return "";
+  return `<!-- ================= WHO IT IS FOR ================= -->
+<section class="cpage-section" id="audience">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Who It Is For</span>
+      <h2>Built for professionals with domain expertise, not developers</h2>
+      ${p.audienceBody ? `<p>${esc(p.audienceBody)}</p>` : ""}
+    </div>
+    ${p.entryRequirements.length ? `<div class="reveal" style="max-width:760px">
+      <h3 class="block-h3">Entry requirements</h3>
+      <ul class="build-list">${p.entryRequirements.map(r => `<li>${esc(r)}</li>`).join("")}</ul>
+      ${p.entryNote ? `<p class="entry-note">${esc(p.entryNote)}</p>` : ""}
+    </div>` : ""}
+  </div>
+</section>
+
+`;
+}
+
+/** The programme details table. */
+function infoSection(p) {
+  if (!p.details.length) return "";
+  const rows = p.details.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("\n        ");
+  return `<!-- ================= COURSE INFORMATION ================= -->
+<section class="cpage-section" id="details" style="background:var(--bg-alt)">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Course Information</span>
+      <h2>Programme details</h2>
+    </div>
+    <div class="info-panel reveal">
+      <dl class="sc-list">
+        ${rows}
+      </dl>
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/**
+ * Fees, and the funding scope note that has to travel with them.
+ *
+ * The whole block is gated on showFees, the funding note included. That note
+ * states which programmes the subsidy covers and which it does not, so it can
+ * never be separated from the figures it qualifies: without it beside them this
+ * page reads as a contradiction of the eight short course pages, which say
+ * plainly that those courses are not subsidised.
+ */
+const hasFees = p => Boolean(p.showFees) && p.fees.length > 0;
+
+function feesSection(p) {
+  if (!hasFees(p)) return "";
+  const tiers = p.fees.map(([e, f]) => `<tr><td class="t">${esc(e)}</td><td>${esc(f)}</td></tr>`).join("\n          ");
+  const refunds = p.refundTerms.length ? `<h3 class="block-h3">If you withdraw or cancel</h3>
+      <div class="policy-table-scroll">
+        <table class="day-table">
+          <thead><tr><th scope="col">When we receive your notice</th><th scope="col">Outcome</th></tr></thead>
+          <tbody>
+          ${p.refundTerms.map(([w, o]) => `<tr><td class="t">${esc(w)}</td><td>${esc(o)}</td></tr>`).join("\n          ")}
+          </tbody>
+        </table>
+      </div>` : "";
+  const payment = p.paymentMethods.length
+    ? `<h3 class="block-h3">Payment</h3>\n      <p>${p.paymentMethods.map(esc).join(", ")}.</p>`
+    : "";
+  return `<!-- ================= FEES AND FUNDING ================= -->
+<section class="cpage-section fees" id="fees">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Fees and Funding</span>
+      <h2>What it costs, and what the subsidy covers</h2>
+    </div>
+    <div class="fees-body reveal">
+      <div class="policy-table-scroll">
+        <table class="day-table">
+          <thead><tr><th scope="col">Eligibility</th><th scope="col">Total course fee</th></tr></thead>
+          <tbody>
+          ${tiers}
+          </tbody>
+        </table>
+      </div>
+      ${p.feeNote ? `<p class="fee-note">${esc(p.feeNote)}</p>` : ""}
+      ${payment}
+      ${refunds}
+      ${p.fundingNote ? `<div class="funding-note"><h3>What this subsidy applies to</h3><p>${esc(p.fundingNote)}</p></div>` : ""}
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/** Partners, each with the limits of its own role stated. */
+function partnersSection(p) {
+  if (!p.partners.length) return "";
+  // h3, not the h4 the assessment cards use, so the outline does not skip a
+  // level under the section heading.
+  const cards = p.partners.map(x => `<article class="assess-card reveal">
+        <h3>${esc(x.name)}</h3>
+        ${x.role ? `<p class="partner-role">${esc(x.role)}</p>` : ""}
+        ${x.body ? `<p>${esc(x.body)}</p>` : ""}
+        ${x.url ? `<p><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a></p>` : ""}
+        ${x.disclaimer ? `<p class="partner-disclaim">${esc(x.disclaimer)}</p>` : ""}
+      </article>`).join("\n      ");
+  return `<!-- ================= PARTNERS ================= -->
+<section class="cpage-section" id="partners">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Partners</span>
+      <h2>Who else is involved</h2>
+    </div>
+    <div class="assess-grid">
+      ${cards}
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/** The FAQ, and nothing at all when there are no questions. */
+function faqSection(p) {
+  if (!p.faqs.length) return "";
+  const items = p.faqs.map(([q, a]) => `<details class="faq-item">
+        <summary>${esc(q)}</summary>
+        <div class="faq-a">${esc(a)}</div>
+      </details>`).join("\n      ");
+  return `<!-- ================= FAQ ================= -->
+<section class="section faq" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2>Frequently asked questions</h2>
+    </div>
+    <div class="faq-list reveal">
+      ${items}
+    </div>
+  </div>
+</section>
+
+`;
+}
+
+/**
+ * Career programme page.
+ *
+ * A third sibling of renderCoursePage and renderWorkshopPage rather than a
+ * branch inside either. This page makes no assessment claim, declares no
+ * delivery hour split, and is not delivered by Future Edge Institute at all,
+ * so nothing it needs belongs in a template shaped around a short course.
+ *
+ * The structured data says the same thing the attribution does: the provider is
+ * Kydon Group with the academic partner named as contributor, and the credential
+ * carries its actual issuer. Defaulting either to Future Edge Institute would
+ * put a claim in the machine readable data that the visible page contradicts.
+ */
+function renderProgrammePage(template, p, s) {
+  const fullTitle = p.subtitle ? `${p.title}: ${p.subtitle}` : p.title;
+  const canonical = `${s.siteUrl}/${p.slug}.html`;
+  const desc = p.standfirst || p.subtitle || p.title;
+  const partner = p.partners.length ? p.partners[0].name : "";
+  const schemaCourse = JSON.stringify({
+    "@context": "https://schema.org", "@type": "Course",
+    name: fullTitle, description: desc,
+    provider: { "@type": "Organization", name: "Kydon Group" },
+    ...(partner ? { contributor: { "@type": "CollegeOrUniversity", name: partner } } : {}),
+    ...(p.certificateAwarded ? { educationalCredentialAwarded: p.certificateAwarded } : {}),
+    url: canonical,
+  });
+  const schemaCrumb = JSON.stringify({
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${s.siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: "Programmes", item: `${s.siteUrl}/#courses` },
+      { "@type": "ListItem", position: 3, name: fullTitle, item: canonical }],
+  });
+  // FAQPage for this page's own questions only, which is the site rule: no two
+  // pages may claim the same question. These are new, so nothing collides.
+  const schemaFaq = p.faqs.length
+    ? `<script type="application/ld+json">${JSON.stringify({
+        "@context": "https://schema.org", "@type": "FAQPage",
+        mainEntity: p.faqs.map(([q, a]) => ({
+          "@type": "Question", name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
+      })}</script>\n`
+    : "";
+  const hero = p.hero;
+  return fill(template, {
+    CODE: p.code, SLUG: p.slug,
+    TITLE: esc(p.title), SUBTITLE: esc(p.subtitle), FULL_TITLE: esc(fullTitle),
+    META_DESC: esc(desc), CANONICAL: canonical,
+    GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
+    SCHEMA_COURSE: schemaCourse, SCHEMA_CRUMB: schemaCrumb, SCHEMA_FAQ: schemaFaq,
+    HEADER: siteHeader({
+      brand: "index.html",
+      items: [["About", "about.html"], programmesItem("index.html#courses", [p]),
+        // The fees block is optional, so the nav follows the same predicate the
+        // section does. Pointing at #fees on a page that rendered no fees would
+        // be a link into nothing.
+        ["Fees and Funding", hasFees(p) ? "#fees" : "index.html#funding"],
+        ["For Organisations", "index.html#corporate"]],
+      wa: waLink(s.whatsappNumber, p.code), cta: "#enquire",
+    }),
+    NAV_SCRIPT: navScript(true),
+    WA_LINK: waLink(s.whatsappNumber, p.code),
+    EMAIL: s.enquiryEmail,
+    MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${p.title}`),
+    // The hero photo reuses the about page treatments, so a photograph uploaded
+    // here crops exactly as one uploaded there.
+    HERO_MOD: aboutHeroMod(hero),
+    HERO_STYLE: aboutHeroStyle(hero),
+    HERO_BG: aboutHeroBg(hero),
+    HERO_FIG: aboutHeroFig(hero),
+    // Absent rather than marked. There is no confirmation style on this site: a
+    // value that is not settled is left out and recorded in docs/DECISIONS.md.
+    EYEBROW: p.eyebrow ? `<span class="eyebrow">${esc(p.eyebrow)}</span>\n    ` : "",
+    STANDFIRST: esc(p.standfirst),
+    STAT_BAR: statBar(p.stats),
+    ATTRIBUTION_HERO: attributionBlock(p.attribution, "hero"),
+    POSITIONING_SECTION: positioningSection(p),
+    MONTHS_SECTION: monthsSection(p),
+    MODULES_SECTION: modulesSection(p),
+    AUDIENCE_SECTION: audienceSection(p),
+    INFO_SECTION: infoSection(p),
+    FEES_SECTION: feesSection(p),
+    PARTNERS_SECTION: partnersSection(p),
+    FAQ_SECTION: faqSection(p),
+    OG_IMAGE: siteOgImage(s),
+  });
+}
+
 /**
  * Legal and policies page. The document body lives in content/policies.html
  * so the prose stays out of the build script; it is injected first so that
@@ -1242,6 +1665,18 @@ function formatUpdated(d) {
       renderWorkshopPage(wTpl, n, w, s, content.careerProgrammes));
   }
 
+  // career programme pages: the long cohort programmes, outside the catalogue.
+  // The list is built once and feeds both the write loop and the sitemap below,
+  // so a page and its sitemap entry cannot diverge. Unpublished programmes are
+  // already absent from the collection, so they reach neither.
+  const prTpl = fs.readFileSync(path.join(ROOT, "templates/programme.template.html"), "utf8");
+  const programmePages = content.careerProgrammes.map(p => ({
+    file: `${p.slug}.html`, html: renderProgrammePage(prTpl, p, s),
+  }));
+  for (const { file, html } of programmePages) {
+    fs.writeFileSync(path.join(DIST, file), html);
+  }
+
   // about
   const aTpl = fs.readFileSync(path.join(ROOT, "templates/about.template.html"), "utf8");
   fs.writeFileSync(path.join(DIST, "about.html"),
@@ -1257,6 +1692,7 @@ function formatUpdated(d) {
   const pages = ["",
     ...Object.values(content.courses).map(c => `${c.slug}.html`),
     ...Object.values(content.workshops).map(w => `${w.slug}.html`),
+    ...programmePages.map(x => x.file),
     "about.html", "policies.html"];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     pages.map(p => `  <url><loc>${s.siteUrl}/${p}</loc></url>`).join("\n") + "\n</urlset>\n";
