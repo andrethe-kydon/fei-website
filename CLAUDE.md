@@ -33,8 +33,48 @@ Content driven static site. No framework, no dependencies for the site build.
 - `studio/` is the Sanity Studio (its own package.json; not part of the site build).
 - `dist/` is generated. Never edit it, never commit it.
 - `docs/DECISIONS.md` records every value the site needs and does not have, grouped by what it blocks, with the person who decides it. An unconfirmed value is omitted from the page and recorded there. Never left on the page as a marker.
+- `.github/workflows/daily-rebuild.yml` calls a Vercel deploy hook once a day. **Anything on this site derived from the build date depends on it.** See below before writing more of it.
 
 Build and check: `npm run build`, then `npx serve dist`. A correct build reports **11 pages**.
+
+## Dates and the daily rebuild
+
+This is a statically built site, so **anything derived from the build date freezes
+at the moment of the last deploy.** Two things already depend on it:
+
+| What | Where | Goes stale as |
+| --- | --- | --- |
+| Upcoming intakes | `upcomingIntakes()` filters on the build date | An intake that has since started is still advertised |
+| The enrolment button | `enrolment()` renders "Enrol now, closes this month" | Still says "this month" in a later month |
+
+**What keeps them honest is `.github/workflows/daily-rebuild.yml`**, which curls a
+Vercel deploy hook at 22:00 UTC, so 06:00 Singapore, every day. Filtering at build
+time is necessary and not sufficient; the daily rebuild is what makes it
+sufficient. The hook URL is the repo secret `VERCEL_DEPLOY_HOOK`, and the workflow
+checks the HTTP status and exits non zero on anything but a 2xx, because a hook
+that silently 404s means the site quietly stops refreshing, which is the failure
+nobody notices. It never echoes the secret, on success or failure.
+
+**If you add build date derived copy, it inherits this dependency.** That is fine,
+and it is the reason the rebuild exists. Two rules follow:
+
+1. **Degrade in one direction only.** Never let a stale build make a claim that
+   is worse than silence. `enrolment()` is the pattern: once the deadline passes
+   it stops offering enrolment, says the cohort closed, and warns on the build
+   console. It never invents urgency it cannot support.
+2. **Filter at build time, never in the browser.** Client side filtering leaves
+   the stale claim in the HTML where it can be scraped and indexed, shows a
+   closed intake as open to anyone with JavaScript off, and does nothing for a
+   line like "closes this month" that is baked into the markup.
+
+**Two ways this mechanism can fail quietly, both worth knowing.** GitHub disables
+scheduled workflows in a repository with no commit activity for 60 days, so a
+quiet period stops the rebuild without any error at all: re-enable it in the
+Actions tab. And a 2xx from the hook means Vercel queued the build, not that it
+succeeded; a failed build is visible in Vercel and leaves the previous deploy
+serving. Scheduled workflow failures email the repository owner by default, which
+is the only thing making "fail loudly" audible, so do not turn that off.
+
 
 ## Pages
 

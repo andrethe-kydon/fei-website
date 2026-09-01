@@ -1,0 +1,102 @@
+# Daily rebuild.
+#
+# The site is statically built, so anything derived from the build date freezes
+# at the moment of the last deploy. Two things already depend on it:
+#
+#   1. Intake dates are filtered against the build date, so a build from last
+#      month still serves an intake that has since started.
+#   2. The career programme enrolment button reads "Enrol now, closes this
+#      month", which is only true in the month it was built.
+#
+# Filtering at build time is necessary but not sufficient. This is what makes it
+# sufficient: the site rebuilds every day, so the filter and every other build
+# date derived line re-run against today.
+#
+# It deliberately does not filter in the browser instead. That would leave the
+# stale claim in the HTML where it can be scraped and indexed, it would show a
+# closed intake as open to anyone with JavaScript off, and it would do nothing
+# at all for the enrolment button.
+
+name: Daily rebuild
+
+on:
+  schedule:
+    # GitHub Actions cron is always UTC and offers no timezone setting, so the
+    # offset here is deliberate rather than an oversight. Singapore is UTC+8 all
+    # year and observes no daylight saving, so 22:00 UTC is 06:00 the following
+    # day in Singapore, every day. Early morning local time means a date that
+    # rolls over overnight is correct on the site before anyone reads it.
+    - cron: '0 22 * * *'
+  # Manual trigger, for testing the hook without waiting for the schedule.
+  workflow_dispatch:
+
+# One rebuild at a time. A manual run during the scheduled one should queue
+# rather than race it, and neither should be cancelled: a cancelled rebuild is
+# a day the site does not refresh.
+concurrency:
+  group: daily-rebuild
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  rebuild:
+    name: Trigger the Vercel deploy hook
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          set -euo pipefail
+          # No `set -x` anywhere in this script: it would expand and echo the
+          # hook URL, which is a credential. Nothing below prints $HOOK either,
+          # on success or on failure.
+
+          if [ -z "${HOOK:-}" ]; then
+            echo "::error title=Deploy hook missing::The VERCEL_DEPLOY_HOOK secret is unset or empty, so nothing was triggered. The site is not rebuilding on a schedule until this is fixed."
+            exit 1
+          fi
+
+          body="$RUNNER_TEMP/hook-response"
+          rc=0
+          # curl's own stderr can quote the URL it was handed, so it is
+          # discarded and the exit code is reported instead. GitHub masks
+          # registered secrets in logs, but not printing it at all is the
+          # stronger guarantee.
+          status=$(curl --silent --location --max-time 30 \
+                        --request POST \
+                        --output "$body" \
+                        --write-out '%{http_code}' \
+                        "$HOOK" 2>/dev/null) || rc=$?
+
+          if [ "$rc" -ne 0 ]; then
+            echo "::error title=Deploy hook unreachable::curl exited $rc. The hook was not reached and the site has NOT been rebuilt."
+            exit 1
+          fi
+
+          echo "Deploy hook responded HTTP $status"
+
+          case "$status" in
+            2*)
+              # Vercel's response names the job it queued. It contains no part
+              # of the hook URL, so it is safe to print and useful for tracing a
+              # deploy back to the run that asked for it.
+              echo "Queued deployment:"
+              head -c 500 "$body" || true
+              echo
+              ;;
+            *)
+              echo "::error title=Deploy hook failed::HTTP $status. The site has NOT been rebuilt. A 404 usually means the hook was deleted or regenerated in Vercel and the VERCEL_DEPLOY_HOOK secret needs updating."
+              head -c 500 "$body" || true
+              echo
+              exit 1
+              ;;
+          esac
+
+          # A 2xx means Vercel accepted and queued the build, not that the build
+          # succeeded. Verifying the deployment itself would need a Vercel API
+          # token, which is a bigger credential for a smaller gain: a failed
+          # build is already visible in Vercel and leaves the previous deploy
+          # serving.
