@@ -218,6 +218,18 @@ unconfirmed goes on the page. There is no confirmation style on this site: an
 unsettled value is omitted and recorded in `docs/DECISIONS.md`. Do not invent a
 marker for one.
 
+**One scoped exception: a reference the funding regime expects.** Where the
+absence of a value would itself mislead, the row stays and states plainly that
+the value is pending. The case on this site is the **TGS code** in the OPC
+Launchpad programme details, which carries the value "To be confirmed": on a
+course funded under an SSG scheme, no TGS reference at all reads as a programme
+that is not registered, which is worse than one visibly awaiting its code. Do
+not delete that row as a stray marker. Note the distinction it rests on: the
+value is plain prose that a reader understands, not a styled marker of the
+`[TO BE CONFIRMED: ...]` kind, which remains banned everywhere but
+`policies.html`. The exception is narrow. It does not licence pending values in
+general, and everything still unsettled is recorded in `docs/DECISIONS.md`.
+
 **Fees.** House rule 4 carries a scoped exception for exactly this case, and it
 is the only page using it: the SCTP fee tiers are already published by Singapore
 Polytechnic under a government subsidy scheme, so they may appear here.
