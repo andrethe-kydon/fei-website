@@ -288,6 +288,67 @@ function waLink(number, code) {
 }
 
 /**
+ * The site header, rendered once for every page.
+ *
+ * This was five hand maintained copies of the same block, one per template,
+ * which is exactly how the five drifted apart: each page points its Programmes,
+ * Fees and Enquire links at its own target, and the homepage points the brand
+ * at #top rather than back at itself. Those differences are deliberate and are
+ * kept, so every target is an argument here rather than something the renderer
+ * decides. Adding a nav item now means editing one function instead of five
+ * files that can disagree.
+ *
+ * `items` is the plain links, in order. The WhatsApp link and the Enquire
+ * button carry their own markup and are not part of it.
+ */
+function siteHeader({ brand, items, wa, cta }) {
+  const links = items
+    .map(([label, href]) => `      <li><a href="${href}">${label}</a></li>`)
+    .join("\n");
+  return `<header>
+  <div class="wrap nav">
+    <a class="brand" href="${brand}" aria-label="Future Edge Institute home">
+      <img class="brand-logo" src="assets/brand/fei_logo_secondary_notag.svg" alt="Future Edge Institute" width="121" height="46">
+      <!-- The logo file is the version without the tagline, because a baked in
+           tagline renders at about 4px at header size. This is the tagline set
+           as live text instead. aria-hidden: the img alt already names the
+           brand, and a screen reader should not read it twice. -->
+      <span class="brand-tagline" aria-hidden="true">Future Ready. Future Strong</span>
+    </a>
+    <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="navlinks">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navlinks">
+${links}
+      <li><a class="nav-wa" id="nav-wa" href="${wa}"><span class="wa-dot"></span>WhatsApp</a></li>
+      <li><a href="${cta}" class="nav-cta">Enquire</a></li>
+    </ul>
+  </div>
+</header>`;
+}
+
+/**
+ * The homepage has always carried the apostrophe in its WhatsApp message as
+ * %27, while every other page carries it literally: encodeURIComponent leaves
+ * an apostrophe alone, and the homepage URL was written by hand. The two decode
+ * to the same message. Preserved rather than normalised so that generating the
+ * header changes no bytes; normalising it is a separate one line change.
+ */
+const waApostrophe = u => u.replace(/'/g, "%27");
+
+/**
+ * The header carried by every page that is neither the homepage nor a programme
+ * page: about and policies. Both point Fees and Funding and Enquire back at the
+ * homepage, because neither has a section of its own to jump to.
+ */
+const staticPageHeader = s => siteHeader({
+  brand: "index.html",
+  items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+    ["Fees and Funding", "index.html#funding"], ["For Organisations", "index.html#corporate"]],
+  wa: waLink(s.whatsappNumber), cta: "index.html#contact",
+});
+
+/**
  * AI capability tags as their own row. Returns "" when the course teaches no
  * AI, so nothing is emitted: no wrapper, no spacing. `after` is appended only
  * when there is something to show, to keep the generated markup tidy.
@@ -762,6 +823,12 @@ function renderCoursePage(template, n, c, content, s) {
     GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
     SCHEMA_COURSE: schemaCourse, SCHEMA_CRUMB: schemaCrumb,
     WA_LINK: waLink(s.whatsappNumber, code),
+    HEADER: siteHeader({
+      brand: "index.html",
+      items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+        ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
+      wa: waLink(s.whatsappNumber, code), cta: "#enquire",
+    }),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${c.title}`),
     TAGS: c.tags.map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -834,6 +901,12 @@ function renderWorkshopPage(template, n, w, s) {
     GA4_ID: s.ga4Id, META_PIXEL_ID: s.metaPixelId, HS_PORTAL: s.hubspotPortalId,
     SCHEMA_COURSE: schemaCourse, SCHEMA_CRUMB: schemaCrumb,
     WA_LINK: waLink(s.whatsappNumber, code),
+    HEADER: siteHeader({
+      brand: "index.html",
+      items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+        ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
+      wa: waLink(s.whatsappNumber, code), cta: "#enquire",
+    }),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${w.title}`),
     TAGS: (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -863,6 +936,7 @@ function renderWorkshopPage(template, n, w, s) {
 function renderPoliciesPage(template, body, s, updated) {
   const withBody = template.replace("{{POLICY_BODY}}", () => body);
   return fill(withBody, {
+    HEADER: staticPageHeader(s),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -886,6 +960,7 @@ function renderAboutPage(template, s, team, page) {
     ABOUT_HERO_FIG: aboutHeroFig(hero),
     STORY_MOD: storyMod(page.storyPhoto),
     STORY_PHOTO: storyPhoto(page.storyPhoto),
+    HEADER: staticPageHeader(s),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -929,6 +1004,12 @@ function formatUpdated(d) {
   // index
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
   const idx = fill(idxTpl, {
+    HEADER: siteHeader({
+      brand: "#top",
+      items: [["About", "about.html"], ["Programmes", "#courses"],
+        ["The Pathways", "#pathway"], ["For Organisations", "#corporate"]],
+      wa: waApostrophe(waLink(s.whatsappNumber)), cta: "#contact",
+    }),
     COURSE_CARDS: renderCourseCards(content),
     CORPORATE_PHOTO: corporatePhoto(content.homePage.corporatePhoto),
     CONTACT_MOD: contactMod(content.homePage.ctaPhoto),
