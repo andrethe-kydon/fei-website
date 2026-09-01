@@ -148,6 +148,31 @@ nothing defaults to FEI.
    to survive the figures being hidden. With fees shown it sits inside the fees
    block; with fees hidden it stands alone in the same slot. Do not re-tie it.
 
+**Hours never appear as a bare total.** Always with their parts: *580.5 taught
+plus 33.5 assessment, 614 in total*. The per module figures elsewhere on the page
+are **taught** hours and the schedule's are **totals**, so a lone number invites a
+reader to conclude the two contradict each other. Stating both is what stops
+that. `hoursPhrase()` in `build.js` is the only place that formats them, and with
+no assessment recorded it falls back to the plain figure rather than inventing a
+breakdown. The module object stores taught and assessment; a module total is
+computed where it is shown and never stored, so the parts and the total cannot
+disagree.
+
+**The schedule derives its own outer dates.** Programme start and end are the
+earliest and latest module dates, not separate fields, so the at a glance block
+can never contradict the module table under it. The section names the cohort it
+belongs to, so a visitor arriving for a later intake cannot read those dates as
+theirs. It renders nothing at all when the schedule object is empty.
+
+**The schedule PDFs are file assets in Sanity, not files in `static/`.** They are
+attached by `studio/scripts/load-opc-schedule-files.js`, which is idempotent and
+reuses an already uploaded asset. **A `sanity dataset import` of `seed-opc.ndjson`
+wipes `schedule.files`**, because the seed carries an empty array and `--replace`
+replaces the whole document. Re-run the script after any import. The PDFs are
+built by hand from an approved workbook and are the one part of this page that
+can drift from it: if a session moves, the workbook is the source of truth and
+both PDFs are reissued with the version line bumped.
+
 **Nothing on the page is ever marked as unconfirmed**, because nothing
 unconfirmed goes on the page. There is no confirmation style on this site: an
 unsettled value is omitted and recorded in `docs/DECISIONS.md`. Do not invent a

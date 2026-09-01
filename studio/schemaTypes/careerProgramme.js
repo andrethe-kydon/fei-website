@@ -244,7 +244,16 @@ export default {
               fields: [
                 {name: 'num', title: 'Module number', type: 'string'},
                 {name: 'title', title: 'Module title', type: 'string'},
-                {name: 'hours', title: 'Hours', type: 'number'},
+                // Retitled, not renamed. This field has always held taught
+                // hours; the title now says so, and the field name is left
+                // alone so no published data moves.
+                {name: 'hours', title: 'Taught hours', type: 'number'},
+                {name: 'assessmentHours', title: 'Assessment hours', type: 'number'},
+                // A module total is taught plus assessment, computed where it is
+                // shown and never stored, so the parts and the total cannot
+                // disagree.
+                {name: 'dateFrom', title: 'Runs from', type: 'date', options: {dateFormat: 'D MMMM YYYY'}},
+                {name: 'dateTo', title: 'Runs to', type: 'date', options: {dateFormat: 'D MMMM YYYY'}},
                 {
                   name: 'deliveredBy',
                   title: 'Delivered by',
@@ -268,6 +277,68 @@ export default {
       }],
     },
 
+    // ---- Schedule -------------------------------------------------------
+    // Nothing here is required. With the whole object empty the schedule section
+    // does not render and the page is exactly what it was.
+    //
+    // The programme start and end are NOT stored here: they are derived from the
+    // earliest and latest module dates, so the schedule can never contradict the
+    // module table beneath it.
+    {
+      name: 'schedule',
+      title: 'Schedule',
+      type: 'object',
+      group: 'structure',
+      fields: [
+        {
+          name: 'cohort',
+          title: 'Which cohort these dates are for',
+          description: 'For example Cohort 1. Named in the section heading so a visitor arriving for a later intake cannot read these dates as theirs. Left empty the section says "the current cohort" instead.',
+          type: 'string',
+        },
+        {
+          name: 'pattern',
+          title: 'Weekly pattern',
+          description: 'The rhythm of a normal week in plain words, for example the teaching days and the hours.',
+          type: 'string',
+        },
+        {
+          name: 'patternNote',
+          title: 'The non teaching day',
+          description: 'What happens on the day that carries no class, and what the weekend looks like.',
+          type: 'text',
+          rows: 3,
+        },
+        {
+          name: 'holidays',
+          title: 'Public holidays with no class',
+          type: 'array',
+          of: [{
+            type: 'object',
+            fields: [
+              {name: 'date', title: 'Date', type: 'date', options: {dateFormat: 'D MMMM YYYY'}},
+              {name: 'name', title: 'Holiday', type: 'string'},
+            ],
+            preview: {select: {title: 'name', subtitle: 'date'}},
+          }],
+        },
+        {
+          name: 'files',
+          title: 'Downloads',
+          description: 'The schedule as published. An empty list renders no downloads block.',
+          type: 'array',
+          of: [{
+            type: 'object',
+            fields: [
+              {name: 'label', title: 'Label', type: 'string'},
+              {name: 'description', title: 'Description', type: 'text', rows: 2},
+              {name: 'file', title: 'PDF', type: 'file', options: {accept: 'application/pdf'}},
+            ],
+            preview: {select: {title: 'label', subtitle: 'description'}},
+          }],
+        },
+      ],
+    },
     // ---- Details, fees, FAQ ---------------------------------------------
     {
       name: 'audienceBody',

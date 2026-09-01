@@ -198,12 +198,30 @@ function mapCareerProgrammes(docs, projectId, dataset) {
       points: (p.training && p.training.points) || [],
     },
     modulesStandfirst: p.modulesStandfirst || "",
+    schedule: {
+      cohort: (p.schedule && p.schedule.cohort) || "",
+      pattern: (p.schedule && p.schedule.pattern) || "",
+      patternNote: (p.schedule && p.schedule.patternNote) || "",
+      holidays: ((p.schedule && p.schedule.holidays) || [])
+        .map(h => ({ date: h.date || "", name: h.name || "" })),
+      // A file with no asset is a half filled row in the Studio, not a download.
+      files: ((p.schedule && p.schedule.files) || [])
+        .filter(f => f.asset && f.asset.url)
+        .map(f => ({
+          label: f.label || "", description: f.description || "",
+          url: f.asset.url, size: f.asset.size || 0,
+          extension: (f.asset.extension || "pdf").toUpperCase(),
+        })),
+    },
     certificateAwarded: p.certificateAwarded || "",
     graduateRoles: p.graduateRoles || [],
     arcs: (p.arcs || []).map(a => ({
       label: a.label, deliveredBy: a.deliveredBy || "",
       modules: (a.modules || []).map(m => ({
         num: m.num, title: m.title, hours: m.hours,
+        // Taught and assessment are stored; the total never is.
+        assessmentHours: m.assessmentHours || 0,
+        dateFrom: m.dateFrom || "", dateTo: m.dateTo || "",
         deliveredBy: m.deliveredBy || "", certificate: m.certificate || "",
         synopsis: m.synopsis || "", objectives: m.objectives || [],
       })),
@@ -246,7 +264,13 @@ async function loadFromSanity(projectId, dataset) {
       "trainers": trainers[]->{name, role, bio, photo}
     },
     "team": *[_type == "person" && (!defined(showOnAbout) || showOnAbout == true)] | order(order asc, name asc),
-    "careerProgrammes": *[_type == "careerProgramme" && published == true && !(_id in path("drafts.**"))] | order(code asc)
+    "careerProgrammes": *[_type == "careerProgramme" && published == true && !(_id in path("drafts.**"))] | order(code asc){
+      ...,
+      schedule{
+        ...,
+        files[]{label, description, "asset": file.asset->{url, size, originalFilename, extension}}
+      }
+    }
   }`);
   const url = `https://${projectId}.api.sanity.io/v2024-01-01/data/query/${dataset}?query=${query}`;
   const headers = process.env.SANITY_READ_TOKEN
@@ -1342,7 +1366,8 @@ function modulesSection(p) {
       </div>`;
   }).join("\n      ");
   // Trailing zeros are noise on a whole number and meaning on a half hour.
-  const hours = Number.isInteger(total) ? String(total) : total.toFixed(1);
+  const assess = p.arcs.reduce((t, a) =>
+    t + a.modules.reduce((u, m) => u + (Number(m.assessmentHours) || 0), 0), 0);
   const roles = p.graduateRoles.length
     ? `<p class="mod-roles reveal"><b>Graduate roles:</b> ${p.graduateRoles.map(esc).join(", ")}. Aligned to the approved course outcomes.</p>`
     : "";
@@ -1351,7 +1376,7 @@ function modulesSection(p) {
   <div class="wrap">
     <div class="section-head reveal" style="max-width:820px">
       <span class="eyebrow">The Modules</span>
-      <h2>${count} modules. ${hours} hours. One programme.</h2>
+      <h2>${count} modules. One programme.</h2>
       ${p.modulesStandfirst ? `<p>${esc(p.modulesStandfirst)}</p>` : ""}
     </div>
     ${roles}
@@ -1359,11 +1384,173 @@ function modulesSection(p) {
       ${arcs}
     </div>
     <div class="mod-summary reveal">
-      <span><b>${hours}</b> total hours</span>
+      <span>${hoursPhrase(total, assess)}</span>
       <span><b>${count}</b> modules</span>
       ${p.certificateAwarded ? `<span>${esc(p.certificateAwarded)}</span>` : ""}
     </div>
     ${attributionBlock(p.attribution, "modules")}
+  </div>
+</section>
+
+`;
+}
+
+/**
+ * A number as it should read: 580.5 keeps its half, 614 does not grow a ".0".
+ */
+const hrs = n => (Number.isInteger(n) ? String(n) : Number(n.toFixed(1)).toString());
+
+/**
+ * Hours, always with their parts.
+ *
+ * Never a bare total. The per module figures elsewhere on this page are taught
+ * hours and the schedule's are totals, so a lone number invites the reader to
+ * conclude the two contradict each other. Stating both is what stops that.
+ * With no assessment recorded there is no second part to state, so it falls back
+ * to the plain figure.
+ */
+function hoursPhrase(taught, assess) {
+  if (!assess) return `${hrs(taught)} hours`;
+  return `${hrs(taught)} taught plus ${hrs(assess)} assessment, ${hrs(taught + assess)} in total`;
+}
+
+/**
+ * Every module in one flat list, with its arc's delivering partner resolved the
+ * same way the module list resolves it, plus the totals and the outer dates.
+ *
+ * The programme start and end are derived here from the earliest and latest
+ * module dates rather than stored, so the at a glance block cannot disagree with
+ * the table under it.
+ */
+function moduleSchedule(p) {
+  const mods = [];
+  for (const a of p.arcs) {
+    for (const m of a.modules) {
+      mods.push({ ...m, by: m.deliveredBy || a.deliveredBy || "" });
+    }
+  }
+  const dates = mods.flatMap(m => [m.dateFrom, m.dateTo]).filter(Boolean).sort();
+  return {
+    mods,
+    taught: mods.reduce((t, m) => t + (Number(m.hours) || 0), 0),
+    assess: mods.reduce((t, m) => t + (Number(m.assessmentHours) || 0), 0),
+    first: dates[0] || "",
+    last: dates[dates.length - 1] || "",
+  };
+}
+
+/** A module's run, with the year stated once unless it straddles two. */
+function dateRange(from, to) {
+  if (!from || !to) return "";
+  const a = parseDate(from), b = parseDate(to);
+  const short = d => `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`;
+  return a.getFullYear() === b.getFullYear()
+    ? `${short(a)} to ${short(b)} ${b.getFullYear()}`
+    : `${short(a)} ${a.getFullYear()} to ${short(b)} ${b.getFullYear()}`;
+}
+
+/** A file size a person can read. */
+function fileSize(bytes) {
+  if (!bytes) return "";
+  return bytes >= 1024 * 1024
+    ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    : `${Math.round(bytes / 1024)} KB`;
+}
+
+/**
+ * The programme schedule.
+ *
+ * Placed between the modules and who it is for, because a candidate reads what
+ * the eight modules are and immediately asks when they run.
+ *
+ * Absent in full when the schedule object is empty: no heading, no reserved
+ * space, and the page is byte for byte what it was. The venue is read from the
+ * existing details rows rather than stored twice.
+ */
+function scheduleSection(p) {
+  const sc = p.schedule || {};
+  const s = moduleSchedule(p);
+  const dated = s.mods.filter(m => m.dateFrom && m.dateTo);
+  const hasAny = dated.length || sc.pattern || (sc.files || []).length;
+  if (!hasAny) return "";
+  const cohort = sc.cohort || "the current cohort";
+  const venue = (p.details.find(([l]) => /venue/i.test(l)) || [])[1] || "";
+
+  const row = (label, value) => (value
+    ? `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>` : "");
+  const glance = [
+    row("Starts", s.first ? formatDate(s.first) : ""),
+    row("Ends", s.last ? formatDate(s.last) : ""),
+    row("Pattern", sc.pattern),
+    row("The non teaching day", sc.patternNote),
+    row("Hours", hoursPhrase(s.taught, s.assess)),
+    row("Venue", venue),
+  ].filter(Boolean).join("\n        ");
+
+  // The module table. Seven columns, so it scrolls inside the wrapper the fees
+  // and comparison tables use rather than being squeezed on a phone.
+  const table = dated.length ? `<p class="table-hint reveal">Scroll the table sideways for the full breakdown.</p>
+    <div class="policy-table-scroll reveal">
+      <table class="day-table sched-table">
+        <thead><tr>
+          <th scope="col">Module</th><th scope="col">Dates</th><th scope="col">Delivered by</th>
+          <th scope="col">Taught</th><th scope="col">Assessment</th><th scope="col">Total</th>
+        </tr></thead>
+        <tbody>
+        ${dated.map(m => `<tr>
+          <th scope="row">${esc(m.num ? `${m.num}: ` : "")}${esc(m.title)}</th>
+          <td class="t t-wrap">${esc(dateRange(m.dateFrom, m.dateTo))}</td>
+          <td>${esc(m.by)}</td>
+          <td class="hrs">${hrs(Number(m.hours) || 0)}</td>
+          <td class="hrs">${hrs(Number(m.assessmentHours) || 0)}</td>
+          <td class="hrs">${hrs((Number(m.hours) || 0) + (Number(m.assessmentHours) || 0))}</td>
+        </tr>`).join("\n        ")}
+        </tbody>
+        <tfoot><tr>
+          <th scope="row">Total</th><td></td><td></td>
+          <td class="hrs">${hrs(s.taught)}</td>
+          <td class="hrs">${hrs(s.assess)}</td>
+          <td class="hrs">${hrs(s.taught + s.assess)}</td>
+        </tr></tfoot>
+      </table>
+    </div>` : "";
+
+  const holidays = (sc.holidays || []).filter(h => h.date && h.name);
+  const holidayLine = holidays.length
+    ? `<p class="sched-note reveal"><b>Public holidays.</b> No class on ${
+        holidays.map(h => `${esc(h.name)}, ${formatDate(h.date)}`).join("; ")
+      }. Singapore public holidays are observed throughout.</p>`
+    : "";
+  // No standalone pattern note. It would repeat, word for word and within one
+  // screen, the "non teaching day" row already in the at a glance block above,
+  // which is the same single field. One statement of it, in the place a reader
+  // scans for facts.
+
+  const files = (sc.files || []);
+  const downloads = files.length ? `<h3 class="block-h3 reveal">Download the schedule</h3>
+    <div class="related-grid reveal">
+      ${files.map(f => `<a class="rel-card" href="${esc(f.url)}" target="_blank" rel="noopener" download>
+        <small>${esc(f.extension)}${f.size ? ` · ${fileSize(f.size)}` : ""}</small>
+        <h4>${esc(f.label)}</h4>
+        <p>${esc(f.description)}</p>
+      </a>`).join("\n      ")}
+    </div>` : "";
+
+  return `<!-- ================= SCHEDULE ================= -->
+<section class="cpage-section schedule" id="schedule" style="background:var(--bg-alt)">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Schedule</span>
+      <h2>When it runs</h2>
+      <p>These are the dates for ${esc(cohort)}. A later intake runs to its own schedule, so check with us before planning around them.</p>
+    </div>
+    <div class="info-panel reveal">
+      <dl class="sc-list">
+        ${glance}
+      </dl>
+    </div>
+    ${table}
+    ${holidayLine}${downloads}
   </div>
 </section>
 
@@ -1634,6 +1821,7 @@ function renderProgrammePage(template, p, s, now) {
     POSITIONING_SECTION: positioningSection(p),
     MONTHS_SECTION: monthsSection(p),
     MODULES_SECTION: modulesSection(p),
+    SCHEDULE_SECTION: scheduleSection(p),
     AUDIENCE_SECTION: audienceSection(p),
     INFO_SECTION: infoSection(p),
     FEES_SECTION: feesSection(p),

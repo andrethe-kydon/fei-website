@@ -1726,3 +1726,24 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 }
 .phero.hero-full .enrolment{background:rgba(255,255,255,.14);border-color:transparent;color:var(--white)}
 .phero.hero-full .enrolment.is-open::before{background:var(--blue-light)}
+
+/* --- Schedule ---
+   Seven columns, so the module table scrolls in the same wrapper the fees and
+   comparison tables use. Its row header is the module name, which .day-table
+   would otherwise paint navy: right for a column head, wrong for a row head. */
+.sched-table{min-width:740px}
+.sched-table th[scope="row"]{
+  background:none;color:var(--navy);text-align:left;text-transform:none;
+  letter-spacing:0;font-size:.9rem;font-weight:700;padding:14px 16px;
+  border-top:1px solid var(--line);vertical-align:top;
+}
+.sched-table tfoot th[scope="row"],.sched-table tfoot td{
+  border-top:2px solid var(--navy);color:var(--navy);font-weight:700;
+}
+.sched-note{max-width:820px;margin-top:22px;font-size:.88rem;color:var(--slate);line-height:1.7}
+.sched-note b{color:var(--navy)}
+.schedule .info-panel{background:var(--card)}
+.schedule .related-grid{margin-top:18px}
+/* A download is a file, so the card says which kind and how big before the
+   reader commits to the tap. */
+.schedule .rel-card small{text-transform:uppercase;letter-spacing:.14em}
