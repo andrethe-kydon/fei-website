@@ -54,7 +54,7 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="programme-page">
 
 {{HEADER}}
 
@@ -79,13 +79,13 @@
      and who issues certificates, set immediately under the hero so a reader
      meets it before anything else on the page. Rendered by the build, not
      placed by an editor: see attributionBlock() in build.js. -->
-{{ATTRIBUTION_HERO}}{{POSITIONING_SECTION}}<!-- ================= WHY NOW =================
+{{ATTRIBUTION_HERO}}{{SECTION_NAV}}{{POSITIONING_SECTION}}<!-- ================= WHY NOW =================
      Static prose, deliberately. This is the market argument of Future Edge
      Institute rather than of any one programme: it reads the same on the next
      career programme, and its two statistics are load bearing enough that they
      should not be editable in passing. Both keep their source, because the
      source is what makes the claim defensible. -->
-<section class="cpage-section why-now">
+<section class="cpage-section why-now" id="why-now">
   <div class="wrap">
     <div class="section-head reveal" style="max-width:760px">
       <span class="eyebrow">Why Now</span>
@@ -197,6 +197,42 @@
 document.querySelectorAll('.module-item').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open&&typeof gtag==='function'){gtag('event','course_outline_open',{programme:'{{CODE}}',module:d.dataset.module});}
 }));
+// In page section menu. An IntersectionObserver rather than a scroll handler:
+// the callback fires when a boundary is crossed, not on every frame of a scroll.
+// Absent bar, absent behaviour, so a programme with too few sections to warrant
+// a menu runs none of this.
+const secNav=document.querySelector('.sectionnav');
+if(secNav){
+  const list=secNav.querySelector('ul');
+  const links=[...secNav.querySelectorAll('a')];
+  const ids=links.map(a=>a.getAttribute('href').slice(1));
+  const sections=ids.map(id=>document.getElementById(id)).filter(Boolean);
+  const seen=new Set();
+  const mark=()=>{
+    // The first section in document order that is inside the band below the two
+    // sticky bars. Document order rather than the order entries arrive in, so
+    // scrolling up and scrolling down settle on the same answer.
+    const cur=sections.find(s=>seen.has(s.id));
+    links.forEach(a=>{
+      if(cur&&a.getAttribute('href')==='#'+cur.id){a.setAttribute('aria-current','location');}
+      else{a.removeAttribute('aria-current');}
+    });
+    if(!cur)return;
+    // Keep the current item in view without ever moving the page: scrollLeft
+    // directly, not scrollIntoView, which is free to scroll an ancestor and
+    // would fight the scroll that triggered it.
+    const a=links[ids.indexOf(cur.id)];
+    if(a)list.scrollLeft=Math.max(0,a.offsetLeft-(list.clientWidth-a.offsetWidth)/2);
+  };
+  // The band starts below the two sticky bars, measured rather than hardcoded,
+  // so it stays correct if either bar changes height.
+  const chrome=document.querySelector('header').offsetHeight+secNav.offsetHeight;
+  const secIo=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){seen.add(e.target.id)}else{seen.delete(e.target.id)}});
+    mark();
+  },{rootMargin:'-'+chrome+'px 0px -55% 0px'});
+  sections.forEach(s=>secIo.observe(s));
+}
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
 },{threshold:.12});

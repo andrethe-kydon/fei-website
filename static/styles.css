@@ -1747,3 +1747,59 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
 /* A download is a file, so the card says which kind and how big before the
    reader commits to the tap. */
 .schedule .rel-card small{text-transform:uppercase;letter-spacing:.14em}
+
+/* ============ IN PAGE SECTION MENU ============
+   Career programme pages only. Sticky under the site header, which is 84px and
+   sticky at top:0 with z-index 100, so this sits at top:84px and just below it
+   in the stack: content passes under both, the mobile menu panel still opens
+   over both. */
+.sectionnav{
+  position:sticky;top:84px;z-index:90;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  /* A hairline, no shadow. Two stacked bars should read as one piece of
+     furniture rather than two slabs. */
+  border-bottom:1px solid var(--line);
+}
+/* The list is the scroller, on the same pattern as .filters on the homepage:
+   it never wraps, because a nav that reflows to two rows changes the page
+   height as you scroll it. */
+.sectionnav ul{
+  display:flex;gap:4px;list-style:none;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.sectionnav ul::-webkit-scrollbar{display:none}
+.sectionnav a{
+  display:block;white-space:nowrap;text-decoration:none;
+  padding:13px 12px;font-size:.84rem;font-weight:500;color:var(--slate);
+  border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;
+}
+.sectionnav a:hover{color:var(--navy)}
+/* Current section. The rule under the label carries the state as well as the
+   colour, so it does not depend on colour alone, and aria-current carries it to
+   a screen reader. */
+.sectionnav a[aria-current]{color:var(--navy);border-bottom-color:var(--blue)}
+/* Anchor targets clear both bars with room to breathe. Measured, not guessed:
+   the header is 85px including its border and this bar is 51px, so 136px of
+   sticky chrome, and a heading landing at 142px sat 6px under the bar's edge.
+   Mobile measures 85 plus 46. Both values carry 20px of headroom, so a jump
+   lands the heading clear of the furniture rather than flush against it. */
+.programme-page [id]{scroll-margin-top:156px}
+
+@media (max-width:900px){
+  /* Compact, because 84px of header plus this bar is already a fifth of a
+     small viewport. */
+  .sectionnav a{padding:11px 10px;font-size:.8rem}
+  .programme-page [id]{scroll-margin-top:151px}
+}
+@media (max-width:1080px){
+  /* The row overflows below roughly this width, so fade the trailing edge to
+     say so. A mask rather than a gradient overlay: it introduces no colour at
+     all, and it needs no JavaScript to know the scroll position. */
+  .sectionnav ul{
+    mask-image:linear-gradient(to right,black calc(100% - 34px),transparent 100%);
+    -webkit-mask-image:linear-gradient(to right,black calc(100% - 34px),transparent 100%);
+  }
+}

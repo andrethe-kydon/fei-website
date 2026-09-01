@@ -1297,8 +1297,8 @@ function positioningSection(p) {
 
 /** The training block and the ways out of it. */
 function monthsSection(p) {
+  if (!hasMonths(p)) return "";
   const t = p.training;
-  if (!t.body && !p.pathways.length) return "";
   const points = t.points.length
     ? `\n        <ul class="build-list">${t.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`
     : "";
@@ -1345,7 +1345,7 @@ function monthsSection(p) {
  * sits directly beneath it because that is where the certificate claim is made.
  */
 function modulesSection(p) {
-  if (!p.arcs.length) return "";
+  if (!hasModules(p)) return "";
   let total = 0, count = 0;
   const arcs = p.arcs.map(a => {
     const mods = a.modules.map(m => {
@@ -1472,11 +1472,10 @@ function fileSize(bytes) {
  * existing details rows rather than stored twice.
  */
 function scheduleSection(p) {
+  if (!hasSchedule(p)) return "";
   const sc = p.schedule || {};
   const s = moduleSchedule(p);
   const dated = s.mods.filter(m => m.dateFrom && m.dateTo);
-  const hasAny = dated.length || sc.pattern || (sc.files || []).length;
-  if (!hasAny) return "";
   const cohort = sc.cohort || "the current cohort";
   const venue = (p.details.find(([l]) => /venue/i.test(l)) || [])[1] || "";
 
@@ -1561,9 +1560,76 @@ function scheduleSection(p) {
 `;
 }
 
+/**
+ * The in page section menu.
+ *
+ * Built from the predicates above, so a section that did not render gets no
+ * link and the bar can never point at a dead anchor. Fees off means no Fees
+ * link, with nothing to keep in step by hand.
+ *
+ * Sticky below the site header once the reader scrolls past it, at every width.
+ * The alternatives were worse: static on mobile removes in page navigation from
+ * the longest page on the site exactly where it matters most, and a "jump to"
+ * disclosure would be the third interactive nav control on this page, after the
+ * mobile menu and the Programmes dropdown. A horizontally scrolling row is
+ * already how .filters handles the same problem on the homepage.
+ *
+ * Plain markup: a nav landmark with a name and a list of anchors. With no
+ * JavaScript nothing is marked current and every link still works, which is the
+ * whole of its function.
+ */
+function sectionNav(p) {
+  const items = [
+    ["#why-now", "Why now", () => true],
+    ["#pathways", "The five months", hasMonths],
+    ["#modules", "Modules", hasModules],
+    ["#schedule", "Schedule", hasSchedule],
+    ["#audience", "Who it is for", hasAudience],
+    ["#details", "Programme details", hasDetails],
+    [`#fees`, hasFees(p) ? "Fees" : "Funding", hasFeesSection],
+    ["#partners", "Partners", hasPartners],
+    ["#faq", "FAQ", hasFaqs],
+    ["#enquire", "Enquire", () => true],
+  ].filter(([, , test]) => test(p));
+  // One link is not a menu. Two is the least that earns the space it takes.
+  if (items.length < 3) return "";
+  const links = items
+    .map(([href, label]) => `      <li><a href="${href}">${label}</a></li>`)
+    .join("\n");
+  return `<!-- ================= SECTION MENU ================= -->
+<nav class="sectionnav" aria-label="Sections of this page">
+  <ul class="wrap">
+${links}
+  </ul>
+</nav>
+
+`;
+}
+
+/**
+ * Which sections this programme actually has.
+ *
+ * One predicate each, and every consumer reads them: the section renderer that
+ * decides whether to emit anything, the in page section nav that decides whether
+ * to link to it, and the site nav that decides where Fees and Funding points.
+ * A second copy of any of these conditions is how a nav ends up linking to an
+ * anchor that was never rendered.
+ */
+const hasMonths = p => Boolean(p.training.body) || p.pathways.length > 0;
+const hasModules = p => p.arcs.length > 0;
+const hasAudience = p => Boolean(p.audienceBody) || p.entryRequirements.length > 0;
+const hasDetails = p => p.details.length > 0 || Boolean(p.startDate) || Boolean(p.enrolmentDeadline);
+const hasPartners = p => p.partners.length > 0;
+const hasFaqs = p => p.faqs.length > 0;
+const hasSchedule = p => {
+  const sc = p.schedule || {};
+  return moduleSchedule(p).mods.some(m => m.dateFrom && m.dateTo)
+    || Boolean(sc.pattern) || (sc.files || []).length > 0;
+};
+
 /** Who it is for, and who may apply. */
 function audienceSection(p) {
-  if (!p.audienceBody && !p.entryRequirements.length) return "";
+  if (!hasAudience(p)) return "";
   return `<!-- ================= WHO IT IS FOR ================= -->
 <section class="cpage-section" id="audience">
   <div class="wrap">
@@ -1587,12 +1653,12 @@ function audienceSection(p) {
 function infoSection(p) {
   // The date rows come from the two date fields rather than from hand typed
   // detail rows, so the table and the hero cannot disagree.
+  if (!hasDetails(p)) return "";
   const dated = [
     ...(p.startDate ? [["Course start date", formatDate(p.startDate)]] : []),
     ...(p.enrolmentDeadline ? [["Applications close", formatDate(p.enrolmentDeadline)]] : []),
     ...p.details,
   ];
-  if (!dated.length) return "";
   const rows = dated.map(([l, v]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("\n        ");
   return `<!-- ================= COURSE INFORMATION ================= -->
 <section class="cpage-section" id="details" style="background:var(--bg-alt)">
@@ -1693,7 +1759,7 @@ function feesSection(p) {
 
 /** Partners, each with the limits of its own role stated. */
 function partnersSection(p) {
-  if (!p.partners.length) return "";
+  if (!hasPartners(p)) return "";
   // h3, not the h4 the assessment cards use, so the outline does not skip a
   // level under the section heading.
   const cards = p.partners.map(x => `<article class="assess-card reveal">
@@ -1721,7 +1787,7 @@ function partnersSection(p) {
 
 /** The FAQ, and nothing at all when there are no questions. */
 function faqSection(p) {
-  if (!p.faqs.length) return "";
+  if (!hasFaqs(p)) return "";
   const items = p.faqs.map(([q, a]) => `<details class="faq-item">
         <summary>${esc(q)}</summary>
         <div class="faq-a">${esc(a)}</div>
@@ -1822,6 +1888,7 @@ function renderProgrammePage(template, p, s, now) {
     ENROLMENT_LINE: enrol.line,
     CTA_PRIMARY: esc(enrol.cta),
     ATTRIBUTION_HERO: attributionBlock(p.attribution, "hero"),
+    SECTION_NAV: sectionNav(p),
     POSITIONING_SECTION: positioningSection(p),
     MONTHS_SECTION: monthsSection(p),
     MODULES_SECTION: modulesSection(p),
