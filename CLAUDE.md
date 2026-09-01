@@ -205,14 +205,25 @@ can never contradict the module table under it. The section names the cohort it
 belongs to, so a visitor arriving for a later intake cannot read those dates as
 theirs. It renders nothing at all when the schedule object is empty.
 
-**Eleven PDFs carry a contact address that no field can reach.** The nine
-brochures in `static/assets/brochures/` and the two schedule PDFs in Sanity all
-have the enquiry address drawn into them, three occurrences each in the
-brochures and two and four in the schedule pair. Changing
-`siteSettings.enquiryEmail` does not touch them, and no build step can: they are
+**Every PDF carries a contact address that no field can reach.** The nine
+brochures in `static/assets/brochures/` and the two schedule PDFs in Sanity have
+the enquiry address drawn into them, three occurrences in each brochure, two in
+the programme directory, and two and four in the schedule pair. Changing
+`siteSettings.enquiryEmail` does not touch them and no build step can: they are
 rendered documents, not markup. Whenever that address changes, every one of them
-has to be reissued from its source, or pulled. This is already true: all eleven
-still say `sales@kydongrp.com`, which the site no longer uses.
+has to be reissued from its source or pulled. The brochures have been; the two
+schedule PDFs still name the old address, and are tracked in
+`docs/DECISIONS.md`.
+
+**Verify a reissued PDF in its text layer, never in a render.** A replacement
+that paints over the old address leaves it in the text layer, so the page looks
+right while copy and paste, a screen reader and any search index all still
+produce the old string. `strings` cannot see it either: these files are ASCII85
+then Flate, and some use CID fonts where the bytes are glyph indices and the
+mapping lives in a ToUnicode CMap. Decode the content streams and read the show
+text operators, search with whitespace stripped so a string split across
+operators by kerning is still found, and validate the checker against a known
+bad copy from git so a silent parser failure cannot read as a pass.
 
 **The downloads block resolves itself.** Files attached renders the downloads;
 none attached renders a line inviting the reader to request the day by day
