@@ -1359,18 +1359,44 @@ function infoSection(p) {
 }
 
 /**
- * Fees, and the funding scope note that has to travel with them.
+ * Fees, and the funding scope note.
  *
- * The whole block is gated on showFees, the funding note included. That note
- * states which programmes the subsidy covers and which it does not, so it can
- * never be separated from the figures it qualifies: without it beside them this
- * page reads as a contradiction of the eight short course pages, which say
- * plainly that those courses are not subsidised.
+ * The note is NOT gated on showFees, and that is the whole point of it. Its job
+ * is not to qualify the fee table: it is to stop the subsidy claim contradicting
+ * the eight short course pages, which say plainly that those courses are
+ * commercial and not subsidised. The standfirst and the comparison table make
+ * that claim whether or not a figure is on the page, so the note has to survive
+ * independently of the figures. An earlier version tied the two together and
+ * left a page that claimed a subsidy with nothing scoping it.
+ *
+ * So there are three states, decided here rather than at the call site: fees
+ * with the note inside them, the note alone in the same slot, or nothing.
  */
 const hasFees = p => Boolean(p.showFees) && p.fees.length > 0;
+const hasFeesSection = p => hasFees(p) || Boolean(p.fundingNote);
+const fundingNoteBlock = p => (p.fundingNote
+  ? `<div class="funding-note"><h3>What this subsidy applies to</h3><p>${esc(p.fundingNote)}</p></div>`
+  : "");
 
 function feesSection(p) {
-  if (!hasFees(p)) return "";
+  if (!hasFeesSection(p)) return "";
+  // The note alone, in the slot the fees would have occupied.
+  if (!hasFees(p)) {
+    return `<!-- ================= FUNDING ================= -->
+<section class="cpage-section fees" id="fees">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <span class="eyebrow">Funding</span>
+      <h2>What this subsidy applies to</h2>
+    </div>
+    <div class="fees-body reveal">
+      ${fundingNoteBlock(p)}
+    </div>
+  </div>
+</section>
+
+`;
+  }
   const tiers = p.fees.map(([e, f]) => `<tr><td class="t">${esc(e)}</td><td>${esc(f)}</td></tr>`).join("\n          ");
   const refunds = p.refundTerms.length ? `<h3 class="block-h3">If you withdraw or cancel</h3>
       <div class="policy-table-scroll">
@@ -1403,7 +1429,7 @@ function feesSection(p) {
       ${p.feeNote ? `<p class="fee-note">${esc(p.feeNote)}</p>` : ""}
       ${payment}
       ${refunds}
-      ${p.fundingNote ? `<div class="funding-note"><h3>What this subsidy applies to</h3><p>${esc(p.fundingNote)}</p></div>` : ""}
+      ${fundingNoteBlock(p)}
     </div>
   </div>
 </section>
@@ -1516,10 +1542,10 @@ function renderProgrammePage(template, p, s) {
     HEADER: siteHeader({
       brand: "index.html",
       items: [["About", "about.html"], programmesItem("index.html#courses", [p]),
-        // The fees block is optional, so the nav follows the same predicate the
-        // section does. Pointing at #fees on a page that rendered no fees would
+        // The section is optional, so the nav follows the same predicate it
+        // does. Pointing at #fees on a page that rendered no such section would
         // be a link into nothing.
-        ["Fees and Funding", hasFees(p) ? "#fees" : "index.html#funding"],
+        ["Fees and Funding", hasFeesSection(p) ? "#fees" : "index.html#funding"],
         ["For Organisations", "index.html#corporate"]],
       wa: waLink(s.whatsappNumber, p.code), cta: "#enquire",
     }),

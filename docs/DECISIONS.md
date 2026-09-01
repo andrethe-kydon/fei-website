@@ -52,6 +52,7 @@ from the built page until it is settled.
 | Whether Kydon client names appear | Removed content | David | Korn Ferry, ResMed, Australian Volunteers, UWC South East Asia. These are Kydon's clients on a Future Edge Institute page. Only with each client's agreement, and only labelled as Kydon's. |
 | Which HubSpot form, and whether the action is waitlist or enquiry | Enquiry, section 10 | David, with Kydon marketing for the form itself | Bound to the closed registration window above: the right call depends on whether there is a live intake to join. |
 | Whether a Future Edge Institute version of the brochure is produced | Removed content | David | The current download is a Kydon branded PDF. Either an FEI version is made, or the page routes to enquiry with no download. |
+| The fourteen FAQ answers | FAQ, section 9 | David | The kit describes the edits to make but carries none of the text: the source answers were never transcribed into it. Drafted fresh against the described changes and awaiting sign off, since the FAQ is the part of the page most likely to be challenged. |
 
 ## Blocking: live tracking and lead capture
 

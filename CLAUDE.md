@@ -32,6 +32,7 @@ Content driven static site. No framework, no dependencies for the site build.
 - `static/` is copied verbatim into `dist/`. `static/styles.css` is the single stylesheet for every page.
 - `studio/` is the Sanity Studio (its own package.json; not part of the site build).
 - `dist/` is generated. Never edit it, never commit it.
+- `docs/DECISIONS.md` records every value the site needs and does not have, grouped by what it blocks, with the person who decides it. An unconfirmed value is omitted from the page and recorded there. Never left on the page as a marker.
 
 Build and check: `npm run build`, then `npx serve dist`. A correct build reports **11 pages**.
 
@@ -44,6 +45,7 @@ Build and check: `npm run build`, then `npx serve dist`. A correct build reports
 | `policies.html` | `policies.template.html` + `content/policies.html` | Privacy, terms, fees and refunds. |
 | `aop101.html` to `aop106.html` | `course.template.html` | One per Operator course, rendered from content. |
 | `aia101.html` to `aia102.html` | `workshop.template.html` | One per Adoption workshop, rendered from content. |
+| `opc.html` | `programme.template.html` | The OPC Launchpad, a Career Programme. Built only when the document is published. |
 
 **Homepage section order:** hero, trust strip, marquee, catalogue (`#courses`), pathway (`#pathway`), why this matters (`#difference`), what you leave with (`#outcomes`), who it is for (`#audience`), organisations (`#corporate`), funding (`#funding`), FAQ (`#faq`), contact (`#contact`).
 
@@ -96,6 +98,81 @@ The **full pathway** cross sell block is rendered by `pathwayBlock()` in `build.
 The brochure button appears only when `static/assets/brochures/<slug>.pdf` exists, checked with `fs.existsSync` at build time. It opens the PDF directly in a new tab: the brochure is for reading, so there is no form and no email gate in front of it. The click still fires `brochure_request` to GA4 and Meta. Both templates get it on the summary card; workshop pages also carry it as the hero's secondary button, under the same condition.
 
 **Course pages state the current position honestly rather than showing TBC markers.** Visible `[TO BE CONFIRMED: ...]` markers are reserved for `policies.html`, where unresolved legal detail must be obvious. On a course page, say what is true now: dates being scheduled, fees at enquiry, the certificate issued by the institute and not yet accredited.
+
+## Career Programmes
+
+A third kind of page, and a third document type, `careerProgramme`. The long
+cohort programmes: the **OPC Launchpad** now, FDO later. Deliberately not a third
+series of `course`, which is shaped around short courses: days, a contact hour
+split three ways, declared assessment modes.
+
+**They are deliberately outside the `#courses` catalogue.** Those filters work by
+hiding and showing siblings in one grid, and a five month programme sitting among
+eight short courses would misrepresent both. Do not add one to the catalogue, and
+do not derive its card from `series`.
+
+Instead they reach the visitor through the nav. The **Programmes** item becomes a
+disclosure when at least one programme is published, listing All short courses
+and then each programme; with none published it is the plain link it has always
+been, and the nav is byte for byte unchanged. The existing item was reused rather
+than a seventh added, because the row already tightens its gap at 1080px to keep
+six items on one line. The control is a `<button>`: `navScript()` closes the
+mobile menu whenever a link inside it is followed, so an anchor would collapse
+the panel on the tap that opened it.
+
+The `published` boolean is the gate: off means absent from the menu, absent from
+the sitemap, and no page built. The Sanity query also excludes drafts explicitly
+rather than relying on the absence of a read token. One list feeds both the write
+loop and the sitemap, so a page and its sitemap entry cannot diverge.
+
+**Future Edge Institute does not deliver this programme.** The OPC Launchpad is
+delivered by Kydon Group in partnership with Singapore Polytechnic under the
+SkillsFuture Career Transition Programme, and **Singapore Polytechnic issues all
+eight certificates**. That is a real exception to the certificate rule below, not
+a slip. The Course JSON-LD says the same: provider is Kydon Group, the academic
+partner is the contributor, and `certificateAwarded` names the actual issuer, so
+nothing defaults to FEI.
+
+**Two rules live in the template, not in editable prose.**
+
+1. **The attribution paragraph renders in two fixed places**, under the hero and
+   beside the certificate claim in the module summary. It resolves who delivers,
+   who accredits and who issues certificates. Never shorten it for style, never
+   move it for layout.
+2. **The funding scope note renders whenever it is set, independently of
+   `showFees`.** An earlier version tied it to the fee block. That was wrong. Its
+   job is not to qualify the fee table: it is to stop the subsidy claim
+   contradicting the eight short course pages, which say plainly that those
+   courses are commercial and not subsidised. The standfirst and the comparison
+   table make that claim whether or not a figure is on the page, so the note has
+   to survive the figures being hidden. With fees shown it sits inside the fees
+   block; with fees hidden it stands alone in the same slot. Do not re-tie it.
+
+**Nothing on the page is ever marked as unconfirmed**, because nothing
+unconfirmed goes on the page. There is no confirmation style on this site: an
+unsettled value is omitted and recorded in `docs/DECISIONS.md`. Do not invent a
+marker for one.
+
+**Fees.** House rule 4 says no fee appears anywhere on the site. This page is the
+one place that may change, because the SCTP fees are already published by
+Singapore Polytechnic under a government subsidy scheme. `showFees` is off by
+default and the decision is still with David: see `docs/DECISIONS.md`. Until it
+is made, rule 4 stands as written. The commercial fees of Future Edge Institute
+never appear, whatever is decided about the subsidised ones.
+
+**Section 3 of the page, why now, is static prose in the template** and has no
+schema fields. It is FEI's market argument rather than any one programme's, it
+reads the same on the next career programme, and its two sourced statistics are
+load bearing enough that they should not be editable in passing. Everything else
+on the page comes from the document.
+
+**Scoping, so neither reads as a rule violation later.** House rule 9 forbids
+describing hours as asynchronous or self directed: that is an RTP filing
+constraint on FEI's own Operator courses and does not bind an SP delivered SCTP
+programme, which is published as full time classroom **and** asynchronous e
+learning. And the certificate rule assumes FEI is the issuer, which is not true
+here, as above.
+
 
 ## Where to make a change
 
