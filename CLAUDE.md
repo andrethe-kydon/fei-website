@@ -38,6 +38,30 @@ Content driven static site. No framework, no dependencies for the site build.
 
 Build and check: `npm run build`, then `npx serve dist`. A correct build reports **11 pages**.
 
+## Verifying a change
+
+**Verification at a single viewport is not verification.** Check 375, 768 and
+1440 at minimum, and prefer a check that can fail loudly over one that can
+quietly not run. Three faults in this repo passed their own check because of how
+the check was taken, not because the code was right:
+
+| What passed | What was actually true |
+| --- | --- |
+| Chip widths held at 1440, so the reserved bold width looked correct | `flex-shrink` compressed the chips at 375, giving **seventeen** width shifts. The row overflows below about 1080px and only then does the default shrink engage. |
+| `--window-size=375` screenshots looked fine | **Headless Chrome floors its window at 500px.** Every "375" render was a 500px layout cropped to 375, which invented one overflow and hid a real one: the fee tables were `nowrap` and pushed the figures off a phone. A true 375 viewport needs the page in a 375px iframe. |
+| `sanity dataset import ... \| tail -1` printed a success line | `tail -1` was showing a different line. The import had not reset `published`, so the OPC document sat at `published: true` and a deploy would have published an unfinished page. |
+
+A fourth of the same shape, recorded under Career Programmes: a reissued PDF
+whose old address was covered by a filled rectangle rendered correctly while the
+text layer still held the old string, so `check-pdf-address.py` validates itself
+against a known bad copy before its pass means anything.
+
+The pattern in all four: the check could not distinguish "correct" from "not
+actually looking". Prefer measuring the invariant over eyeballing the result,
+assert on counts rather than reading output, and make a checker prove it can fail
+before believing that it passed.
+
+
 ## Dates and the daily rebuild
 
 This is a statically built site, so **anything derived from the build date freezes

@@ -3,10 +3,27 @@
     python3 studio/scripts/check-pdf-address.py static/assets/brochures/*.pdf
 
 Exits non zero if any file still carries the old address or is missing the new
-one. Validate it against a known bad copy before trusting a pass:
+one.
+
+ALWAYS validate it against a known bad copy before trusting a pass:
 
     git show HEAD~1:static/assets/brochures/aop101.pdf > /tmp/old.pdf
     python3 studio/scripts/check-pdf-address.py /tmp/old.pdf   # must FAIL
+
+That step is not ceremony, and skipping it defeats the point of the script.
+Two failures look identical from the outside:
+
+  * The file is clean.
+  * This parser could not read the file at all, so it found nothing.
+
+Both print zero occurrences and exit zero. Only running it against a copy known
+to contain the old address tells you which one you are looking at.
+
+The reason this script exists rather than a visual check: an earlier attempt at
+the same replacement covered the old address with a filled rectangle and left
+the text underneath it in the layer. Every render looked correct while copy and
+paste, a screen reader and any search index still returned the old address. So a
+render proves nothing here, and neither does a parse that silently failed.
 
 
 A painted-over string is still in the text layer and still comes out of copy and
