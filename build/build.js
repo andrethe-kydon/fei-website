@@ -174,11 +174,29 @@ function mapCareerProgrammes(docs, projectId, dataset) {
     slug: (p.slug && p.slug.current) || p.slug,
     title: p.title, subtitle: p.subtitle || "",
     attribution: p.attribution || "",
+    eyebrow: p.eyebrow || "",
     standfirst: p.standfirst || "",
     stats: (p.stats || []).map(x => ({
       value: x.value, label: x.label, attribution: x.attribution || "",
     })),
     hero: heroFigure(p.hero, projectId, dataset),
+    // The section that sets this programme against the alternative. Both column
+    // headings come from the document, so a second programme comparing itself
+    // against something else needs no code change.
+    positioning: {
+      lead: (p.positioning && p.positioning.lead) || [],
+      programmeColumn: (p.positioning && p.positioning.programmeColumn) || "",
+      alternativeColumn: (p.positioning && p.positioning.alternativeColumn) || "",
+      rows: ((p.positioning && p.positioning.rows) || [])
+        .map(r => [r.dimension, r.programme, r.alternative]),
+    },
+    training: {
+      label: (p.training && p.training.label) || "",
+      body: (p.training && p.training.body) || "",
+      points: (p.training && p.training.points) || [],
+    },
+    modulesStandfirst: p.modulesStandfirst || "",
+    graduateRoles: p.graduateRoles || [],
     arcs: (p.arcs || []).map(a => ({
       label: a.label, deliveredBy: a.deliveredBy || "",
       modules: (a.modules || []).map(m => ({
@@ -190,8 +208,10 @@ function mapCareerProgrammes(docs, projectId, dataset) {
     pathways: (p.pathways || []).map(x => ({
       tag: x.tag || "", title: x.title, body: x.body || "", points: x.points || [],
     })),
+    audienceBody: p.audienceBody || "",
     details: (p.details || []).map(d => [d.label, d.value]),
     entryRequirements: p.entryRequirements || [],
+    entryNote: p.entryNote || "",
     // showFees gates the whole block, the funding note included. A fee tier left
     // in the document with the switch off never reaches the page.
     showFees: Boolean(p.showFees),

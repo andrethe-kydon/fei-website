@@ -68,6 +68,13 @@ export default {
       group: 'overview',
       validation: R => R.required(),
     },
+    {
+      name: 'eyebrow',
+      title: 'Hero eyebrow',
+      description: 'The small line above the headline, for example the cohort and its month. Leave it empty when the cohort is not confirmed: nothing renders and the headline moves up.',
+      type: 'string',
+      group: 'overview',
+    },
     {name: 'standfirst', title: 'Hero standfirst', type: 'text', rows: 4, group: 'overview'},
     {
       name: 'stats',
@@ -92,7 +99,99 @@ export default {
     },
     {name: 'hero', title: 'Hero photo', type: 'heroMedia', group: 'overview'},
 
+    // The section that lets a five month programme sit beside the short course
+    // catalogue without confusing a visitor. Per programme rather than template
+    // prose, because FDO sets this programme against a different alternative and
+    // every row of its table will differ.
+    {
+      name: 'positioning',
+      title: 'Where this sits beside the short courses',
+      type: 'object',
+      group: 'overview',
+      fields: [
+        {
+          name: 'lead',
+          title: 'Lead paragraphs',
+          description: 'The prose above the table. One entry per paragraph.',
+          type: 'array',
+          of: [{type: 'text', rows: 4}],
+        },
+        {
+          name: 'programmeColumn',
+          title: 'Column heading: this programme',
+          description: 'For example OPC Launchpad.',
+          type: 'string',
+        },
+        {
+          name: 'alternativeColumn',
+          title: 'Column heading: the alternative',
+          description: 'What this programme is being set against, for example The AI Operator Professional Series.',
+          type: 'string',
+        },
+        {
+          name: 'rows',
+          title: 'Comparison rows',
+          type: 'array',
+          of: [{
+            type: 'object',
+            fields: [
+              {name: 'dimension', title: 'Dimension', type: 'string'},
+              {name: 'programme', title: 'This programme', type: 'text', rows: 2},
+              {name: 'alternative', title: 'The alternative', type: 'text', rows: 2},
+            ],
+            preview: {select: {title: 'dimension', subtitle: 'programme'}},
+          }],
+        },
+      ],
+    },
+
     // ---- Modules --------------------------------------------------------
+    // The training block that stands above the pathways: what the months
+    // actually consist of, before the two ways out of them.
+    {
+      name: 'training',
+      title: 'The training block',
+      type: 'object',
+      group: 'structure',
+      fields: [
+        {name: 'label', title: 'Label', description: 'For example Months 1 to 5.', type: 'string'},
+        {name: 'body', title: 'Body', type: 'text', rows: 4},
+        {name: 'points', title: 'Points', type: 'array', of: [{type: 'string'}]},
+      ],
+    },
+    {
+      name: 'pathways',
+      title: 'Post graduation pathways',
+      type: 'array',
+      group: 'structure',
+      validation: R => R.max(3),
+      of: [{
+        type: 'object',
+        fields: [
+          {name: 'tag', title: 'Short tag', type: 'string'},
+          {name: 'title', title: 'Title', type: 'string'},
+          {name: 'body', type: 'text', rows: 4},
+          {name: 'points', type: 'array', of: [{type: 'string'}]},
+        ],
+        preview: {select: {title: 'title', subtitle: 'tag'}},
+      }],
+    },
+    {
+      name: 'modulesStandfirst',
+      title: 'Modules standfirst',
+      description: 'The paragraph above the module list. Where a partner delivers part of the programme, this is where the split is stated: which modules, to whose syllabus, and how many of the total hours.',
+      type: 'text',
+      rows: 4,
+      group: 'structure',
+    },
+    {
+      name: 'graduateRoles',
+      title: 'Graduate roles',
+      description: 'The roles the programme is aligned to. Only roles carried by the approved course outcomes.',
+      type: 'array',
+      of: [{type: 'string'}],
+      group: 'structure',
+    },
     {
       name: 'arcs',
       title: 'Arcs',
@@ -142,25 +241,15 @@ export default {
         preview: {select: {title: 'label'}},
       }],
     },
-    {
-      name: 'pathways',
-      title: 'Post graduation pathways',
-      type: 'array',
-      group: 'structure',
-      validation: R => R.max(3),
-      of: [{
-        type: 'object',
-        fields: [
-          {name: 'tag', title: 'Short tag', type: 'string'},
-          {name: 'title', title: 'Title', type: 'string'},
-          {name: 'body', type: 'text', rows: 4},
-          {name: 'points', type: 'array', of: [{type: 'string'}]},
-        ],
-        preview: {select: {title: 'title', subtitle: 'tag'}},
-      }],
-    },
 
     // ---- Details, fees, FAQ ---------------------------------------------
+    {
+      name: 'audienceBody',
+      title: 'Who it is for',
+      type: 'text',
+      rows: 4,
+      group: 'admin',
+    },
     {
       name: 'details',
       title: 'Programme details',
@@ -177,6 +266,14 @@ export default {
       }],
     },
     {name: 'entryRequirements', title: 'Entry requirements', type: 'array', of: [{type: 'string'}], group: 'admin'},
+    {
+      name: 'entryNote',
+      title: 'Entry note',
+      description: 'What happens for an applicant who does not meet the stated minimum, and where to write. Sits under the requirements list.',
+      type: 'text',
+      rows: 3,
+      group: 'admin',
+    },
     {
       name: 'showFees',
       title: 'Show fees on the page',
