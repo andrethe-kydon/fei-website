@@ -1186,7 +1186,8 @@ function positioningSection(p) {
           <td>${esc(a)}</td>
           <td>${esc(b)}</td>
         </tr>`).join("\n        ");
-  const table = pos.rows.length ? `<div class="policy-table-scroll reveal">
+  const table = pos.rows.length ? `<p class="table-hint reveal">Scroll the table sideways to compare the two.</p>
+    <div class="policy-table-scroll reveal">
       <table class="day-table compare-table">
         <thead><tr>
           <th scope="col"><span class="vh">Dimension</span></th>
@@ -1397,13 +1398,13 @@ function feesSection(p) {
 
 `;
   }
-  const tiers = p.fees.map(([e, f]) => `<tr><td class="t">${esc(e)}</td><td>${esc(f)}</td></tr>`).join("\n          ");
+  const tiers = p.fees.map(([e, f]) => `<tr><td class="t t-wrap">${esc(e)}</td><td>${esc(f)}</td></tr>`).join("\n          ");
   const refunds = p.refundTerms.length ? `<h3 class="block-h3">If you withdraw or cancel</h3>
       <div class="policy-table-scroll">
         <table class="day-table">
           <thead><tr><th scope="col">When we receive your notice</th><th scope="col">Outcome</th></tr></thead>
           <tbody>
-          ${p.refundTerms.map(([w, o]) => `<tr><td class="t">${esc(w)}</td><td>${esc(o)}</td></tr>`).join("\n          ")}
+          ${p.refundTerms.map(([w, o]) => `<tr><td class="t t-wrap">${esc(w)}</td><td>${esc(o)}</td></tr>`).join("\n          ")}
           </tbody>
         </table>
       </div>` : "";

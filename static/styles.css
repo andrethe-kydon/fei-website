@@ -1692,3 +1692,19 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
   font-family:var(--display);font-size:1rem;font-weight:700;
   color:var(--navy);margin-bottom:6px;
 }
+
+/* A theme cell carrying a sentence rather than a label. .day-table td.t is
+   nowrap, which is right for "Day 1" and wrong for "Singapore Citizens aged 40
+   and above": left nowrap, the fees table is pushed wider than a phone and the
+   figures scroll out of sight, which are the values the reader came for. */
+.day-table td.t.t-wrap{white-space:normal}
+
+/* The comparison table is the one table on the page that genuinely has to
+   scroll: read one column at a time it stops being a comparison. Shown only
+   where it cannot fit, so the hint never contradicts what the reader sees. */
+.table-hint{display:none}
+@media (max-width:900px){
+  .table-hint{
+    display:block;margin:26px 0 10px;font-size:.8rem;color:var(--fog);
+  }
+}
