@@ -360,6 +360,56 @@ function waLink(number, code) {
 }
 
 /**
+ * A nav item that opens a panel instead of navigating.
+ *
+ * The control is a button and not an anchor, and that is not a stylistic
+ * preference: navScript() closes the mobile menu whenever a link inside it is
+ * followed, so an anchor here would collapse the panel on the same tap that
+ * opened it.
+ *
+ * The panel is hidden with the `hidden` attribute rather than a class, so it is
+ * out of the accessibility tree and out of the tab order while closed, with no
+ * script needed to keep those two in step.
+ */
+function navGroup(label, rows) {
+  const id = `nav-${label.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+  const items = rows
+    .map(([l, href]) => `          <li><a href="${href}">${l}</a></li>`)
+    .join("\n");
+  return `      <li class="nav-group">
+        <button class="nav-group-btn" aria-expanded="false" aria-controls="${id}">${label}</button>
+        <ul class="nav-panel" id="${id}" hidden>
+${items}
+        </ul>
+      </li>`;
+}
+
+/**
+ * The Programmes item.
+ *
+ * With no career programme published it is the plain anchor it has always been,
+ * so the nav stays byte for byte what it is today until there is something to
+ * put in it. With one or more published it becomes a disclosure, and the anchor
+ * it would have been becomes the first row of the panel.
+ *
+ * The existing item is reused rather than a seventh added. The row already
+ * tightens its gap at 1080px to keep six items on one line, so a seventh would
+ * have to be paid for somewhere. It is also the better answer: a visitor looking
+ * for programmes should not have to know that the word silently excludes the
+ * five month one.
+ *
+ * No group heading inside the panel. With one published programme there is
+ * nothing to head, and the right label for two is not visible from here.
+ */
+function programmesItem(href, programmes) {
+  if (!programmes.length) return ["Programmes", href];
+  return ["Programmes", href, [
+    ["All short courses", href],
+    ...programmes.map(p => [p.title, `${p.slug}.html`]),
+  ]];
+}
+
+/**
  * The site header, rendered once for every page.
  *
  * This was five hand maintained copies of the same block, one per template,
@@ -375,7 +425,9 @@ function waLink(number, code) {
  */
 function siteHeader({ brand, items, wa, cta }) {
   const links = items
-    .map(([label, href]) => `      <li><a href="${href}">${label}</a></li>`)
+    .map(([label, href, panel]) => panel
+      ? navGroup(label, panel)
+      : `      <li><a href="${href}">${label}</a></li>`)
     .join("\n");
   return `<header>
   <div class="wrap nav">
@@ -418,8 +470,8 @@ const waApostrophe = u => u.replace(/'/g, "%27");
  * opens a submenu rather than navigating must be a button, or this will collapse
  * the whole menu under it.
  */
-function navScript() {
-  return `const btn=document.querySelector('.menu-btn');
+function navScript(hasGroup) {
+  const base = `const btn=document.querySelector('.menu-btn');
 const links=document.getElementById('navlinks');
 btn.addEventListener('click',()=>{
   const open=links.classList.toggle('open');
@@ -428,6 +480,37 @@ btn.addEventListener('click',()=>{
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
   links.classList.remove('open');btn.setAttribute('aria-expanded','false');
 }));`;
+  // Appended, never interleaved: with no disclosure in the markup the base
+  // block above is emitted exactly as it has always been.
+  if (!hasGroup) return base;
+  return `${base}
+
+// Programmes disclosure. The only interactive nav element on the site, so it
+// carries the full keyboard contract: aria-expanded tracks the panel, Escape
+// closes it and returns focus to the button, and focus leaving the group closes
+// it too. That last check is deferred a tick because Safari does not focus a
+// link on click, so reading activeElement synchronously would close the panel
+// before the click it is closing for had been dispatched.
+const groupBtn=document.querySelector('.nav-group-btn');
+if(groupBtn){
+  const group=groupBtn.parentNode;
+  const panel=document.getElementById(groupBtn.getAttribute('aria-controls'));
+  const setOpen=o=>{panel.hidden=!o;groupBtn.setAttribute('aria-expanded',o);};
+  groupBtn.addEventListener('click',()=>setOpen(panel.hidden));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!panel.hidden){setOpen(false);groupBtn.focus();}
+  });
+  document.addEventListener('click',e=>{
+    if(!panel.hidden&&!group.contains(e.target))setOpen(false);
+  });
+  group.addEventListener('focusout',()=>setTimeout(()=>{
+    if(!group.contains(document.activeElement))setOpen(false);
+  },0));
+  // The hamburger and the panel links both close the panel: reopening the
+  // mobile menu should never reveal a panel left open from last time.
+  btn.addEventListener('click',()=>setOpen(false));
+  panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+}`;
 }
 
 /**
@@ -435,9 +518,9 @@ links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
  * page: about and policies. Both point Fees and Funding and Enquire back at the
  * homepage, because neither has a section of its own to jump to.
  */
-const staticPageHeader = s => siteHeader({
+const staticPageHeader = (s, programmes) => siteHeader({
   brand: "index.html",
-  items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+  items: [["About", "about.html"], programmesItem("index.html#courses", programmes),
     ["Fees and Funding", "index.html#funding"], ["For Organisations", "index.html#corporate"]],
   wa: waLink(s.whatsappNumber), cta: "index.html#contact",
 });
@@ -878,6 +961,7 @@ function renderTrainers(trainers) {
 }
 
 function renderCoursePage(template, n, c, content, s) {
+  const programmes = content.careerProgrammes;
   const code = `${c.codePrefix} ${n}`;
   const fullTitle = `${c.title}: ${c.subtitle}`;
   const canonical = `${s.siteUrl}/${c.slug}.html`;
@@ -919,11 +1003,11 @@ function renderCoursePage(template, n, c, content, s) {
     WA_LINK: waLink(s.whatsappNumber, code),
     HEADER: siteHeader({
       brand: "index.html",
-      items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+      items: [["About", "about.html"], programmesItem("index.html#courses", programmes),
         ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
-    NAV_SCRIPT: navScript(),
+    NAV_SCRIPT: navScript(programmes.length > 0),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${c.title}`),
     TAGS: c.tags.map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -961,7 +1045,7 @@ function renderCoursePage(template, n, c, content, s) {
  * delivery hour split, so the template has nowhere to put one and this function
  * never supplies one.
  */
-function renderWorkshopPage(template, n, w, s) {
+function renderWorkshopPage(template, n, w, s, programmes) {
   const code = `${w.codePrefix} ${n}`;
   const fullTitle = `${w.title}: ${w.subtitle}`;
   const canonical = `${s.siteUrl}/${w.slug}.html`;
@@ -998,11 +1082,11 @@ function renderWorkshopPage(template, n, w, s) {
     WA_LINK: waLink(s.whatsappNumber, code),
     HEADER: siteHeader({
       brand: "index.html",
-      items: [["About", "about.html"], ["Programmes", "index.html#courses"],
+      items: [["About", "about.html"], programmesItem("index.html#courses", programmes),
         ["Fees and Funding", "#fees"], ["For Organisations", "index.html#corporate"]],
       wa: waLink(s.whatsappNumber, code), cta: "#enquire",
     }),
-    NAV_SCRIPT: navScript(),
+    NAV_SCRIPT: navScript(programmes.length > 0),
     EMAIL: s.enquiryEmail,
     MAIL_SUBJECT: encodeURIComponent(`Enquiry: ${code} ${w.title}`),
     TAGS: (w.tags || []).map(t => `<span class="c-tag">${t}</span>`).join(""),
@@ -1029,11 +1113,11 @@ function renderWorkshopPage(template, n, w, s) {
  * so the prose stays out of the build script; it is injected first so that
  * tokens used inside it are filled along with the template's own.
  */
-function renderPoliciesPage(template, body, s, updated) {
+function renderPoliciesPage(template, body, s, updated, programmes) {
   const withBody = template.replace("{{POLICY_BODY}}", () => body);
   return fill(withBody, {
-    HEADER: staticPageHeader(s),
-    NAV_SCRIPT: navScript(),
+    HEADER: staticPageHeader(s, programmes),
+    NAV_SCRIPT: navScript(programmes.length > 0),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -1047,7 +1131,7 @@ function renderPoliciesPage(template, body, s, updated) {
  * About page. Story and market context live here, not on the homepage.
  * Static content, so this only fills the shared tracking and contact tokens.
  */
-function renderAboutPage(template, s, team, page) {
+function renderAboutPage(template, s, team, page, programmes) {
   const hero = page.hero;
   return fill(template, {
     TEAM_SECTION: renderTeam(team),
@@ -1057,8 +1141,8 @@ function renderAboutPage(template, s, team, page) {
     ABOUT_HERO_FIG: aboutHeroFig(hero),
     STORY_MOD: storyMod(page.storyPhoto),
     STORY_PHOTO: storyPhoto(page.storyPhoto),
-    HEADER: staticPageHeader(s),
-    NAV_SCRIPT: navScript(),
+    HEADER: staticPageHeader(s, programmes),
+    NAV_SCRIPT: navScript(programmes.length > 0),
     SITE_URL: s.siteUrl,
     EMAIL: s.enquiryEmail,
     WA_LINK: waLink(s.whatsappNumber),
@@ -1101,14 +1185,15 @@ function formatUpdated(d) {
 
   // index
   const idxTpl = fs.readFileSync(path.join(ROOT, "templates/index.template.html"), "utf8");
+  const programmes = content.careerProgrammes;
   const idx = fill(idxTpl, {
     HEADER: siteHeader({
       brand: "#top",
-      items: [["About", "about.html"], ["Programmes", "#courses"],
+      items: [["About", "about.html"], programmesItem("#courses", programmes),
         ["The Pathways", "#pathway"], ["For Organisations", "#corporate"]],
       wa: waApostrophe(waLink(s.whatsappNumber)), cta: "#contact",
     }),
-    NAV_SCRIPT: navScript(),
+    NAV_SCRIPT: navScript(programmes.length > 0),
     COURSE_CARDS: renderCourseCards(content),
     CORPORATE_PHOTO: corporatePhoto(content.homePage.corporatePhoto),
     CONTACT_MOD: contactMod(content.homePage.ctaPhoto),
@@ -1134,19 +1219,19 @@ function formatUpdated(d) {
   const wTpl = fs.readFileSync(path.join(ROOT, "templates/workshop.template.html"), "utf8");
   for (const [n, w] of Object.entries(content.workshops)) {
     fs.writeFileSync(path.join(DIST, `${w.slug}.html`),
-      renderWorkshopPage(wTpl, n, w, s));
+      renderWorkshopPage(wTpl, n, w, s, content.careerProgrammes));
   }
 
   // about
   const aTpl = fs.readFileSync(path.join(ROOT, "templates/about.template.html"), "utf8");
   fs.writeFileSync(path.join(DIST, "about.html"),
-    renderAboutPage(aTpl, s, content.team, content.aboutPage));
+    renderAboutPage(aTpl, s, content.team, content.aboutPage, content.careerProgrammes));
 
   // policies
   const pTpl = fs.readFileSync(path.join(ROOT, "templates/policies.template.html"), "utf8");
   const pBody = fs.readFileSync(path.join(ROOT, "content/policies.html"), "utf8");
   fs.writeFileSync(path.join(DIST, "policies.html"),
-    renderPoliciesPage(pTpl, pBody, s, formatUpdated(new Date())));
+    renderPoliciesPage(pTpl, pBody, s, formatUpdated(new Date()), content.careerProgrammes));
 
   // sitemap
   const pages = ["",

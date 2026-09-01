@@ -116,6 +116,41 @@ header{
   transition:box-shadow .2s,background .2s;
 }
 .nav-cta:hover{background:var(--navy-deep);box-shadow:0 8px 26px rgba(18,44,80,.36)}
+/* The Programmes disclosure. Rendered only when a career programme is
+   published: with none, Programmes is the plain link it has always been and
+   none of this matches anything. The control is a button, so it is not caught
+   by the handler that closes the mobile menu on any link inside it. */
+.nav-group{position:relative}
+.nav-group-btn{
+  display:flex;align-items:center;gap:7px;
+  background:none;border:0;padding:0;cursor:pointer;
+  /* A button inherits none of this, so the row is matched by hand against
+     .nav-links a above. Any change there has to be made here too. */
+  font-family:var(--body);font-size:.9rem;font-weight:500;color:var(--slate);
+  white-space:nowrap;transition:color .15s;
+}
+.nav-group-btn:hover,.nav-group-btn:focus-visible{color:var(--navy)}
+/* A chevron drawn from two borders rather than an asset: it takes the text
+   colour, so it follows the hover and needs no second state. The global
+   reduced motion rule kills the rotation transition. */
+.nav-group-btn::after{
+  content:"";width:6px;height:6px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:translateY(-2px) rotate(45deg);transition:transform .2s;
+}
+.nav-group-btn[aria-expanded="true"]::after{transform:translateY(1px) rotate(-135deg)}
+/* The row is 84px tall and centred, so the item sits about 30px above the
+   header edge. That offset drops the panel just clear of the bottom border.
+   No hover bridge is needed across the gap: the panel is click toggled. */
+.nav-panel{
+  position:absolute;top:calc(100% + 30px);left:-16px;
+  min-width:236px;list-style:none;padding:8px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow-lg);
+}
+.nav-panel[hidden]{display:none}
+.nav-panel a{display:block;padding:11px 14px;border-radius:10px;font-size:.88rem}
+.nav-panel a:hover,.nav-panel a:focus-visible{background:var(--blue-dim);color:var(--navy)}
 .menu-btn{display:none;background:#fff;border:1px solid var(--line);border-radius:12px;width:46px;height:46px;cursor:pointer}
 .menu-btn span{display:block;width:20px;height:2px;background:var(--navy);margin:4px auto;transition:transform .2s,opacity .2s}
 .menu-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -136,6 +171,18 @@ header{
   .nav-links.open{display:flex}
   .nav-links a{padding:15px 4px;border-bottom:1px solid var(--line)}
   .nav-cta{margin-top:14px;text-align:center;border-radius:14px}
+  /* The panel stops floating and becomes an indented part of the column. The
+     button takes the same row treatment the links get above it. */
+  .nav-group{position:static}
+  .nav-group-btn{
+    width:100%;justify-content:space-between;
+    padding:15px 4px;border-bottom:1px solid var(--line);
+  }
+  .nav-panel{
+    position:static;min-width:0;padding:0 0 0 18px;
+    background:none;border:0;border-radius:0;box-shadow:none;
+  }
+  .nav-panel a{border-radius:0}
 }
 
 /* ============ HERO ============ */
