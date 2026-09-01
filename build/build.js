@@ -1731,8 +1731,10 @@ function sectionNav(p) {
   ].filter(([, , test]) => test(p));
   // One link is not a menu. Two is the least that earns the space it takes.
   if (items.length < 3) return "";
+  // data-label duplicates the text for the CSS that reserves the bold width.
+  // See .sectionnav a::after: generated content cannot read a text node.
   const links = items
-    .map(([href, label]) => `      <li><a href="${href}">${label}</a></li>`)
+    .map(([href, label]) => `      <li><a href="${href}" data-label="${esc(label)}">${label}</a></li>`)
     .join("\n");
   return `<!-- ================= SECTION MENU ================= -->
 <nav class="sectionnav" aria-label="Sections of this page">

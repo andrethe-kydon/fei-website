@@ -1777,16 +1777,33 @@ footer{background:var(--navy-deep);color:#8FA0B8;padding:52px 0}
   display:flex;gap:4px;list-style:none;
   overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
+/* Chips never compress: the row scrolls instead. Without this the default
+   flex-shrink:1 squeezes them whenever the row overflows, which it does below
+   about 1080px, and it squeezes them by different amounts depending on which
+   chip is currently bold. That reintroduced exactly the shift the reserved
+   width above exists to prevent, and only at narrow widths, which is why it was
+   invisible at 1440. */
+.sectionnav li{flex:0 0 auto}
 .sectionnav ul::-webkit-scrollbar{display:none}
+/* Grid, not block, so the chip reserves the width of its own bold label. The
+   active chip is weight 700 and every resting chip is 500, and bold is wider, so
+   without this the chips after the current one shift a few pixels every time the
+   current section changes under a scroll. The ::after holds the same text at 700
+   with zero height, which sets the column width and adds nothing to the row.
+   data-label carries the text because generated content cannot read a text node. */
 .sectionnav a{
-  display:block;white-space:nowrap;text-decoration:none;
+  display:grid;white-space:nowrap;text-decoration:none;
   /* --ink, not --slate. Slate measured 4.68:1 against the darkest state the bar
      could reach, which passes with 0.18 to spare and only because the bar was
      translucent. --ink is 11.51:1 at the same point and does not depend on what
      is behind it. */
   padding:13px 12px;font-size:.84rem;font-weight:500;color:var(--ink);
-  border-bottom:3px solid transparent;
+  border-bottom:2px solid transparent;
   transition:color .15s,border-color .15s;
+}
+.sectionnav a::after{
+  content:attr(data-label);
+  font-weight:700;height:0;overflow:hidden;visibility:hidden;pointer-events:none;
 }
 .sectionnav a:hover{color:var(--navy)}
 /* Current section, carried three ways so it never depends on colour alone:
