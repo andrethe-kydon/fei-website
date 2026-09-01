@@ -1332,6 +1332,10 @@ function monthsSection(p) {
 /**
  * The modules, grouped by arc.
  *
+ * The number and the title are joined with a middot, not a colon: six of the
+ * eight titles carry a colon of their own, so a colon here reads as two. The
+ * approved workbook uses a middot in the same place.
+ *
  * A details element rather than a scripted accordion: it opens with the
  * keyboard, announces its own state, and prints expanded, with no code of ours
  * standing between the reader and the content.
@@ -1351,7 +1355,7 @@ function modulesSection(p) {
       const meta = [`${m.hours} hours`, by].filter(Boolean).map(esc).join(" · ");
       return `<details class="faq-item module-item" data-module="${esc(m.num || m.title)}">
           <summary>
-            <span class="mod-head"><b>${esc(m.num ? `${m.num}: ` : "")}${esc(m.title)}</b><span class="mod-meta">${meta}</span></span>
+            <span class="mod-head"><b>${esc(m.num ? `${m.num} \u00b7 ` : "")}${esc(m.title)}</b><span class="mod-meta">${meta}</span></span>
           </summary>
           <div class="faq-a">
             ${m.certificate ? `<p class="mod-cert">Certificate: ${esc(m.certificate)}</p>` : ""}
@@ -1498,7 +1502,7 @@ function scheduleSection(p) {
         </tr></thead>
         <tbody>
         ${dated.map(m => `<tr>
-          <th scope="row">${esc(m.num ? `${m.num}: ` : "")}${esc(m.title)}</th>
+          <th scope="row">${esc(m.num ? `${m.num} \u00b7 ` : "")}${esc(m.title)}</th>
           <td class="t t-wrap">${esc(dateRange(m.dateFrom, m.dateTo))}</td>
           <td>${esc(m.by)}</td>
           <td class="hrs">${hrs(Number(m.hours) || 0)}</td>
